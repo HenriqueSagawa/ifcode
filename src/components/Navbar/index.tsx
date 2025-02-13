@@ -1,4 +1,7 @@
 import { FaUsers, FaPhone, FaPaperclip, FaQuestion, FaRobot, FaBars } from "react-icons/fa";
+import LogoIFCode from "../../../public/img/logo ifcode.png";
+import Image from "next/image";
+import { ModeToggle } from "../ModeToggle";
 
 
 import {
@@ -23,6 +26,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Separator } from "../ui/separator";
 
 interface MenuItem {
   title: string;
@@ -40,10 +44,6 @@ interface Navbar1Props {
     title: string;
   };
   menu?: MenuItem[];
-  mobileExtraLinks?: {
-    name: string;
-    url: string;
-  }[];
   auth?: {
     login: {
       text: string;
@@ -59,7 +59,7 @@ interface Navbar1Props {
 const Navbar = ({
   logo = {
     url: "/",
-    src: '../../../public/img/logo ifcode.png',
+    src: 'https://i.imgur.com/UJCtFtt.png',
     alt: "logo",
     title: "IF Code",
   },
@@ -111,15 +111,9 @@ const Navbar = ({
       url: "#",
     },
   ],
-  mobileExtraLinks = [
-    { name: "Press", url: "#" },
-    { name: "Contact", url: "#" },
-    { name: "Imprint", url: "#" },
-    { name: "Sitemap", url: "#" },
-  ],
   auth = {
-    login: { text: "Log in", url: "#" },
-    signup: { text: "Sign up", url: "#" },
+    login: { text: "Entrar", url: "#" },
+    signup: { text: "Cadastrar", url: "#" },
   },
 }: Navbar1Props) => {
   console.log(logo.title)
@@ -141,6 +135,7 @@ const Navbar = ({
             </div>
           </div>
           <div className="flex gap-2">
+            <ModeToggle />
             <Button asChild variant="outline" size="sm">
               <a href={auth.login.url}>{auth.login.text}</a>
             </Button>
@@ -150,9 +145,9 @@ const Navbar = ({
           </div>
         </nav>
         <div className="block lg:hidden">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mx-4">
             <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
+              <Image src={LogoIFCode} className="w-8" alt={logo.alt} />
               <span className="text-lg font-semibold">{logo.title}</span>
             </a>
             <Sheet>
@@ -180,19 +175,9 @@ const Navbar = ({
                   >
                     {menu.map((item) => renderMobileMenuItem(item))}
                   </Accordion>
-                  <div className="border-t py-4">
-                    <div className="grid grid-cols-2 justify-start">
-                      {mobileExtraLinks.map((link, idx) => (
-                        <a
-                          key={idx}
-                          className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground"
-                          href={link.url}
-                        >
-                          {link.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
+
+                  <Separator />
+
                   <div className="flex flex-col gap-3">
                     <Button asChild variant="outline">
                       <a href={auth.login.url}>{auth.login.text}</a>

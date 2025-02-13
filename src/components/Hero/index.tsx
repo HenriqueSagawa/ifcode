@@ -1,91 +1,63 @@
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
+import { HeroCards } from "./HeroCards";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { InfiniteMovingCardsDemo } from "../MovingCards";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { HoverBorderGradient } from "../ui/hover-border-gradient";
-
-interface Hero1Props {
-  badge?: string;
-  heading: string;
-  description: string;
-  buttons?: {
-    primary?: {
-      text: string;
-      url: string;
-    };
-    secondary?: {
-      text: string;
-      url: string;
-    };
-  };
-  image: {
-    src: string;
-    alt: string;
-  };
-}
-
-const Hero1 = ({
-  badge = "✨ Sua principal ajuda",
-  heading = "Blocks Built With Shadcn & Tailwind",
-  description = "Finely crafted components built with React, Tailwind and Shadcn UI. Developers can copy and paste these blocks directly into their project.",
-  buttons = {
-    primary: {
-      text: "Comece já",
-      url: "/",
-    },
-    secondary: {
-      text: "Saiba mais",
-      url: "/",
-    },
-  },
-  image = {
-    src: "https://www.shadcnblocks.com/images/block/placeholder-1.svg",
-    alt: "Hero section demo image showing interface components",
-  },
-}: Hero1Props) => {
+export const Hero = () => {
   return (
-    <section className="py-32 flex justify-center">
-      <div className="container">
-        <div className="grid items-center gap-8 lg:grid-cols-2">
-          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-            {badge && (
-              <Badge variant="outline">
-                {badge}
-                <ArrowUpRight className="ml-2 size-4" />
-              </Badge>
-            )}
-            <h1 className="my-6 text-pretty text-4xl font-bold lg:text-6xl">
-              {heading}
-            </h1>
-            <p className="mb-8 max-w-xl text-muted-foreground lg:text-xl">
-              {description}
-            </p>
-            <div className="flex w-full flex-col justify-center gap-2 sm:flex-row lg:justify-start">
-              {buttons.primary && (
-                <Button asChild className="w-full sm:w-auto">
-                  <a href={buttons.primary.url}>{buttons.primary.text}</a>
-                </Button>
-              )}
-              {buttons.secondary && (
-                <Button asChild variant="outline" className="w-full sm:w-auto">
-                  <a href={buttons.secondary.url}>
-                    {buttons.secondary.text}
-                    <ArrowRight className="size-4" />
-                  </a>
-                </Button>
-              )}
-            </div>
-          </div>
+    <section className="container mx-auto grid grid-cols-1 xl:grid-cols-2 place-items-center py-20 md:py-32 gap-10 overflow-hidden">
+      <div className="text-center xl:text-start space-y-6">
+        <main className="text-4xl md:text-6xl mx-4 font-bold">
+          <h1 className="inline">
+            <span className="inline bg-gradient-to-r from-[#80C342]  to-[#118B44] text-transparent bg-clip-text">
+              IF Code
+            </span>{" "}
+            Solucione suas
+          </h1>{" "}
+          <h2 className="inline">
+            <span className="inline bg-gradient-to-r from-[#ffba08] via-[#faa307] to-[#f48c06] text-transparent bg-clip-text">
+              Dúvidas
+            </span>{" "}
+            de forma rápida
+          </h2>
+        </main>
 
-          <img
-            src={image.src}
-            alt={image.alt}
-            className="max-h-96 w-full rounded-md object-cover"
-          />
+        <p className="text-xl text-muted-foreground w-[80%] md:w-10/12 mx-auto lg:mx-0">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+          Numquam cum voluptatum vel ratione pariatur.
+        </p>
+
+        <div className="space-y-4 md:space-y-0 md:space-x-4">
+          <Button className="w-[80%] md:w-1/3">Comece já</Button>
+
+          <a
+            rel="noreferrer noopener"
+            href="https://github.com/HenriqueSagawa/ifcode"
+            target="_blank"
+            className={`w-[80%] md:w-1/3 ${buttonVariants({
+              variant: "outline",
+            })}`}
+          >
+            Github Repository
+            <GitHubLogoIcon className="ml-2 w-5 h-5" />
+          </a>
         </div>
       </div>
+
+      {/* Hero cards sections */}
+
+      
+      <div className="z-10">
+        <div className="hidden lg:block">
+          <HeroCards />
+        </div>
+        <div className="block lg:hidden">
+          <InfiniteMovingCardsDemo />
+        </div>
+      </div>
+
+      {/* Shadow effect */}
+      <div className="shadow"></div>
     </section>
   );
 };
-
-export { Hero1 };
