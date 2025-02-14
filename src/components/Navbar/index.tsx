@@ -176,6 +176,8 @@ const Navbar = ({
                     {menu.map((item) => renderMobileMenuItem(item))}
                   </Accordion>
 
+                  <ModeToggle />
+
                   <Separator />
 
                   <div className="flex flex-col gap-3">

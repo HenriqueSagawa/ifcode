@@ -1,5 +1,6 @@
+"use client"
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Badge } from "../ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -12,11 +13,16 @@ import {
 import { Check, Linkedin } from "lucide-react";
 import { LightBulbIcon } from "./Icons";
 import Link from "next/link";
+import { motion } from "motion/react";
+
+const CardMotion = motion(Card);
 
 export const HeroCards = () => {
   return (
-    <div className="lg:flex flex-row flex-wrap gap-8 relative w-[550px] h-[350px] 2xl:w-[700px] 2xl:h-[500px]">
-      <Card className="absolute w-[340px] -top-[15px] 2xl:scale-100 scale-[.8] 2xl:left-0 left-[-100px] drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+    <div className="lg:flex flex-row mt-12 xl:mt-0 flex-wrap gap-8 relative w-[550px] h-[350px] 2xl:w-[700px] 2xl:h-[500px]">
+      <CardMotion animate={ {y: [10, -10, 10]} } transition={{
+        repeat: Infinity, duration: 4.2
+      }} className="absolute w-[290px] 2xl:w-[340px] -top-[15px] 2xl:scale-100 scale-[.8] 2xl:left-0 left-[-100px] drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="flex flex-row items-center gap-4 pb-2">
           <Avatar>
             <AvatarImage
@@ -33,9 +39,9 @@ export const HeroCards = () => {
         </CardHeader>
 
         <CardContent>Siga nossa página no instagram</CardContent>
-      </Card>
+      </CardMotion>
 
-      <Card className="absolute 2xl:scale-100 scale-[.8] right-[30px] 2xl:right-[20px] top-4 w-80 flex flex-col justify-center items-center drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+      <CardMotion animate={{ y: [15, -15, 15] }} transition={{ repeat: Infinity, duration: 6 }} className="absolute 2xl:scale-100 right-[30px] 2xl:right-[20px] 2xl:top-4 -top-1 w-64 h-[250px] 2xl:w-80 flex flex-col justify-center items-center drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="mt-8 flex justify-center items-center pb-2">
           <img
             src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-PNG-Photo.png"
@@ -59,9 +65,9 @@ export const HeroCards = () => {
             <Link href="https://gemini.google.com/app?hl=pt-BR">Conheça</Link>
           </Button>
         </CardFooter>
-      </Card>
+      </CardMotion>
 
-      <Card className="absolute 2xl:scale-100 scale-[.8] 2xl:top-[150px] top-[100px] left-[-50px] 2xl:left-[50px] w-72  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+      <CardMotion animate={{ y: [5, -5, 5] }} transition={{ repeat: Infinity, duration: 4.7 }} className="absolute 2xl:scale-100 2xl:top-[150px] top-[150px] left-[-50px] 2xl:left-[50px]  w-64 2xl:w-72  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader>
           <CardTitle className="flex item-center justify-between">
             IF Code
@@ -93,9 +99,9 @@ export const HeroCards = () => {
             )}
           </div>
         </CardFooter>
-      </Card>
+      </CardMotion>
 
-      <Card className="absolute 2xl:scale-100 scale-[.8] w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[35px] bottom-[-60px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+      <CardMotion animate={{ y: [10, -5, 10] }} transition={{ repeat: Infinity, duration: 5.4 }} className="absolute 2xl:scale-100 w-[300px] h-[auto] 2xl:w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[35px] bottom-[-60px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="space-y-1 flex md:flex-row justify-start items-start gap-4">
           <div className="mt-1 invert bg-primary/20 p-1 rounded-2xl">
             <LightBulbIcon />
@@ -108,7 +114,7 @@ export const HeroCards = () => {
             </CardDescription>
           </div>
         </CardHeader>
-      </Card>
+      </CardMotion>
     </div>
   );
 };

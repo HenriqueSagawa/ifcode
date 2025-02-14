@@ -1,3 +1,4 @@
+import { transform } from "next/dist/build/swc";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -15,8 +16,16 @@ const config: Config = {
   			'accordion-up': 'accordion-up 0.2s ease-out',
 			scroll:
 			  "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+
+			"slide-down": "slideDown 4s linear infinite",
+
   		},
   		keyframes: {
+			slideDown: {
+				"0%": {  transform: "translateY(0)"},
+				"50%": { transform: "translateY(-10px)"},
+				"100%": { transform: "translateY(0)" }
+			},
   			spotlight: {
   				'0%': {
   					opacity: '0',
@@ -48,6 +57,7 @@ const config: Config = {
 				  transform: "translate(calc(-50% - 0.5rem))",
 				},
 			  },
+			  
   		},
   		colors: {
   			background: 'var(--background)',

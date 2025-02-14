@@ -2,6 +2,8 @@ import { Button, buttonVariants } from "../ui/button";
 import { HeroCards } from "./HeroCards";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { InfiniteMovingCardsDemo } from "../MovingCards";
+import { MoveRight } from "lucide-react";
+
 
 export const Hero = () => {
   return (
@@ -22,13 +24,13 @@ export const Hero = () => {
           </h2>
         </main>
 
-        <p className="text-xl text-muted-foreground w-[80%] md:w-10/12 mx-auto lg:mx-0">
+        <p className="text-xl text-muted-foreground w-[80%] md:w-10/12 mx-auto lg:mx-auto xl:mx-0">
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
           Numquam cum voluptatum vel ratione pariatur.
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
-          <Button className="w-[80%] md:w-1/3">Comece já</Button>
+          <Button className="w-[80%] md:w-1/3">Comece já {" "} <MoveRight /></Button>
 
           <a
             rel="noreferrer noopener"
@@ -38,7 +40,7 @@ export const Hero = () => {
               variant: "outline",
             })}`}
           >
-            Github Repository
+            Repositório do Github
             <GitHubLogoIcon className="ml-2 w-5 h-5" />
           </a>
         </div>

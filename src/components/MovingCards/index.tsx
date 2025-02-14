@@ -5,11 +5,12 @@ import { InfiniteMovingCards } from "../ui/infinite-moving-cards";
 
 export function InfiniteMovingCardsDemo() {
   return (
-    <div className="h-auto rounded-md flex flex-col antialiased items-center justify-center relative overflow-hidden w-screen">
+    <div className="h-auto rounded-md  flex flex-col antialiased items-center justify-center relative overflow-hidden w-screen">
       <InfiniteMovingCards
         items={testimonials}
         direction="right"
         speed="slow"
+        className="invert dark:invert-0"
       />
     </div>
   );
