@@ -1,9 +1,8 @@
 import { Button, buttonVariants } from "../ui/button";
-import { HeroCards } from "./HeroCards";
+import { HeroCards } from "../HeroCards";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { InfiniteMovingCardsDemo } from "../MovingCards";
 import { MoveRight } from "lucide-react";
-import Link from "next/link";
 import { LinkPreview } from "../ui/link-preview";
 
 
