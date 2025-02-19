@@ -112,8 +112,8 @@ const Navbar = ({
     },
   ],
   auth = {
-    login: { text: "Entrar", url: "#" },
-    signup: { text: "Cadastrar", url: "#" },
+    login: { text: "Entrar", url: "/login" },
+    signup: { text: "Cadastrar", url: "/register" },
   },
 }: Navbar1Props) => {
   console.log(logo.title)

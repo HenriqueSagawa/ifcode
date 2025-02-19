@@ -10,17 +10,19 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { Check, Linkedin } from "lucide-react";
+import { Check } from "lucide-react";
 import { LightBulbIcon } from "./Icons";
 import Link from "next/link";
 import { motion } from "motion/react";
+import { LinkPreview } from "../ui/link-preview";
+
 
 const CardMotion = motion(Card);
 
 export const HeroCards = () => {
   return (
-    <div className="lg:flex flex-row mt-12 xl:mt-0 flex-wrap gap-8 relative w-[550px] h-[350px] 2xl:w-[700px] 2xl:h-[500px]">
-      <CardMotion animate={ {y: [10, -10, 10]} } transition={{
+    <div className="lg:flex flex-row mt-12 xl:mt-0 flex-wrap gap-8 relative lg:mx-0 w-[550px] h-[350px] 2xl:w-[700px] 2xl:h-[500px]">
+      <CardMotion animate={{ y: [10, -10, 10] }} transition={{
         repeat: Infinity, duration: 4.2
       }} className="absolute w-[290px] 2xl:w-[340px] -top-[15px] 2xl:scale-100 scale-[.8] 2xl:left-0 left-[-100px] drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="flex flex-row items-center gap-4 pb-2">
@@ -34,7 +36,11 @@ export const HeroCards = () => {
 
           <div className="flex flex-col">
             <CardTitle className="text-lg">IF Code</CardTitle>
-            <CardDescription><Link href="https://www.instagram.com/ifcode.assis/" className="hover:underline">@ifcode.assis</Link></CardDescription>
+            <CardDescription>
+              <LinkPreview url="https://www.instagram.com/ifcode.assis/" className="dark:!text-gray-300 text-gay-600">
+                @ifcode.assis
+              </LinkPreview>
+            </CardDescription>
           </div>
         </CardHeader>
 
