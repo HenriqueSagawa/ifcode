@@ -7,7 +7,6 @@ import { Checkbox } from "../ui/checkbox";
 import {
   IconBrandGithub,
   IconBrandGoogle,
-  IconBrandOnlyfans,
 } from "@tabler/icons-react";
 
 export function SignInForm() {
