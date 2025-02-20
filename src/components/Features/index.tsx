@@ -8,36 +8,37 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import Link from "next/link";
+import YoutubeIfcode from "../../../public/img/capa if code vídeo.jpg"
 
 export function Feature() {
   const features = [
     {
-      title: "Track issues effectively",
+      title: "Resolva dúvidas de forma eficiente",
       description:
-        "Track and manage your project issues with ease using our intuitive interface.",
+        "Encontre respostas para suas perguntas e acompanhe discussões sobre programação. Publique suas dúvidas e receba ajuda da comunidade.",
       skeleton: <SkeletonOne />,
       className:
         "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
     },
     {
-      title: "Capture pictures with AI",
+      title: "Compartilhe conhecimento",
       description:
-        "Capture stunning photos effortlessly using our advanced AI technology.",
+        "Ajude outros estudantes postando dicas, tutoriais e soluções para desafios técnicos. O IF Code é um espaço colaborativo feito por e para alunos de informática.",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
-      title: "Watch our AI on YouTube",
+      title: "Acompanhe nosso canal no YouTube",
       description:
-        "Whether its you or Tyler Durden, you can get to know about our product on YouTube",
+        "Quer aprender de forma prática? Assista a vídeos explicativos no nosso canal e aprimore suas habilidades com conteúdos feitos especialmente para você.",
       skeleton: <SkeletonThree />,
       className:
         "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
     },
     {
-      title: "Deploy in seconds",
+      title: "Interaja em tempo real",
       description:
-        "With our blazing fast, state of the art, cutting edge, we are so back cloud servies (read AWS) - you can deploy your model in seconds.",
+        "Com um sistema dinâmico e intuitivo, você pode comentar, responder e interagir com a comunidade rapidamente. Construa conexões e aprenda junto!",
       skeleton: <SkeletonFour />,
       className: "col-span-1 lg:col-span-3 border-b lg:border-none",
     },
@@ -46,12 +47,11 @@ export function Feature() {
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
-          Packed with thousands of features
+          Repleto de funcionalidades
         </h4>
 
         <p className="text-sm lg:text-base  max-w-2xl  my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-          From Image generation to video generation, Everything AI has APIs for
-          literally everything. It can even create this website copy for you.
+          No IF Code, você encontra suporte, troca experiências e soluciona dúvidas com a ajuda de outros estudantes. Compartilhe seu conhecimento e aprenda com a comunidade!
         </p>
       </div>
 
@@ -113,11 +113,11 @@ export const SkeletonOne = () => {
         <div className="flex flex-1 w-full h-full flex-col space-y-2  ">
           {/* TODO */}
           <Image
-            src="/linear.webp"
+            src="/img/fotoifcodecapa.jpg"
             alt="header"
             width={800}
             height={800}
-            className="h-full w-full aspect-square object-cover object-left-top rounded-sm"
+            className="h-full w-full aspect-square object-cover rounded-sm"
           />
         </div>
       </div>
@@ -131,7 +131,7 @@ export const SkeletonOne = () => {
 export const SkeletonThree = () => {
   return (
     <Link
-      href="https://www.youtube.com/watch?v=RPa3_AD1_Vs"
+      href="https://www.youtube.com/playlist?list=PLQCg2eNNnukPWBYmgQ4m_OWps4W2szYo1"
       target="__blank"
       className="relative flex gap-10  h-full group/image"
     >
@@ -140,7 +140,7 @@ export const SkeletonThree = () => {
           {/* TODO */}
           <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " />
           <Image
-            src=""
+            src={YoutubeIfcode}
             alt="header"
             width={800}
             height={800}
@@ -154,11 +154,11 @@ export const SkeletonThree = () => {
 
 export const SkeletonTwo = () => {
   const images = [
-    "",
-    "",
-    "",
-    "",
-    "",
+    "/img/equipeifcode.jpg",
+    "/img/ifcodefoto1.jpg",
+    "/img/ifcodefoto2.jpg",
+    "/img/ifcodefoto3.jpg",
+    "/img/ifcodefoto4.jpg",
   ];
 
   const imageVariants = {
