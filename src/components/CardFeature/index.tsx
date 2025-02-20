@@ -13,48 +13,48 @@ import {
 export function CardFeature() {
   const features = [
     {
-      title: "Built for developers",
+      title: "Criado para estudantes de informática",
       description:
-        "Built for engineers, developers, dreamers, thinkers and doers.",
+        "Um espaço dedicado para quem está aprendendo programação, redes, banco de dados e muito mais. Compartilhe suas dúvidas e aprenda com a comunidade.",
       icon: <IconTerminal2 />,
     },
     {
-      title: "Ease of use",
+      title: "Fácil de usar",
       description:
-        "It's as easy as using an Apple, and as expensive as buying one.",
+        "Interface intuitiva para que você possa focar no que realmente importa: aprender e trocar conhecimento sem dificuldades.",
       icon: <IconEaseInOut />,
     },
     {
-      title: "Pricing like no other",
+      title: "Aprenda sem custo",
       description:
-        "Our prices are best in the market. No cap, no lock, no credit card required.",
+        "Aqui, o conhecimento é gratuito! Você pode acessar conteúdos, tirar dúvidas e ajudar outros estudantes sem pagar nada.",
       icon: <IconCurrencyDollar />,
     },
     {
-      title: "100% Uptime guarantee",
-      description: "We just cannot be taken down by anyone.",
+      title: "Comunidade sempre ativa",
+      description: "Poste suas dúvidas a qualquer momento! Sempre há alguém pronto para ajudar e compartilhar experiências.",
       icon: <IconCloud />,
     },
     {
-      title: "Multi-tenant Architecture",
-      description: "You can simply share passwords instead of buying new seats",
+      title: "Colaboração sem limites",
+      description: "Compartilhe códigos, resoluções de problemas e ajude outros estudantes a evoluírem junto com você.",
       icon: <IconRouteAltLeft />,
     },
     {
-      title: "24/7 Customer Support",
+      title: "Apoio contínuo",
       description:
-        "We are available a 100% of the time. Atleast our AI Agents are.",
+        "Se precisar de uma explicação diferente, a comunidade está aqui para te dar novas perspectivas até você entender.",
       icon: <IconHelp />,
     },
     {
-      title: "Money back guarantee",
+      title: "Tire suas dúvidas rapidamente",
       description:
-        "If you donot like EveryAI, we will convince you to like us.",
+        "Não fique preso em um problema por muito tempo! Publique suas perguntas e receba respostas de quem já passou por isso.",
       icon: <IconAdjustmentsBolt />,
     },
     {
-      title: "And everything else",
-      description: "I just ran out of copy ideas. Accept my sincere apologies",
+      title: "Sempre em evolução",
+      description: "O IF Code está em constante aprimoramento para oferecer sempre mais recursos e facilitar ainda mais sua jornada no mundo da informática.",
       icon: <IconHeart />,
     },
   ];

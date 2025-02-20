@@ -3,19 +3,19 @@ export function Stats() {
     const stats = [
         {
             data: "0",
-            desc: "Customers consectetur adipiscing elit."
+            desc: "Dúvidas respondidas"
         },
         {
             data: "0",
-            desc: "Downloads efficitur id eu nulla facilisis turpis"
+            desc: "Estudantes alcançados"
         },
         {
             data: "0",
-            desc: "Countries maximus sit amet auctor sed,"
+            desc: "Mentores disponíveis"
         },
         {
             data: "0",
-            desc: "Total revenue consectetur adipiscing elit"
+            desc: "Perguntas publicadas"
         },
     ]
 
@@ -24,10 +24,10 @@ export function Stats() {
             <div className="relative z-10 max-w-screen-xl mx-auto px-4 md:px-8">
                 <div className="max-w-2xl xl:mx-auto xl:text-center">
                     <h3 className="dark:text-white text-3xl font-semibold sm:text-4xl">
-                        Our customers are always happy
+                        A comunidade do IF Code está crescendo
                     </h3>
                     <p className="mt-3 dark:text-gray-300 text-gray-500">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi venenatis sollicitudin quam ut tincidunt.
+                        Nosso compromisso é ajudar estudantes de informática a evoluírem e superarem desafios juntos. Confira alguns números da nossa plataforma:
                     </p>
                 </div>
                 <div className="mt-12">
