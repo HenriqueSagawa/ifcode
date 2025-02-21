@@ -26,8 +26,7 @@ export const Hero = () => {
         </main>
 
         <p className="text-xl text-muted-foreground w-[80%] md:w-10/12 mx-auto lg:mx-auto xl:mx-0">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
-          Numquam cum voluptatum vel ratione pariatur.
+          Tire dúvidas, compartilhe conhecimento e encontre suporte para seus desafios em informática, tudo de forma rápida e acessível!
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
@@ -47,7 +46,7 @@ export const Hero = () => {
 
       {/* Hero cards sections */}
 
-      
+
       <div className="z-10">
         <div className="hidden xl:block">
           <HeroCards />

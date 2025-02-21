@@ -59,7 +59,7 @@ interface Navbar1Props {
 const Navbar = ({
   logo = {
     url: "/",
-    src: 'https://i.imgur.com/UJCtFtt.png',
+    src: '/img/logo ifcode.png',
     alt: "logo",
     title: "IF Code",
   },
@@ -78,13 +78,13 @@ const Navbar = ({
           title: "Contato",
           description: "Our mission is to innovate and empower the world",
           icon: <FaPhone className="size-5 shrink-0" />,
-          url: "#",
+          url: "/contato",
         },
         {
           title: "Sobre o Projeto",
           description: "Browse job listing and discover our workspace",
           icon: <FaPaperclip className="size-5 shrink-0" />,
-          url: "#",
+          url: "/sobre",
         },
       ],
     },
@@ -123,7 +123,7 @@ const Navbar = ({
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <a href={logo.url} className="flex items-center gap-2">
-              <Image width={100} height={100} src={logo.src} className="w-8" alt={logo.alt} />
+              <Image alt="" src={logo.src} width={100} height={100} className="w-8" quality={100} />
               <span className="text-lg font-semibold">{logo.title}</span>
             </a>
             <div className="flex items-center">
@@ -160,7 +160,7 @@ const Navbar = ({
                 <SheetHeader>
                   <SheetTitle>
                     <a href={logo.url} className="flex items-center gap-2">
-                      <Image src={logo.src} className="w-8" alt={logo.alt} />
+                      <Image alt="" src={logo.src} width={0} height={0} sizes="100vh" className="w-8" />
                       <span className="text-lg font-semibold">
                         {logo.title}
                       </span>

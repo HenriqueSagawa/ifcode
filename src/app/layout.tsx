@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Footer } from "@/components/Footer";
+import favicon from "../../public/img/logo ifcode.png";
 
 
 const geistSans = localFont({
@@ -29,7 +30,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}>
+      <head>
+        <link rel="icon" href={favicon.src} color="#fff" />
+      </head>
+
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col py-4 mx-auto`}>
+
 
         <ThemeProvider
           attribute="class"
@@ -41,6 +47,8 @@ export default function RootLayout({
             <link rel="icon" href={favicon.src} color="#fff" />
           </head> */}
           <Navbar />
+
+
 
           {children}
 
