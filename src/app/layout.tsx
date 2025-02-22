@@ -34,7 +34,7 @@ export default function RootLayout({
         <link rel="icon" href={favicon.src} color="#fff" />
       </head>
 
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col py-4 mx-auto`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col py-4 mx-auto`}>
 
 
         <ThemeProvider
@@ -49,8 +49,9 @@ export default function RootLayout({
           <Navbar />
 
 
-
-          {children}
+          <div className="grow">
+            {children}
+          </div>
 
           <Footer />
         </ThemeProvider>

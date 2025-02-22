@@ -75,7 +75,7 @@ export const ContactForm = () => {
                                             Nosso Endereço
                                         </h4>
                                         <p className="text-base text-body-color dark:text-dark-6">
-                                            Rua Principal, 123 - Centro, Cidade - Estado
+                                            Av. Cívica, 475 - Assis Chateaubriand, PR, 85935-000
                                         </p>
                                     </div>
                                 </div>
@@ -115,7 +115,7 @@ export const ContactForm = () => {
                                             Telefone
                                         </h4>
                                         <p className="text-base text-body-color dark:text-dark-6">
-                                            (11) 99999-9999
+                                            Indispoível no momento...
                                         </p>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@ export const ContactForm = () => {
                                             Email
                                         </h4>
                                         <p className="text-base text-body-color dark:text-dark-6">
-                                            contato@ifcode.com.br
+                                            ifcodeprojeto@gmail.com
                                         </p>
                                     </div>
                                 </div>
@@ -1002,7 +1002,7 @@ export const ContactForm = () => {
                 </div>
             </section>
 
-            <SuccessMessage 
+            <SuccessMessage
                 isOpen={showSuccess}
                 onClose={() => setShowSuccess(false)}
                 message="Sua mensagem foi enviada com sucesso! Entraremos em contato em breve."

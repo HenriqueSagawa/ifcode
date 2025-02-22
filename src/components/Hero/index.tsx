@@ -8,7 +8,7 @@ import { LinkPreview } from "../ui/link-preview";
 
 export const Hero = () => {
   return (
-    <section className="container mx-auto grid grid-cols-1 xl:grid-cols-2 place-items-center py-20 md:py-32 gap-10 overflow-hidden">
+    <section className="container mx-auto grid grid-cols-1 xl:grid-cols-2 place-items-center py-20 md:py-32 gap-10">
       <div className="text-center xl:text-start space-y-6">
         <main className="text-4xl md:text-6xl font-bold">
           <h1 className="inline">

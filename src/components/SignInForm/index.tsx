@@ -18,12 +18,12 @@ export function SignInForm() {
     console.log("Form submitted");
   };
   return (
-    <div className="sm:max-w-md max-w-[80%] w-full mx-auto rounded-2xl p-8 shadow-input bg-white dark:bg-black">
+    <div className="z-30 sm:max-w-md max-w-[80%] w-full mx-auto my-24 rounded-2xl p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
         Bem-vindo ao IF Code
       </h2>
       <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi provident totam iusto sunt culpa!
+        Crie já sua conta!
       </p>
 
       <form className="my-8" onSubmit={handleSubmit}>

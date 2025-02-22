@@ -62,7 +62,7 @@ export const HeroCards = () => {
 
         <CardContent className="text-center pb-2">
           <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae, nobis deserunt?
+            O Gemini é um modelo de linguagem multimodal avançado do Google.
           </p>
         </CardContent>
 
@@ -80,7 +80,7 @@ export const HeroCards = () => {
           </CardTitle>
 
           <CardDescription>
-            Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.
+            IF Code soluciona suas dúvidas de forma rápida
           </CardDescription>
         </CardHeader>
 
@@ -107,16 +107,15 @@ export const HeroCards = () => {
         </CardFooter>
       </CardMotion>
 
-      <CardMotion animate={{ y: [10, -5, 10] }} transition={{ repeat: Infinity, duration: 5.4 }} className="absolute 2xl:scale-100 w-[270px] h-[auto] 2xl:w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[35px] bottom-[-100px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+      <CardMotion animate={{ y: [10, -5, 10] }} transition={{ repeat: Infinity, duration: 5.4 }} className="absolute 2xl:scale-100 w-[270px] h-[auto] 2xl:w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[10px] bottom-[-210px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="space-y-1 flex md:flex-row justify-start items-start gap-4">
           <div className="mt-1 invert bg-primary/20 p-1 rounded-2xl">
             <LightBulbIcon />
           </div>
           <div>
-            <CardTitle>O Instituto Federal</CardTitle>
-            <CardDescription className="text-md mt-2">
-              Lorem ipsum dolor sit amet consect adipisicing elit. Consectetur
-              natusm.
+            <CardTitle>O IFPR</CardTitle>
+            <CardDescription className="text-sm mt-2">
+              O Instituto Federal de Educação, Ciência e Tecnologia do Paraná (IFPR) é uma instituição pública federal que oferece educação profissional e tecnológica gratuita em diversas modalidades e níveis de ensino.
             </CardDescription>
           </div>
         </CardHeader>
