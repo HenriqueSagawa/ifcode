@@ -70,19 +70,19 @@ const Navbar = ({
       items: [
         {
           title: "Quem somos?",
-          description: "Lorem ipsum dolor sit amet consectetur adipisicing.",
+          description: "Conheça um pouco mais sobre nós, a equipe por trás do IF Code",
           icon: <FaUsers className="size-5 shrink-0" />,
-          url: "#",
+          url: "/equipe",
         },
         {
           title: "Contato",
-          description: "Our mission is to innovate and empower the world",
+          description: "Entre em contato conosco para mais informações",
           icon: <FaPhone className="size-5 shrink-0" />,
           url: "/contato",
         },
         {
           title: "Sobre o Projeto",
-          description: "Browse job listing and discover our workspace",
+          description: "Conheça um pouco da história de nosso projeto",
           icon: <FaPaperclip className="size-5 shrink-0" />,
           url: "/sobre",
         },
@@ -118,7 +118,7 @@ const Navbar = ({
 }: Navbar1Props) => {
   console.log(logo.title)
   return (
-    <section className="py-4">
+    <section className="py-4 z-50">
       <div className="container mx-auto">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">

@@ -7,6 +7,8 @@ const nextConfig = {
         domains: [
             "api.microlink.io",
             "assets.aceternity.com",
+            "images.unsplash.com",
+            "media.gettyimages.com"
         ]
     }
 };

@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
-
+import { SuccessMessage } from "../ui/success-message";
 
 export const ContactForm = () => {
     const [formData, setFormdata] = useState({
@@ -14,6 +14,7 @@ export const ContactForm = () => {
         message: "",
     });
     const [status, setStatus] = useState("");
+    const [showSuccess, setShowSuccess] = useState(false);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setFormdata({ ...formData, [e.target.name]: e.target.value });
@@ -31,7 +32,8 @@ export const ContactForm = () => {
             );
             console.log("Email enviado:" + response);
             setStatus("Email enviado com sucesso");
-            setFormdata({ name: "", email: "", phone: "", message: "" })
+            setFormdata({ name: "", email: "", phone: "", message: "" });
+            setShowSuccess(true);
         } catch (err) {
             console.error("Erro ao enviar o email:" + err);
             setStatus("Erro ao enviar o email");
@@ -39,21 +41,19 @@ export const ContactForm = () => {
     }
     return (
         <>
-            <section className="relative z-10 overflow-hidden py-20 lg:py-[120px]">
+            <section className="relative overflow-hidden py-20 lg:py-[120px]">
                 <div className="container mx-auto">
                     <div className="-mx-4 flex flex-wrap lg:justify-between">
                         <div className="w-full px-4 lg:w-1/2 xl:w-6/12">
                             <div className="mb-12 max-w-[570px] lg:mb-0">
                                 <span className="mb-4 block text-base font-semibold text-primary">
-                                    Contact Us
+                                    Entre em Contato
                                 </span>
                                 <h2 className="mb-6 text-[32px] font-bold uppercase text-dark dark:text-white sm:text-[40px] lg:text-[36px] xl:text-[40px]">
-                                    GET IN TOUCH WITH US
+                                    FALE CONOSCO
                                 </h2>
                                 <p className="mb-9 text-base leading-relaxed text-body-color dark:text-dark-6">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                                    do eius tempor incididunt ut labore e dolore magna aliqua. Ut
-                                    enim adiqua minim veniam quis nostrud exercitation ullamco
+                                    Estamos aqui para ajudar! Se você tiver alguma dúvida, sugestão ou precisar de suporte, não hesite em entrar em contato conosco. Nossa equipe está pronta para atendê-lo da melhor forma possível.
                                 </p>
                                 <div className="mb-8 flex w-full max-w-[370px]">
                                     <div className="mr-6 flex h-[60px] w-full max-w-[60px] items-center justify-center overflow-hidden rounded bg-primary/5 text-primary sm:h-[70px] sm:max-w-[70px]">
@@ -72,10 +72,10 @@ export const ContactForm = () => {
                                     </div>
                                     <div className="w-full">
                                         <h4 className="mb-1 text-xl font-bold text-dark dark:text-white">
-                                            Our Location
+                                            Nosso Endereço
                                         </h4>
                                         <p className="text-base text-body-color dark:text-dark-6">
-                                            99 S.t Jomblo Park Pekanbaru 28292. Indonesia
+                                            Rua Principal, 123 - Centro, Cidade - Estado
                                         </p>
                                     </div>
                                 </div>
@@ -112,10 +112,10 @@ export const ContactForm = () => {
                                     </div>
                                     <div className="w-full">
                                         <h4 className="mb-1 text-xl font-bold text-dark dark:text-white">
-                                            Phone Number
+                                            Telefone
                                         </h4>
                                         <p className="text-base text-body-color dark:text-dark-6">
-                                            (+62)81 414 257 9980
+                                            (11) 99999-9999
                                         </p>
                                     </div>
                                 </div>
@@ -137,10 +137,10 @@ export const ContactForm = () => {
                                     </div>
                                     <div className="w-full">
                                         <h4 className="mb-1 text-xl font-bold text-dark dark:text-white">
-                                            Email Address
+                                            Email
                                         </h4>
                                         <p className="text-base text-body-color dark:text-dark-6">
-                                            info@yourdomain.com
+                                            contato@ifcode.com.br
                                         </p>
                                     </div>
                                 </div>
@@ -152,27 +152,27 @@ export const ContactForm = () => {
                                     <ContactInputBox
                                         type="text"
                                         name="name"
-                                        placeholder="Your Name"
+                                        placeholder="Seu Nome"
                                         value={formData.name}
                                         onChange={handleChange}
                                     />
                                     <ContactInputBox
                                         type="text"
                                         name="email"
-                                        placeholder="Your Email"
+                                        placeholder="Seu Email"
                                         value={formData.email}
                                         onChange={handleChange}
                                     />
                                     <ContactInputBox
                                         type="text"
                                         name="phone"
-                                        placeholder="Your Phone"
+                                        placeholder="Seu Telefone"
                                         value={formData.phone}
                                         onChange={handleChange}
                                     />
                                     <ContactTextArea
                                         row="6"
-                                        placeholder="Your Message"
+                                        placeholder="Sua Mensagem"
                                         name="message"
                                         value={formData.message}
                                         onChange={handleChange}
@@ -181,9 +181,9 @@ export const ContactForm = () => {
                                         <Button
                                             variant="ghost"
                                             type="submit"
-                                            className="w-full rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
+                                            className="w-full rounded border border-primary bg-primary p-3 dark:text-white transition hover:bg-opacity-90"
                                         >
-                                            Send Message
+                                            Enviar Mensagem
                                         </Button>
                                     </div>
                                 </form>
@@ -1001,6 +1001,12 @@ export const ContactForm = () => {
                     </div>
                 </div>
             </section>
+
+            <SuccessMessage 
+                isOpen={showSuccess}
+                onClose={() => setShowSuccess(false)}
+                message="Sua mensagem foi enviada com sucesso! Entraremos em contato em breve."
+            />
         </>
     );
 };
