@@ -8,14 +8,35 @@ import {
   IconBrandGithub,
   IconBrandGoogle,
 } from "@tabler/icons-react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { json } from "stream/consumers";
 
 export function LogInForm() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const User = z.object({
+    email: z.string().min(1, { message: "Email é obrigatório" }).email(),
+    password: z.string().min(1, { message: "Senha é obrigatória" })
+
+  });
+
+  type UserData = z.infer<typeof User>;
+
+  const { 
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UserData>({
+    resolver: zodResolver(User),
+    mode: "onChange"
+  })
   
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
+  const onSubmit = (data: UserData) => {
+    // TODO: Implementar ação de login aqui
+    console.log("Form submitted:", JSON.stringify(data));
+  }
 
   return (
     <div className="!z-50 sm:max-w-md max-w-[80%] w-full mx-auto my-24 rounded-2xl p-8 shadow-input bg-white dark:bg-black">
@@ -26,10 +47,10 @@ export function LogInForm() {
         Acesse sua conta!
       </p>
 
-      <form className="my-8" onSubmit={handleSubmit}>
+      <form className="my-8" onSubmit={handleSubmit(onSubmit)}>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" placeholder="projectmayhem@fc.com" type="email" />
+          <Input id="email" placeholder="projectmayhem@fc.com" type="email" {...register("email")} />
         </LabelInputContainer>
         
         <LabelInputContainer className="mb-4">
@@ -38,6 +59,7 @@ export function LogInForm() {
             id="password" 
             placeholder="••••••••" 
             type={showPassword ? "text" : "password"}
+            {...register("password")}
           />
         </LabelInputContainer>
 

@@ -8,15 +8,50 @@ import {
   IconBrandGithub,
   IconBrandGoogle,
 } from "@tabler/icons-react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
+  const User = z.object({
+    name: z.string()
+      .min(1, { message: "Nome é obrigatório" })
+      .max(50, { message: "Nome deve ter no máximo 50 caracteres" }),
+    lastName: z.string()
+      .min(1, { message: "O sobrenome é obrigatório" })
+      .max(50, { message: "O sobrenome deve ter no máximo 50 caracteres" }),
+    email: z.string()
+      .email({ message: "Email inválido" }),
+    password: z.string()
+      .min(8, { message: "Senha deve ter no mínimo 8 caracteres" })
+      .max(50, { message: "Senha deve ter no máximo 50 caracteres" })
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+        message: "Senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial",
+      }),
+    passwordConfirm: z.string()
+      .min(8, { message: "Senha deve ter no mínimo 8 caracteres" }),
+  }).refine((data) => data.password === data.passwordConfirm, {
+    message: "As senhas não coincidem",
+    path: ["passwordConfirm"],
+  });
+
+  type UserData = z.infer<typeof User>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<UserData>({
+    resolver: zodResolver(User),
+    mode: "onChange"
+  });
+
+  const onSubmit = (data: UserData) => {
+    console.log("Usuário cadastrado" + JSON.stringify(data));
+  }
   return (
     <div className="z-30 sm:max-w-md max-w-[80%] w-full mx-auto my-24 rounded-2xl p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
@@ -26,31 +61,35 @@ export function SignInForm() {
         Crie já sua conta!
       </p>
 
-      <form className="my-8" onSubmit={handleSubmit}>
+      <form className="my-8" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
           <LabelInputContainer>
             <Label htmlFor="firstname">Nome</Label>
-            <Input id="firstname" placeholder="Tyler" type="text" />
+            <Input id="firstname" placeholder="Tyler" type="text" {...register("name")} />
+            {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
           </LabelInputContainer>
           <LabelInputContainer>
             <Label htmlFor="lastname">Sobrenome</Label>
-            <Input id="lastname" placeholder="Durden" type="text" />
+            <Input id="lastname" placeholder="Durden" type="text" {...register("lastName")} />
+            {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName.message}</span>}
           </LabelInputContainer>
         </div>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" placeholder="projectmayhem@fc.com" type="email" />
+          <Input id="email" placeholder="projectmayhem@fc.com" type="email" {...register("email")} />
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Senha</Label>
-          <Input 
-            id="password" 
-            placeholder="••••••••" 
+          <Input
+            id="password"
+            placeholder="••••••••"
             type={showPassword ? "text" : "password"}
+            {...register("password")}
           />
+            {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="showPassword" 
+            <Checkbox
+              id="showPassword"
               checked={showPassword}
               onCheckedChange={() => setShowPassword(!showPassword)}
             />
@@ -68,10 +107,12 @@ export function SignInForm() {
             id="confirmPassword"
             placeholder="••••••••"
             type={showConfirmPassword ? "text" : "password"}
+            {...register("passwordConfirm")}
           />
+          {errors.passwordConfirm && <span className="text-red-500 text-sm">{errors.passwordConfirm.message}</span>}
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="showConfirmPassword" 
+            <Checkbox
+              id="showConfirmPassword"
               checked={showConfirmPassword}
               onCheckedChange={() => setShowConfirmPassword(!showConfirmPassword)}
             />
