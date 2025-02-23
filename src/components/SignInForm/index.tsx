@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
+import { Loader } from "../Loader";
 import {
   IconBrandGithub,
   IconBrandGoogle,
@@ -11,10 +12,18 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Button } from "../ui/button";
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const User = z.object({
     name: z.string()
@@ -49,9 +58,36 @@ export function SignInForm() {
     mode: "onChange"
   });
 
-  const onSubmit = (data: UserData) => {
-    console.log("Usuário cadastrado" + JSON.stringify(data));
+  const onSubmit = async (dataUser: UserData) => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataUser)
+      });
+
+      const data: any = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao cadastrar usuário");
+      }
+
+      console.log("Usuário cadastrado com sucesso:", data);
+      // Redirecionar ou mostrar mensagem de sucesso
+      
+    } catch (error: any) {
+      console.error("Erro no cadastro:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
+
   return (
     <div className="z-30 sm:max-w-md max-w-[80%] w-full mx-auto my-24 rounded-2xl p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
@@ -61,7 +97,7 @@ export function SignInForm() {
         Crie já sua conta!
       </p>
 
-      <form className="my-8" onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
           <LabelInputContainer>
             <Label htmlFor="firstname">Nome</Label>
@@ -125,13 +161,10 @@ export function SignInForm() {
           </div>
         </LabelInputContainer>
 
-        <button
-          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-          type="submit"
-        >
-          Cadastrar &rarr;
-          <BottomGradient />
-        </button>
+        {error && <p className="text-red-500">{error}</p>}
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? <Loader /> : "Cadastrar"}
+        </Button>
 
         <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 
