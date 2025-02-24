@@ -1,9 +1,20 @@
+"use client"
+
 import { FaUsers, FaPhone, FaPaperclip, FaQuestion, FaRobot, FaBars } from "react-icons/fa";
 import LogoIFCode from "../../../public/img/logo ifcode.png";
 import Image from "next/image";
 import { ModeToggle } from "../ModeToggle";
-
-
+import { useSession, signOut } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -116,10 +127,12 @@ const Navbar = ({
     signup: { text: "Cadastrar", url: "/register" },
   },
 }: Navbar1Props) => {
-  console.log(logo.title)
+  const { data: session, status } = useSession();
+
   return (
     <section className="py-4 z-50">
       <div className="container mx-auto">
+        {/* Desktop Navigation */}
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <a href={logo.url} className="flex items-center gap-2">
@@ -134,63 +147,158 @@ const Navbar = ({
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
+
+          <div className="flex items-center gap-2">
             <ModeToggle />
-            <Button asChild variant="outline" size="sm">
-              <a href={auth.login.url}>{auth.login.text}</a>
-            </Button>
-            <Button asChild size="sm">
-              <a href={auth.signup.url}>{auth.signup.text}</a>
-            </Button>
+            
+            {status === "authenticated" ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="outline-none">
+                  <Avatar>
+                    <AvatarImage src={session.user?.image || ""} />
+                    <AvatarFallback>
+                      {session.user?.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/dashboard"}>
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/profile"}>
+                    Perfil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/settings"}>
+                    Configurações
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer text-red-600" onClick={() => signOut()}>
+                    Sair
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={auth.login.url}>{auth.login.text}</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href={auth.signup.url}>{auth.signup.text}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
+
+        {/* Mobile Navigation */}
         <div className="block lg:hidden">
           <div className="flex items-center justify-between mx-4">
             <a href={logo.url} className="flex items-center gap-2">
               <Image src={LogoIFCode} className="w-8" alt={logo.alt} />
               <span className="text-lg font-semibold">{logo.title}</span>
             </a>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <FaBars className="size-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>
-                    <a href={logo.url} className="flex items-center gap-2">
-                      <Image alt="" src={logo.src} width={0} height={0} sizes="100vh" className="w-8" />
-                      <span className="text-lg font-semibold">
-                        {logo.title}
-                      </span>
-                    </a>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="my-6 flex flex-col gap-6">
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="flex w-full flex-col gap-4"
-                  >
-                    {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
-
-                  <ModeToggle />
-
-                  <Separator />
-
-                  <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
-                      <a href={auth.login.url}>{auth.login.text}</a>
-                    </Button>
-                    <Button asChild>
-                      <a href={auth.signup.url}>{auth.signup.text}</a>
-                    </Button>
+            <div className="flex items-center gap-2">
+              <ModeToggle />
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <FaBars className="size-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  {/* Header com Avatar/Logo */}
+                  <div className="flex items-center gap-4 pb-4 mb-4 border-b">
+                    {status === "authenticated" ? (
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={session.user?.image || ""} />
+                          <AvatarFallback>
+                            {session.user?.name?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{session.user?.name}</span>
+                          <span className="text-xs text-muted-foreground">{session.user?.email}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <Link href={logo.url} className="flex items-center gap-2">
+                        <Image src={LogoIFCode} className="w-8" alt={logo.alt} />
+                        <span className="text-lg font-semibold">{logo.title}</span>
+                      </Link>
+                    )}
                   </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+
+                  {/* Menu com Dropdowns */}
+                  <div className="flex flex-col gap-2">
+                    <Accordion type="single" collapsible className="w-full">
+                      {menu.map((item, index) => (
+                        <AccordionItem 
+                          key={index} 
+                          value={`item-${index}`}
+                          className="border-none"
+                        >
+                          <AccordionTrigger className="py-2 hover:bg-accent rounded-md px-2">
+                            {item.title}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="flex flex-col gap-1 pl-4">
+                              {item.items?.map((subItem, subIndex) => (
+                                <Link
+                                  key={subIndex}
+                                  href={subItem.url}
+                                  className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                                >
+                                  {subItem.icon}
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+
+                    {/* Opções do Usuário ou Autenticação */}
+                    <div className="mt-4 pt-4 border-t">
+                      {status === "authenticated" ? (
+                        <div className="flex flex-col gap-1">
+                          <Link
+                            href="/dashboard"
+                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                          >
+                            Dashboard
+                          </Link>
+                          <Link
+                            href="/profile"
+                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                          >
+                            Perfil
+                          </Link>
+                          <button
+                            onClick={() => signOut()}
+                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 w-full text-left"
+                          >
+                            Sair
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          <Button asChild variant="outline" className="w-full">
+                            <Link href={auth.login.url}>{auth.login.text}</Link>
+                          </Button>
+                          <Button asChild className="w-full">
+                            <Link href={auth.signup.url}>{auth.signup.text}</Link>
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </div>

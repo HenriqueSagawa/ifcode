@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Footer } from "@/components/Footer";
 import favicon from "../../public/img/logo ifcode.png";
+import { Providers } from "./provider";
 
 
 const geistSans = localFont({
@@ -34,18 +34,13 @@ export default function RootLayout({
         <link rel="icon" href={favicon.src} color="#fff" />
       </head>
 
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col py-4 mx-auto`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col py-4 mx-auto overflow-x-hidden`}>
 
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {/* <head>
-            <link rel="icon" href={favicon.src} color="#fff" />
-          </head> */}
+
+        <Providers>
+
+
           <Navbar />
 
 
@@ -54,7 +49,8 @@ export default function RootLayout({
           </div>
 
           <Footer />
-        </ThemeProvider>
+        </Providers>
+
       </body>
     </html>
   );

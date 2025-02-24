@@ -11,10 +11,12 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { json } from "stream/consumers";
+import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function LogInForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const User = z.object({
     email: z.string().min(1, { message: "Email é obrigatório" }).email(),
@@ -33,9 +35,8 @@ export function LogInForm() {
     mode: "onChange"
   })
   
-  const onSubmit = (data: UserData) => {
-    // TODO: Implementar ação de login aqui
-    console.log("Form submitted:", JSON.stringify(data));
+  const onSubmit = async (data: UserData) => {
+    setIsLoading(true);
   }
 
   return (
@@ -91,6 +92,7 @@ export function LogInForm() {
           <button
             className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
             type="submit"
+            onClick={() => signIn("github")}
           >
             <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
             <span className="text-neutral-700 dark:text-neutral-300 text-sm">
@@ -101,6 +103,7 @@ export function LogInForm() {
           <button
             className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
             type="submit"
+            onClick={() => signIn('google')}
           >
             <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
             <span className="text-neutral-700 dark:text-neutral-300 text-sm">

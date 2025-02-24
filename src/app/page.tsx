@@ -1,3 +1,5 @@
+'use client'
+
 import React from "react";
 import { Spotlight } from "@/components/ui/spotlight";
 import { Hero } from "@/components/Hero";
@@ -5,7 +7,14 @@ import { GeminiSection } from "@/components/GeminiSection";
 import { Feature } from "@/components/Features";
 import { Stats } from "@/components/Stats";
 import { CardFeature } from "@/components/CardFeature";
+import { useSession } from "next-auth/react";
+
+
 export default function Home() {
+  const {data: session, status} = useSession();
+
+  console.log(session?.user?.image);
+
   return (
     <div>
 
