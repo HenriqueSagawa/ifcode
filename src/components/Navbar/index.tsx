@@ -38,6 +38,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "../ui/separator";
+import { useState, useEffect } from "react";
 
 interface MenuItem {
   title: string;
@@ -128,6 +129,14 @@ const Navbar = ({
   },
 }: Navbar1Props) => {
   const { data: session, status } = useSession();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Previne o overflow hidden no body
+  useEffect(() => {
+    if (!isOpen) {
+      document.body.style.overflow = '';
+    }
+  }, [isOpen]);
 
   return (
     <section className="py-4 z-50">
@@ -201,13 +210,13 @@ const Navbar = ({
             </a>
             <div className="flex items-center gap-2">
               <ModeToggle />
-              <Sheet>
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="icon">
                     <FaBars className="size-4" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent>
+                <SheetContent className="overflow-y-auto">
                   {/* Header com Avatar/Logo */}
                   <div className="flex items-center gap-4 pb-4 mb-4 border-b">
                     {status === "authenticated" ? (

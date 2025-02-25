@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/services/firebaseConnection";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, doc, getDoc } from "firebase/firestore";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
@@ -61,3 +61,26 @@ export async function POST(request: Request) {
     }
 }
 
+export async function GET() {
+    try {
+        const usersRef = collection(db, "users");
+        const querySnapshot = await getDocs(usersRef);
+        
+        const users = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            const { password, ...userWithoutPassword } = data;
+            return {
+                id: doc.id,
+                ...userWithoutPassword
+            };
+        });
+
+        return NextResponse.json(users);
+    } catch (error: any) {
+        console.error("Erro ao buscar usuários:", error);
+        return NextResponse.json({
+            error: "Erro ao buscar usuários",
+            details: error.message
+        }, { status: 500 });
+    }
+}
