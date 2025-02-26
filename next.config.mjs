@@ -8,7 +8,8 @@ const nextConfig = {
             "api.microlink.io",
             "assets.aceternity.com",
             "images.unsplash.com",
-            "media.gettyimages.com"
+            "media.gettyimages.com",
+            "res.cloudinary.com"
         ]
     }
 };
