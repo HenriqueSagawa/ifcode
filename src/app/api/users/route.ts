@@ -39,6 +39,7 @@ export async function POST(request: Request) {
             email: body.email,
             password: hashedPassword,
             createdAt: new Date().toISOString(),
+            fullData: false
         }
 
         console.log("Tentando criar usuário");

@@ -13,7 +13,7 @@ export default function Login() {
         if (status === "authenticated") {
             router.push("dashboard");
         }
-    })
+    }, [session, router, status]);
 
     return (
         <div className="">

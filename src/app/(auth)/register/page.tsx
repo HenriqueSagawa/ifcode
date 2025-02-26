@@ -13,7 +13,7 @@ export default function Register() {
     if (status === "authenticated") {
         router.push('/');
     }
-  })
+  }, [session, router, status]);
 
     return (
         <div className="z-20 ">

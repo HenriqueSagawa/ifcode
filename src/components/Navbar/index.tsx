@@ -39,6 +39,8 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "../ui/separator";
 import { useState, useEffect } from "react";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/services/firebaseConnection";
 
 interface MenuItem {
   title: string;
@@ -46,6 +48,22 @@ interface MenuItem {
   description?: string;
   icon?: JSX.Element;
   items?: MenuItem[];
+}
+
+interface UserData {
+  name: string;
+  email: string;
+  birthDate: string;
+  phone: string;
+  course: string;
+  period: string;
+  registration: string;
+  github: string;
+  linkedin: string;
+  bio: string;
+  profileImage: string;
+  createdAt: string;
+  fullData: boolean;
 }
 
 interface Navbar1Props {
@@ -130,6 +148,28 @@ const Navbar = ({
 }: Navbar1Props) => {
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    async function checkUserData() {
+      if (status === "authenticated" && session?.user?.email) {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", session.user.email));
+        const querySnapshot = await getDocs(q);
+
+        console.log(querySnapshot.docs[0].data());
+
+        if (!querySnapshot.empty) {
+          setUserData(querySnapshot.docs[0].data() as UserData);
+
+        }
+        console.log(userData);
+      }
+    }
+
+    checkUserData();
+  }, [session, status]);
+
 
   // Previne o overflow hidden no body
   useEffect(() => {
@@ -159,12 +199,12 @@ const Navbar = ({
 
           <div className="flex items-center gap-2">
             <ModeToggle />
-            
+
             {status === "authenticated" ? (
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <Avatar>
-                    <AvatarImage src={session.user?.image || ""} />
+                    <AvatarImage src={userData?.profileImage || ""} />
                     <AvatarFallback>
                       {session.user?.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
@@ -222,7 +262,7 @@ const Navbar = ({
                     {status === "authenticated" ? (
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarImage src={session.user?.image || ""} />
+                          <AvatarImage src={userData?.profileImage || ""} />
                           <AvatarFallback>
                             {session.user?.name?.charAt(0).toUpperCase()}
                           </AvatarFallback>
@@ -244,8 +284,8 @@ const Navbar = ({
                   <div className="flex flex-col gap-2">
                     <Accordion type="single" collapsible className="w-full">
                       {menu.map((item, index) => (
-                        <AccordionItem 
-                          key={index} 
+                        <AccordionItem
+                          key={index}
                           value={`item-${index}`}
                           className="border-none"
                         >
