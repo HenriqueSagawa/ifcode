@@ -95,17 +95,7 @@ export default function UserProfile() {
 
             <div className="min-h-screen transition-colors duration-200">
 
-                <div className="h-64 bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-700 dark:to-indigo-800 relative">
-
-                    
-                    
-                    {/* Back Button */}
-                    <button 
-                        onClick={() => router.back()}
-                        className="absolute top-4 left-4 px-3 py-1 rounded-md bg-white/30 dark:bg-gray-800/30 text-white hover:bg-white/40 dark:hover:bg-gray-800/40 transition-colors"
-                    >
-                        Voltar
-                    </button>
+                <div className="h-28 relative">
                     
                     <div className="absolute bottom-0 left-0 w-full transform translate-y-1/2 px-4 sm:px-6 lg:px-8">
                         <div className="max-w-7xl mx-auto flex items-end">
@@ -124,7 +114,7 @@ export default function UserProfile() {
                                         </span>
                                     </div>
                                 )}
-                            </div>
+                            </div>  
                             <div className="ml-6 text-white pb-4">
                                 <h1 className="text-2xl sm:text-3xl font-bold">
                                     {userData.name} {userData.lastName}

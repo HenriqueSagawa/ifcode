@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/services/firebaseConnection";
+import { DashboardSkeleton } from "@/components/Dashboard/DashboardSkeleton";
 
 interface UserData {
     name: string;
@@ -58,7 +59,7 @@ export default function Dashboard() {
     }, [session, status, router]);
 
     if (status === "loading" || loading) {
-        return <div>Carregando...</div>;
+        return <DashboardSkeleton />;
     }
 
     if (status === "unauthenticated") {

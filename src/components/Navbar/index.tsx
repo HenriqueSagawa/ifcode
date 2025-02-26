@@ -5,6 +5,7 @@ import LogoIFCode from "../../../public/img/logo ifcode.png";
 import Image from "next/image";
 import { ModeToggle } from "../ModeToggle";
 import { useSession, signOut } from "next-auth/react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -163,7 +164,6 @@ const Navbar = ({
           setUserData(querySnapshot.docs[0].data() as UserData);
 
         }
-        console.log(userData);
       }
     }
 
@@ -216,11 +216,8 @@ const Navbar = ({
                   <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/dashboard"}>
                     Dashboard
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/profile"}>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/profile/"}>
                     Perfil
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/settings"}>
-                    Configurações
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="cursor-pointer text-red-600" onClick={() => signOut()}>
@@ -315,23 +312,25 @@ const Navbar = ({
                       {status === "authenticated" ? (
                         <div className="flex flex-col gap-1">
                           <Link
-                            href="/dashboard"
-                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                          href="/dashboard"
+                          className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
                           >
-                            Dashboard
+                          Dashboard
                           </Link>
                           <Link
-                            href="/profile"
-                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                          href="/profile"
+                          className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
                           >
-                            Perfil
+                          Perfil
                           </Link>
-                          <button
-                            onClick={() => signOut()}
-                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 w-full text-left"
-                          >
-                            Sair
-                          </button>
+                          <Select onValueChange={() => signOut()}>
+                          <SelectTrigger className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 w-full text-left">
+                            <SelectValue placeholder="Sair" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="signOut">Sair</SelectItem>
+                          </SelectContent>
+                          </Select>
                         </div>
                       ) : (
                         <div className="flex flex-col gap-2">

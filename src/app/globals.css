@@ -24,3 +24,8 @@
     --sidebar-ring: 217.2 91.2% 59.8%
   }
 }
+
+html body[data-scroll-locked] {
+  overflow: visible !important;
+  margin-right: 0 !important;
+} 
