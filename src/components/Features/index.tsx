@@ -10,39 +10,49 @@ import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import YoutubeIfcode from "../../../public/img/capa if code vídeo.jpg"
 
+/**
+ * Componente que exibe as principais features/funcionalidades do site.
+ *
+ * Este componente renderiza uma seção com cards que destacam as features do IF Code,
+ * como resolução de dúvidas, compartilhamento de conhecimento, canal no YouTube e interação em tempo real.
+ *
+ * @returns {JSX.Element} A seção de features renderizada.
+ */
 export function Feature() {
+  // Array com os dados de cada feature.
   const features = [
     {
       title: "Resolva dúvidas de forma eficiente",
       description:
         "Encontre respostas para suas perguntas e acompanhe discussões sobre programação. Publique suas dúvidas e receba ajuda da comunidade.",
-      skeleton: <SkeletonOne />,
+      skeleton: <SkeletonOne />, // Componente para exibir um "esqueleto" de carregamento.
       className:
-        "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
+        "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800", // Classes CSS para estilização e layout.
     },
     {
       title: "Compartilhe conhecimento",
       description:
         "Ajude outros estudantes postando dicas, tutoriais e soluções para desafios técnicos. O IF Code é um espaço colaborativo feito por e para alunos de informática.",
-      skeleton: <SkeletonTwo />,
-      className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
+      skeleton: <SkeletonTwo />, // Componente para exibir um "esqueleto" de carregamento.
+      className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800", // Classes CSS para estilização e layout.
     },
     {
       title: "Acompanhe nosso canal no YouTube",
       description:
         "Quer aprender de forma prática? Assista a vídeos explicativos no nosso canal e aprimore suas habilidades com conteúdos feitos especialmente para você.",
-      skeleton: <SkeletonThree />,
+      skeleton: <SkeletonThree />, // Componente para exibir um "esqueleto" de carregamento.
       className:
-        "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
+        "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800", // Classes CSS para estilização e layout.
     },
     {
       title: "Interaja em tempo real",
       description:
         "Com um sistema dinâmico e intuitivo, você pode comentar, responder e interagir com a comunidade rapidamente. Construa conexões e aprenda junto!",
-      skeleton: <SkeletonFour />,
-      className: "col-span-1 lg:col-span-3 border-b lg:border-none",
+      skeleton: <SkeletonFour />, // Componente para exibir um "esqueleto" de carregamento.
+      className: "col-span-1 lg:col-span-3 border-b lg:border-none", // Classes CSS para estilização e layout.
     },
   ];
+
   return (
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
@@ -57,6 +67,7 @@ export function Feature() {
 
       <div className="relative ">
         <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800">
+          {/* Mapeia o array de features e renderiza um componente FeatureCard para cada uma. */}
           {features.map((feature) => (
             <FeatureCard key={feature.title} className={feature.className}>
               <FeatureTitle>{feature.title}</FeatureTitle>
@@ -70,6 +81,14 @@ export function Feature() {
   );
 }
 
+/**
+ * Componente para renderizar um card de feature individual.
+ *
+ * @param {object} props - As propriedades do componente.
+ * @param {React.ReactNode} [props.children] - Os elementos filhos a serem renderizados dentro do card.
+ * @param {string} [props.className] - Classes CSS adicionais para estilizar o card.
+ * @returns {JSX.Element} O card de feature renderizado.
+ */
 const FeatureCard = ({
   children,
   className,
@@ -84,6 +103,13 @@ const FeatureCard = ({
   );
 };
 
+/**
+ * Componente para renderizar o título de uma feature.
+ *
+ * @param {object} props - As propriedades do componente.
+ * @param {React.ReactNode} [props.children] - O texto do título.
+ * @returns {JSX.Element} O título da feature renderizado.
+ */
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   return (
     <p className=" max-w-5xl mx-auto text-left tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug">
@@ -92,6 +118,13 @@ const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
+/**
+ * Componente para renderizar a descrição de uma feature.
+ *
+ * @param {object} props - As propriedades do componente.
+ * @param {React.ReactNode} [props.children] - O texto da descrição.
+ * @returns {JSX.Element} A descrição da feature renderizada.
+ */
 const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
   return (
     <p
@@ -106,6 +139,13 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
+/**
+ * Componente que exibe um "esqueleto" de carregamento para a primeira feature.
+ *
+ * Este componente renderiza uma imagem e um gradiente para simular o carregamento do conteúdo.
+ *
+ * @returns {JSX.Element} O esqueleto de carregamento renderizado.
+ */
 export const SkeletonOne = () => {
   return (
     <div className="relative flex py-8 px-2 gap-10 h-full">
@@ -128,6 +168,13 @@ export const SkeletonOne = () => {
   );
 };
 
+/**
+ * Componente que exibe um "esqueleto" de carregamento para a terceira feature (canal do YouTube).
+ *
+ * Este componente renderiza um link para o canal do YouTube com um ícone e uma imagem de capa borrada.
+ *
+ * @returns {JSX.Element} O esqueleto de carregamento renderizado.
+ */
 export const SkeletonThree = () => {
   return (
     <Link
@@ -152,6 +199,13 @@ export const SkeletonThree = () => {
   );
 };
 
+/**
+ * Componente que exibe um "esqueleto" de carregamento para a segunda feature (compartilhamento de conhecimento).
+ *
+ * Este componente renderiza uma galeria de imagens com um efeito de rotação e sobreposição.
+ *
+ * @returns {JSX.Element} O esqueleto de carregamento renderizado.
+ */
 export const SkeletonTwo = () => {
   const images = [
     "/img/equipeifcode.jpg",
@@ -227,6 +281,13 @@ export const SkeletonTwo = () => {
   );
 };
 
+/**
+ * Componente que exibe um "esqueleto" de carregamento para a quarta feature (interação em tempo real).
+ *
+ * Este componente renderiza um globo interativo usando a biblioteca `cobe`.
+ *
+ * @returns {JSX.Element} O esqueleto de carregamento renderizado.
+ */
 export const SkeletonFour = () => {
   return (
     <div className="h-60 md:h-60  flex flex-col items-center relative bg-transparent dark:bg-transparent mt-10">
@@ -235,14 +296,24 @@ export const SkeletonFour = () => {
   );
 };
 
+/**
+ * Componente que renderiza um globo interativo.
+ *
+ * Este componente utiliza a biblioteca `cobe` para criar um globo 3D que pode ser interativo.
+ *
+ * @param {object} props - As propriedades do componente.
+ * @param {string} [props.className] - Classes CSS adicionais para estilizar o globo.
+ * @returns {JSX.Element} O globo interativo renderizado.
+ */
 export const Globe = ({ className }: { className?: string }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null); // Referência para o elemento canvas.
 
   useEffect(() => {
-    let phi = 0;
+    let phi = 0; // Ângulo de rotação do globo.
 
-    if (!canvasRef.current) return;
+    if (!canvasRef.current) return; // Garante que o canvas está disponível.
 
+    // Inicializa o globo usando a biblioteca `cobe`.
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: 2,
       width: 600 * 2,
@@ -262,17 +333,18 @@ export const Globe = ({ className }: { className?: string }) => {
         { location: [40.7128, -74.006], size: 0.1 },
       ],
       onRender: (state: any) => {
-        // Called on every animation frame.
-        // `state` will be an empty object, return updated params.
+        // Chamado em cada frame de animação.
+        // Atualiza o ângulo de rotação do globo.
         state.phi = phi;
         phi += 0.01;
       },
     });
 
+    // Função para destruir o globo quando o componente é desmontado.
     return () => {
       globe.destroy();
     };
-  }, []);
+  }, []); // Executa apenas uma vez quando o componente é montado.
 
   return (
     <canvas
