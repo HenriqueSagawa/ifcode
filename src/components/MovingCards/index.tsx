@@ -3,19 +3,29 @@
 import React from "react";
 import { InfiniteMovingCards } from "../ui/infinite-moving-cards";
 
+/**
+ * Componente que renderiza uma demonstração de cards em movimento infinito.
+ *
+ * Este componente utiliza o componente `InfiniteMovingCards` para exibir um conjunto de cards
+ * com depoimentos/informações sobre o IF Code, criando um efeito visual de rolagem contínua.
+ *
+ * @returns {JSX.Element} A demonstração de cards em movimento infinito renderizada.
+ */
 export function InfiniteMovingCardsDemo() {
   return (
     <div className="h-auto rounded-md  flex flex-col antialiased items-center justify-center relative overflow-hidden w-screen">
+      {/* Container principal para os cards em movimento. */}
       <InfiniteMovingCards
-        items={testimonials}
-        direction="right"
-        speed="slow"
-        className="invert dark:invert-0"
+        items={testimonials} // Array de depoimentos/informações a serem exibidas nos cards.
+        direction="right" // Define a direção da rolagem (da esquerda para a direita).
+        speed="slow" // Define a velocidade da rolagem.
+        className="invert dark:invert-0" // Inverte as cores para melhor visualização em temas escuros.
       />
     </div>
   );
 }
 
+// Array de depoimentos/informações a serem exibidas nos cards.
 const testimonials = [
   {
     quote:
@@ -25,14 +35,4 @@ const testimonials = [
   },
   {
     quote:
-      "Utilize nossa IA integrada com o Gemini para obter respostas rápidas e precisas sobre programação, algoritmos, estruturas de dados e muito mais. Tire suas dúvidas 24 horas por dia.",
-    name: "Inteligência Artificial",
-    title: "Suporte Contínuo",
-  },
-  {
-    quote:
-      "Faça parte de uma comunidade ativa de estudantes e professores do IFPR Assis Chateaubriand. Compartilhe conhecimento, participe de discussões e cresça junto com outros desenvolvedores.",
-    name: "Comunidade",
-    title: "Aprendizado Colaborativo",
-  },
-];
+      "Utilize nossa IA integrada com o Gemini para obter respostas rápidas e
