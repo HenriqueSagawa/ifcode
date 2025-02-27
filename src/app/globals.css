@@ -1,8 +1,28 @@
+/*
+  Este arquivo define os estilos globais da aplicação, utilizando Tailwind CSS.
+  Ele importa as diretivas base, components e utilities do Tailwind,
+  e define variáveis CSS globais para customização.
+*/
+
 @tailwind base;
+/* Importa os estilos base do Tailwind CSS, que incluem normalização, reset de estilos e estilos básicos para elementos HTML. */
+
 @tailwind components;
+/* Importa os estilos de componentes do Tailwind CSS, que são classes pré-definidas para criar elementos de interface comuns, como botões, cards e formulários. */
+
 @tailwind utilities;
+/* Importa as classes de utilidade do Tailwind CSS, que são classes de estilo pequenas e reutilizáveis que podem ser combinadas para criar layouts e estilos complexos. */
+
 @layer base {
+  /*
+    Define estilos base personalizados para a aplicação.
+    Estes estilos são aplicados a todos os elementos da aplicação.
+  */
   :root {
-    --radius: 0.5rem
+    /*
+      Define variáveis CSS globais que podem ser usadas para customizar a aparência da aplicação.
+      Neste caso, define a variável `--radius` para controlar o raio dos cantos arredondados.
+    */
+    --radius: 0.5rem;
   }
 }
