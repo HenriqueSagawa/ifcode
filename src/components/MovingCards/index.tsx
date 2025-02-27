@@ -25,7 +25,10 @@ export function InfiniteMovingCardsDemo() {
   );
 }
 
-// Array de depoimentos/informações a serem exibidas nos cards.
+/**
+ * Array de depoimentos/informações a serem exibidas nos cards.
+ * Cada objeto no array representa um card com um depoimento, nome e título.
+ */
 const testimonials = [
   {
     quote:
@@ -35,4 +38,14 @@ const testimonials = [
   },
   {
     quote:
-      "Utilize nossa IA integrada com o Gemini para obter respostas rápidas e
+      "Utilize nossa IA integrada com o Gemini para obter respostas rápidas e precisas sobre programação, algoritmos, estruturas de dados e muito mais. Tire suas dúvidas 24 horas por dia.",
+    name: "Inteligência Artificial",
+    title: "Suporte Contínuo",
+  },
+  {
+    quote:
+      "Faça parte de uma comunidade ativa de estudantes e professores do IFPR Assis Chateaubriand. Compartilhe conhecimento, participe de discussões e cresça junto com outros desenvolvedores.",
+    name: "Comunidade",
+    title: "Aprendizado Colaborativo",
+  },
+];
