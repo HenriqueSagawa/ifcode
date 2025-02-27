@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
+import Link from "next/link";
 
 export function SignInForm() {
   const { data: session, status } = useSession();
@@ -183,8 +184,10 @@ export function SignInForm() {
 
             {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? <Loader className="" /> : "Cadastrar"}
+              {loading ? <Loader className="" /> : "Avançar"}
             </Button>
+
+            <p className="text-sm mt-2 text-center">Já possuí conta? <Link className="text-blue-500" href="/login">Entre</Link></p>
 
             <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 

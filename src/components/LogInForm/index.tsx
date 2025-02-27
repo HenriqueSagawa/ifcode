@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { AlertMessage } from "../ui/alert-message";
 import { Loader } from "../Loader";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 export function LogInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -140,6 +141,8 @@ export function LogInForm() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? <Loader className="" /> : "Entrar"}
             </Button>
+
+            <p className="text-sm text-center mt-2">Não possuí conta? <Link className="text-blue-500" href="/register">Cadastre-se</Link></p>
 
             <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 

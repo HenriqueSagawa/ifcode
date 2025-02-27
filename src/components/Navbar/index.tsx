@@ -144,7 +144,7 @@ const Navbar = ({
   ],
   auth = {
     login: { text: "Entrar", url: "/login" },
-    signup: { text: "Cadastrar", url: "/register" },
+    signup: { text: "Cadastre-se", url: "/register" },
   },
 }: Navbar1Props) => {
   const { data: session, status } = useSession();
