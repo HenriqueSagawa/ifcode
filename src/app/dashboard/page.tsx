@@ -209,16 +209,20 @@ export default function DashboardPage() {
         }
     };
 
+    const skillColors = ["bg-red-200", "bg-blue-200", "bg-green-200", "bg-yellow-200", "bg-purple-200", "bg-pink-200"];
 
     return (
         <div className="container mx-auto py-6 px-4 lg:px-8">
             <div className="grid gap-6">
                 {/* User Header */}
                 <Card className="overflow-hidden bg-white shadow-md">
-                    <CardContent className="p-6">
+                    {/* Banner do usuário */}
+                    <div className="h-48 w-full bg-cover bg-center" style={{ backgroundImage: `url(${user?.bannerImage || '/default-banner.jpg'})` }}></div>
+
+                    <CardContent className="p-6 relative">
                         <div className="flex flex-col md:flex-row gap-6">
                             <div className="flex-shrink-0 flex flex-col items-center md:items-start">
-                                <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
+                                <Avatar className="h-24 w-24 border-4 border-white shadow-lg -mt-16">
                                     <AvatarImage src={user?.profileImage} alt={user?.name} />
                                     <AvatarFallback>{user?.name}</AvatarFallback>
                                 </Avatar>
@@ -230,13 +234,12 @@ export default function DashboardPage() {
 
                             <div className="flex-grow space-y-4">
                                 <div>
-                                    <h2 className="text-2xl font-bold">{user?.name}</h2>
+                                    <h2 className="text-2xl font-bold">{user?.name} {user?.lastName}</h2>
                                     <p className="text-gray-600">{user?.email}</p>
                                 </div>
 
                                 <div className="space-y-2">
                                     <p className="text-sm text-gray-700">{user?.bio ? user?.bio : "Não disponível"}</p>
-
                                     <div className="flex flex-wrap gap-4 mt-4">
                                         {user?.github ? (
                                             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -262,26 +265,34 @@ export default function DashboardPage() {
                                         )}
                                     </div>
                                 </div>
+
+                                {/* Habilidades */}
+                                {user?.skills && user.skills.length > 0 && (
+                            <div className="mt-4">
+                                <h3 className="text-lg font-semibold">Habilidades</h3>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {user.skills.map((skill: string, index: number) => (
+                                        <span key={index} className={`text-zinc-800 px-3 py-1 ${skillColors[index % skillColors.length]} text-sm rounded-full`}>
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                             </div>
 
                             <div className="flex gap-2 mt-4 md:mt-0 md:self-start">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={handleShareProfile}
-                                    className="flex items-center gap-1"
-                                >
+                                <Button variant="outline" size="sm" onClick={handleShareProfile} className="flex items-center gap-1">
                                     <ShareIcon className="h-4 w-4" />
                                     Compartilhar
                                 </Button>
-
                                 {user?.fullData ? (
                                     <Link href="/edit-data">
-                                    <Button variant="default" size="sm" className="flex items-center gap-1">
-                                        <PencilIcon className="h-4 w-4" />
-                                        Editar perfil
-                                    </Button>
-                                </Link>
+                                        <Button variant="default" size="sm" className="flex items-center gap-1">
+                                            <PencilIcon className="h-4 w-4" />
+                                            Editar perfil
+                                        </Button>
+                                    </Link>
                                 ) : (
                                     <Link href="/complete-profile">
                                         <Button variant="default" size="sm" className="flex items-center gap-1">
@@ -290,8 +301,6 @@ export default function DashboardPage() {
                                         </Button>
                                     </Link>
                                 )}
-
-
                             </div>
                         </div>
                     </CardContent>
