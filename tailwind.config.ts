@@ -1,6 +1,9 @@
 import { transform } from "next/dist/build/swc";
 import type { Config } from "tailwindcss";
 
+const {heroui} = require("@heroui/theme");
+
+
 const svgToDataUri = require("mini-svg-data-uri");
 const colors = require("tailwindcss/colors");
 const {
@@ -9,11 +12,12 @@ const {
 
 const config: Config = {
 	darkMode: ["class"],
-	content: [
-		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-	],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@heroui/theme/dist/components/(avatar|button|card|checkbox|chip|dropdown|input|progress|select|ripple|spinner|form|menu|divider|popover|listbox|scroll-shadow).js"
+  ],
 	theme: {
     	extend: {
     		boxShadow: {
@@ -113,7 +117,8 @@ const config: Config = {
 			},
 			{ values: flattenColorPalette(theme("backgroundColor")), type: "color" }
 		);
-	}
+	},
+	heroui()
 	],
 };
 

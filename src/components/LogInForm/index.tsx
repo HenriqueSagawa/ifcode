@@ -3,11 +3,12 @@ import React, { use, useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "../ui/checkbox";
+import { Button as ButtonHeroUi } from "@heroui/button";
 import {
   IconBrandGithub,
   IconBrandGoogle,
 } from "@tabler/icons-react";
+import { Checkbox } from "@heroui/checkbox";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,7 +16,6 @@ import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { AlertMessage } from "../ui/alert-message";
 import { Loader } from "../Loader";
-import { Button } from "../ui/button";
 import Link from "next/link";
 
 export function LogInForm() {
@@ -27,6 +27,13 @@ export function LogInForm() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState<'success' | 'error'>('error');
   const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push('/dashboard');
+    }
+  }, [status, router]);
 
   const User = z.object({
     email: z.string().min(1, { message: "Email é obrigatório" }).email(),
@@ -111,7 +118,7 @@ export function LogInForm() {
           <form className="my-8" onSubmit={handleSubmit(onSubmit)}>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" placeholder="projectmayhem@fc.com" type="email" {...register("email")} />
+              <Input id="email" placeholder="neymarjunior@gmail.com" type="email" {...register("email")} />
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
@@ -128,26 +135,24 @@ export function LogInForm() {
               <Checkbox
                 id="showPassword"
                 checked={showPassword}
-                onCheckedChange={() => setShowPassword(!showPassword)}
-              />
-              <label
-                htmlFor="showPassword"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                onChange={() => setShowPassword(!showPassword)}
+                color="default"
+                size="md"
               >
                 Mostrar senha
-              </label>
+              </Checkbox>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <ButtonHeroUi type="submit" className="w-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900" disabled={isLoading}>
               {isLoading ? <Loader className="" /> : "Entrar"}
-            </Button>
+            </ButtonHeroUi>
 
             <p className="text-sm text-center mt-2">Não possuí conta? <Link className="text-blue-500" href="/register">Cadastre-se</Link></p>
 
             <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 
             <div className="flex flex-col space-y-4">
-              <button
+              <ButtonHeroUi
                 className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
                 type="button"
                 onClick={() => signIn("github")}
@@ -157,8 +162,8 @@ export function LogInForm() {
                   GitHub
                 </span>
                 <BottomGradient />
-              </button>
-              <button
+              </ButtonHeroUi>
+              <ButtonHeroUi
                 className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
                 type="button"
                 onClick={() => signIn('google')}
@@ -168,7 +173,7 @@ export function LogInForm() {
                   Google
                 </span>
                 <BottomGradient />
-              </button>
+              </ButtonHeroUi>
             </div>
           </form>
         </div>

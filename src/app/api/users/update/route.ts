@@ -27,14 +27,13 @@ export async function PUT(request: Request) {
         await updateDoc(userRef, {
             birthDate: data.birthDate,
             phone: data.phone,
-            course: data.course,
-            period: data.period,
-            registration: data.registration,
             github: data.github,
-            linkedin: data.linkedin,
             bio: data.bio,
             profileImage: data.profileImage,
-            fullData: true
+            bannerImage: data.bannerImage,
+            fullData: true,
+            profession: data.profession,
+            skills: data.skills,
         });
 
         return NextResponse.json({ 

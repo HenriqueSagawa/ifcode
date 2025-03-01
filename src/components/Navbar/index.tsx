@@ -1,20 +1,15 @@
 "use client"
 
 import { FaUsers, FaPhone, FaPaperclip, FaQuestion, FaRobot, FaBars } from "react-icons/fa";
+
 import LogoIFCode from "../../../public/img/logo ifcode.png";
 import Image from "next/image";
 import { ModeToggle } from "../ModeToggle";
 import { useSession, signOut } from "next-auth/react";
+import { Button as ButtonHeroUi } from "@heroui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu as DrodownHeroui } from "@heroui/dropdown";
+import { Avatar } from "@heroui/avatar";
 import Link from "next/link";
 import {
   Accordion,
@@ -150,33 +145,30 @@ const Navbar = ({
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [userData, setUserData] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    async function checkUserData() {
-      if (status === "authenticated" && session?.user?.email) {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", session.user.email));
-        const querySnapshot = await getDocs(q);
-
-        console.log(querySnapshot.docs[0].data());
-
-        if (!querySnapshot.empty) {
-          setUserData(querySnapshot.docs[0].data() as UserData);
-
-        }
-      }
-    }
-
-    checkUserData();
-  }, [session, status]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
 
-  // Previne o overflow hidden no body
   useEffect(() => {
     if (!isOpen) {
       document.body.style.overflow = '';
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      getUser();
+    }
+  }, [session, status]);
+
+  async function getUser() {
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where('email', "==", session?.user?.email));
+    const querySnapshot = await getDocs(q);
+
+
+  }
+
 
   return (
     <section className="py-4 z-50">
@@ -201,38 +193,38 @@ const Navbar = ({
             <ModeToggle />
 
             {status === "authenticated" ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="outline-none">
-                  <Avatar>
-                    <AvatarImage src={userData?.profileImage || ""} />
-                    <AvatarFallback>
-                      {session.user?.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/dashboard"}>
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = "/profile/"}>
-                    Perfil
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer text-red-600" onClick={() => signOut()}>
-                    Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={userData?.profileImage} />
+                </DropdownTrigger>
+                <DrodownHeroui aria-label="Profile Actions" variant="flat">
+                  <DropdownItem key="profile" className="h-14 gap-2">
+                    <p className="font-semibold">Conectado como</p>
+                    <p className="font-semibold">{session?.user?.email}</p>
+                  </DropdownItem>
+                  <DropdownItem key="settings">My Settings</DropdownItem>
+                  <DropdownItem key="team_settings">Team Settings</DropdownItem>
+                  <DropdownItem key="analytics">Analytics</DropdownItem>
+                  <DropdownItem key="system">System</DropdownItem>
+                  <DropdownItem key="configurations">Configurations</DropdownItem>
+                  <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+                  <DropdownItem key="logout" color="danger">
+                    <button className="w-full h-full text-left" onClick={() => signOut()}>Sair</button>
+                  </DropdownItem>
+                </DrodownHeroui>
+              </Dropdown>
             ) : (
               <>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={auth.login.url}>{auth.login.text}</Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link href={auth.signup.url}>{auth.signup.text}</Link>
-                </Button>
+                <Link href={auth.login.url}>
+                  <ButtonHeroUi color="default" size="sm" variant="ghost">
+                    {auth.login.text}
+                  </ButtonHeroUi>
+                </Link>
+                <Link href={auth.signup.url}>
+                  <ButtonHeroUi className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900" size="sm">
+                    {auth.signup.text}
+                  </ButtonHeroUi>
+                </Link>
               </>
             )}
           </div>
@@ -258,12 +250,7 @@ const Navbar = ({
                   <div className="flex items-center gap-4 pb-4 mb-4 border-b">
                     {status === "authenticated" ? (
                       <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={userData?.profileImage || ""} />
-                          <AvatarFallback>
-                            {session.user?.name?.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
+                        <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={userData?.profileImage} />
                         <div className="flex flex-col">
                           <span className="text-sm font-medium">{session.user?.name}</span>
                           <span className="text-xs text-muted-foreground">{session.user?.email}</span>
@@ -312,24 +299,24 @@ const Navbar = ({
                       {status === "authenticated" ? (
                         <div className="flex flex-col gap-1">
                           <Link
-                          href="/dashboard"
-                          className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                            href="/dashboard"
+                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
                           >
-                          Dashboard
+                            Dashboard
                           </Link>
                           <Link
-                          href="/profile"
-                          className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                            href="/profile"
+                            className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
                           >
-                          Perfil
+                            Perfil
                           </Link>
                           <Select onValueChange={() => signOut()}>
-                          <SelectTrigger className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 w-full text-left">
-                            <SelectValue placeholder="Sair" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="signOut">Sair</SelectItem>
-                          </SelectContent>
+                            <SelectTrigger className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 w-full text-left">
+                              <SelectValue placeholder="Sair" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="signOut">Sair</SelectItem>
+                            </SelectContent>
                           </Select>
                         </div>
                       ) : (

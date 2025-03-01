@@ -1,7 +1,7 @@
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/button";
 import {
   Card,
   CardContent,
@@ -67,9 +67,11 @@ export const HeroCards = () => {
         </CardContent>
 
         <CardFooter>
-          <Button>
-            <Link href="https://gemini.google.com/app?hl=pt-BR">Conheça</Link>
-          </Button>
+          <Link href="https://gemini.google.com/app?hl=pt-BR">
+            <Button className="dark:bg-zinc-50 bg-zinc-900 text-zinc-50 dark:text-zinc-900">
+              Conheça
+            </Button>
+          </Link>
         </CardFooter>
       </CardMotion>
 
@@ -85,7 +87,7 @@ export const HeroCards = () => {
         </CardHeader>
 
         <CardContent>
-          <Button className="w-full">Encontrar ajuda</Button>
+          <Button className="w-full dark:bg-zinc-50 bg-zinc-900 text-zinc-50 dark:text-zinc-900">Encontrar ajuda</Button>
         </CardContent>
 
         <hr className="w-4/5 m-auto mb-4" />

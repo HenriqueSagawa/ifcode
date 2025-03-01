@@ -1,89 +1,71 @@
-// components/dashboard/user-stats.tsx
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PenSquare, MessageSquare, Heart } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { PenSquare, MessageSquare, ThumbsUp } from "lucide-react";
 
-// Dados de exemplo - em um ambiente real, viriam da API
-const userStats = {
-  posts: 42,
-  comments: 128,
-  likes: 560,
-  views: 12450,
-  postGrowth: 12,
-  commentGrowth: -5,
-  likeGrowth: 25,
-};
-
-export function UserStats() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Estatísticas</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatCard 
-            icon={<PenSquare className="h-5 w-5" />}
-            title="Publicações"
-            value={userStats.posts}
-            trend={userStats.postGrowth}
-            color="blue"
-          />
-          
-          <StatCard 
-            icon={<MessageSquare className="h-5 w-5" />}
-            title="Comentários" 
-            value={userStats.comments}
-            trend={userStats.commentGrowth}
-            color="green"
-          />
-          
-          <StatCard 
-            icon={<Heart className="h-5 w-5" />}
-            title="Curtidas"
-            value={userStats.likes}
-            trend={userStats.likeGrowth}
-            color="red"
-          />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-interface StatCardProps {
-  icon: React.ReactNode;
+type StatCardProps = {
   title: string;
   value: number;
-  trend: number;
-  color: "blue" | "green" | "red";
-}
-
-function StatCard({ icon, title, value, trend, color }: StatCardProps) {
-  const colorClasses = {
-    blue: "bg-blue-50 text-blue-500",
-    green: "bg-green-50 text-green-500",
-    red: "bg-red-50 text-red-500",
+  icon: React.ReactNode;
+  trend?: {
+    value: number;
+    positive: boolean;
   };
+};
 
-  const trendColorClass = trend >= 0 ? "text-green-500" : "text-red-500";
-  const trendArrow = trend >= 0 ? "↑" : "↓";
-  
+function StatCard({ title, value, icon, trend }: StatCardProps) {
   return (
-    <div className="flex items-center p-4 rounded-lg border">
-      <div className={`p-3 rounded-full ${colorClasses[color]} mr-4`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        <div className="flex items-baseline gap-2">
-          <h4 className="text-2xl font-bold">{value.toLocaleString()}</h4>
-          <span className={`text-xs font-medium ${trendColorClass}`}>
-            {trendArrow} {Math.abs(trend)}%
-          </span>
+    <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-500">{title}</p>
+          <h3 className="text-2xl font-bold">{value.toLocaleString()}</h3>
+          {trend && (
+            <p className={`text-xs ${trend.positive ? 'text-green-500' : 'text-red-500'}`}>
+              {trend.positive ? '+' : ''}{trend.value}% desde o último mês
+            </p>
+          )}
+        </div>
+        <div className="rounded-full bg-primary/10 p-2">
+          {icon}
         </div>
       </div>
     </div>
+  );
+}
+
+export function UserStats() {
+  const stats = [
+    {
+      title: "Total de Posts",
+      value: 147,
+      icon: <PenSquare className="h-5 w-5 text-primary" />,
+      trend: { value: 12.4, positive: true }
+    },
+    {
+      title: "Comentários",
+      value: 842,
+      icon: <MessageSquare className="h-5 w-5 text-primary" />,
+      trend: { value: 8.2, positive: true }
+    },
+    {
+      title: "Curtidas Recebidas",
+      value: 3254,
+      icon: <ThumbsUp className="h-5 w-5 text-primary" />,
+      trend: { value: 24.1, positive: true }
+    }
+  ];
+
+  return (
+    <Card>
+      <CardContent className="p-6">
+        <h2 className="text-xl font-semibold mb-4">Estatísticas do Usuário</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {stats.map((stat, index) => (
+            <StatCard key={index} {...stat} />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

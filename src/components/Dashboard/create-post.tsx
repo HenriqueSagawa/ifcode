@@ -1,176 +1,139 @@
-// components/dashboard/create-post.tsx
 "use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Image, Code, Send, FileUp } from "lucide-react";
+import { ImageIcon, Code, Send } from "lucide-react";
 
 export function CreatePost() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [postType, setPostType] = useState("artigo");
-  const [contentType, setContentType] = useState("texto");
-  const [fileName, setFileName] = useState<string | null>(null);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFileName(e.target.files[0].name);
-    } else {
-      setFileName(null);
-    }
-  };
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
+  const [postType, setPostType] = useState("article");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você implementaria a lógica para publicar o post
-    console.log({ title, content, postType, contentType, fileName });
+    // Implementar funcionalidade para publicar o post
+    console.log({
+      title: postTitle,
+      content: postContent,
+      type: postType
+    });
     
-    // Reset do formulário
-    setTitle("");
-    setContent("");
-    setPostType("artigo");
-    setContentType("texto");
-    setFileName(null);
+    // Limpar formulário após envio
+    setPostTitle("");
+    setPostContent("");
   };
 
   return (
-    <Card className="w-full">
+    <Card>
       <CardHeader>
-        <CardTitle>Criar Nova Publicação</CardTitle>
+        <CardTitle className="text-xl font-semibold">Criar Nova Publicação</CardTitle>
       </CardHeader>
-      
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Título do Post */}
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title" className="text-sm font-medium">
-              Título
-            </Label>
+            <Label htmlFor="post-title">Título</Label>
             <Input
-              id="title"
+              id="post-title"
               placeholder="Digite o título da sua publicação"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="mt-1.5"
-              required
+              value={postTitle}
+              onChange={(e) => setPostTitle(e.target.value)}
+              className="mt-1"
             />
           </div>
-
-          {/* Tipo de Post e Upload de Imagem em uma linha */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="postType" className="text-sm font-medium">
-                Tipo de Publicação
-              </Label>
-              <Select 
-                value={postType} 
-                onValueChange={setPostType}
-              >
-                <SelectTrigger className="mt-1.5">
+          
+          <div>
+            <Label>Conteúdo</Label>
+            <Tabs defaultValue="text" className="w-full mt-2">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="text">Texto</TabsTrigger>
+                <TabsTrigger value="code">
+                  <Code className="h-4 w-4 mr-1" />
+                  Código
+                </TabsTrigger>
+                <TabsTrigger value="image">
+                  <ImageIcon className="h-4 w-4 mr-1" />
+                  Imagem
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="text" className="mt-2">
+                <Textarea
+                  placeholder="Escreva o conteúdo da sua publicação aqui..."
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                  className="min-h-32"
+                />
+              </TabsContent>
+              
+              <TabsContent value="code" className="mt-2">
+                <Textarea
+                  placeholder="Cole ou escreva seu código aqui..."
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                  className="min-h-32 font-mono"
+                />
+                <div className="mt-2">
+                  <Label htmlFor="language" className="text-sm">Linguagem</Label>
+                  <Select>
+                    <SelectTrigger id="language" className="w-full mt-1">
+                      <SelectValue placeholder="Selecione a linguagem" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="javascript">JavaScript</SelectItem>
+                      <SelectItem value="typescript">TypeScript</SelectItem>
+                      <SelectItem value="python">Python</SelectItem>
+                      <SelectItem value="java">Java</SelectItem>
+                      <SelectItem value="csharp">C#</SelectItem>
+                      <SelectItem value="cpp">C++</SelectItem>
+                      <SelectItem value="php">PHP</SelectItem>
+                      <SelectItem value="ruby">Ruby</SelectItem>
+                      <SelectItem value="go">Go</SelectItem>
+                      <SelectItem value="other">Outra</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="image" className="mt-2">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
+                  <ImageIcon className="h-12 w-12 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500 mb-2">Arraste e solte uma imagem aqui ou clique para selecionar</p>
+                  <Button variant="outline" size="sm">Selecionar Imagem</Button>
+                </div>
+                <Input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden"
+                  id="image-upload"
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="w-1/3">
+              <Label htmlFor="post-type">Tipo de Publicação</Label>
+              <Select value={postType} onValueChange={setPostType}>
+                <SelectTrigger id="post-type" className="mt-1">
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="artigo">Artigo</SelectItem>
+                  <SelectItem value="article">Artigo</SelectItem>
                   <SelectItem value="tutorial">Tutorial</SelectItem>
-                  <SelectItem value="pergunta">Pergunta</SelectItem>
-                  <SelectItem value="discussao">Discussão</SelectItem>
+                  <SelectItem value="question">Pergunta</SelectItem>
+                  <SelectItem value="discussion">Discussão</SelectItem>
+                  <SelectItem value="project">Projeto</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-
-            <div>
-              <Label htmlFor="image" className="text-sm font-medium">
-                Anexar Imagem
-              </Label>
-              <div className="mt-1.5 relative">
-                <label
-                  htmlFor="image-upload" 
-                  className="cursor-pointer flex items-center justify-between w-full px-3 py-2 border rounded-md bg-background hover:bg-accent transition-colors"
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    <FileUp className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground truncate">
-                      {fileName || "Selecione uma imagem"}
-                    </span>
-                  </div>
-                  <Button type="button" variant="ghost" size="sm" className="h-8">
-                    <Image className="h-4 w-4" />
-                  </Button>
-                </label>
-                <Input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  className="sr-only"
-                  onChange={handleFileChange}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Tabs para Conteúdo */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <Label className="text-sm font-medium">Conteúdo</Label>
-              <Tabs 
-                value={contentType} 
-                onValueChange={setContentType} 
-                className="w-auto"
-              >
-                <TabsList className="h-8 p-0.5">
-                  <TabsTrigger 
-                    value="texto" 
-                    className="text-xs px-3 h-7"
-                  >
-                    Texto
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="codigo" 
-                    className="text-xs px-3 h-7 flex items-center gap-1"
-                  >
-                    <Code className="h-3.5 w-3.5" />
-                    Código
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-
-            <div className="min-h-40">
-              {contentType === "texto" ? (
-                <Textarea
-                  placeholder="Escreva o conteúdo da sua publicação aqui..."
-                  className="min-h-40 resize-y"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  required
-                />
-              ) : (
-                <Textarea
-                  placeholder="// Cole ou escreva seu código aqui..."
-                  className="min-h-40 resize-y font-mono"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  required
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Botão de Publicar */}
-          <div className="flex justify-end">
-            <Button type="submit" className="gap-2">
+            
+            <Button type="submit" className="flex items-center gap-2">
               <Send className="h-4 w-4" />
               Publicar
             </Button>

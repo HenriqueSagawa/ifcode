@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "@heroui/button";
 import { HeroCards } from "../HeroCards";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { InfiniteMovingCardsDemo } from "../MovingCards";
@@ -30,17 +30,18 @@ export const Hero = () => {
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
-          <Button className="w-[80%] md:w-1/3">Comece já {" "} <MoveRight /></Button>
+          <Button className="w-[80%] md:w-1/3 !bg-zinc-900 dark:!bg-zinc-50 text-zinc-50 dark:text-zinc-900">Comece já {" "} <MoveRight /></Button>
 
-          <LinkPreview
-            url="https://github.com/HenriqueSagawa/ifcode"
-            className={`w-[80%] md:w-1/3 ${buttonVariants({
-              variant: "outline",
-            })}`}
-          >
-            Repositório do Github
-            <GitHubLogoIcon className="ml-2 w-5 h-5" />
-          </LinkPreview>
+          <Button color="default" variant="ghost" className="w-[80%] md:w-1/3 ">
+            <LinkPreview
+              url="https://github.com/IFcode-Assis"
+              className="flex items-center"
+            >
+              Repositório do Github
+              <GitHubLogoIcon className="ml-2 w-5 h-5" />
+            </LinkPreview>
+          </Button>
+
         </div>
       </div>
 
