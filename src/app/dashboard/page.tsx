@@ -9,17 +9,19 @@ import { UserData } from "@/types/userData";
 
 // UI Components
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { addToast } from "@heroui/toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShareIcon, PencilIcon, GithubIcon, PhoneIcon, ChevronLeft, ChevronRight, Calendar, ImageIcon, Code, Send, PenSquare, MessageSquare, ThumbsUp } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
-import { link } from "fs";
+import { EditProfile } from "@/components/EditProfile";
+import { Spinner } from "@heroui/spinner";
+
 
 // Types
 type Comment = {
@@ -38,12 +40,11 @@ export default function DashboardPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [user, setUser] = useState<any>();
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedUser, setEditedUser] = useState<any>(null); // Inicializar com null ou um valor padrão
     const [postTitle, setPostTitle] = useState("");
     const [postContent, setPostContent] = useState("");
     const [postType, setPostType] = useState("article");
     const [recentCommentsCurrentPage, setRecentCommentsCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false);
 
     const stats = [
         {
@@ -138,6 +139,7 @@ export default function DashboardPage() {
 
         async function fetchData() {
             try {
+                setLoading(true);
                 const usersRef = collection(db, "users");
                 const q = query(usersRef, where("email", "==", session?.user?.email));
                 const querySnapshot = await getDocs(q);
@@ -146,38 +148,36 @@ export default function DashboardPage() {
                     const doc = querySnapshot.docs[0];
                     const userData = doc.data() as UserData;
                     const { id, ...rest } = userData;
-                    return { id: doc.id, ...rest };
+                    setUser({ id: doc.id, ...rest });
                 } else {
                     return null;
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
                 return null;
+            } finally {
+                setLoading(false);
             }
         }
 
-        async function loadData() {
-            const data = await fetchData();
-            setUser(data);
-            setEditedUser(data);
-        }
-
-        loadData();
+        fetchData();
     }, [session, router, status]);
 
-    console.log(user);
-
-    if (status === "loading") {
-        return <div>Carregando...</div>;
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Spinner color="success" label="Seja paciente! Não quebre o monitor" size="lg" />
+            </div>
+        )
     }
-
-    const handleSave = () => {
-        setIsEditing(false);
-    };
 
     const handleShareProfile = () => {
         navigator.clipboard.writeText(`https://ifcode.com.br/perfil/${user?.id}`);
-        alert("Link do perfil copiado para a área de transferência!");
+        addToast({
+            title: "Url do Perfil",
+            description: "Url do perfil copiado com sucesso!",
+            color: "success"
+          });
     };
 
     const handleCreatePostSubmit = (e: React.FormEvent) => {
@@ -268,17 +268,17 @@ export default function DashboardPage() {
 
                                 {/* Habilidades */}
                                 {user?.skills && user.skills.length > 0 && (
-                            <div className="mt-4">
-                                <h3 className="text-lg font-semibold">Habilidades</h3>
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    {user.skills.map((skill: string, index: number) => (
-                                        <span key={index} className={`text-zinc-800 px-3 py-1 ${skillColors[index % skillColors.length]} text-sm rounded-full`}>
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                                    <div className="mt-4">
+                                        <h3 className="text-lg font-semibold">Habilidades</h3>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {user.skills.map((skill: string, index: number) => (
+                                                <span key={index} className={`text-zinc-800 px-3 py-1 ${skillColors[index % skillColors.length]} text-sm rounded-full`}>
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex gap-2 mt-4 md:mt-0 md:self-start">
@@ -287,12 +287,7 @@ export default function DashboardPage() {
                                     Compartilhar
                                 </Button>
                                 {user?.fullData ? (
-                                    <Link href="/edit-data">
-                                        <Button variant="default" size="sm" className="flex items-center gap-1">
-                                            <PencilIcon className="h-4 w-4" />
-                                            Editar perfil
-                                        </Button>
-                                    </Link>
+                                    <EditProfile user={user} />
                                 ) : (
                                     <Link href="/complete-profile">
                                         <Button variant="default" size="sm" className="flex items-center gap-1">
