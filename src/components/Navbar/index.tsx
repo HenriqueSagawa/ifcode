@@ -47,6 +47,7 @@ interface MenuItem {
 }
 
 interface UserData {
+  id?: string;
   name: string;
   email: string;
   birthDate: string;
@@ -55,7 +56,6 @@ interface UserData {
   period: string;
   registration: string;
   github: string;
-  linkedin: string;
   bio: string;
   profileImage: string;
   createdAt: string;
@@ -144,20 +144,25 @@ const Navbar = ({
 }: Navbar1Props) => {
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-
-  useEffect(() => {
-    if (!isOpen) {
-      document.body.style.overflow = '';
-    }
-  }, [isOpen]);
-
   useEffect(() => {
     if (status === "authenticated") {
-      getUser();
+      try {
+        setIsLoading(true);
+        getUser().then(user => {
+          if (user) {
+            setUser(user);
+          }
+        });
+      } catch (error) {
+        setError("Ocorreu um erro ao carregar os dados do usuário.");
+      } finally {
+        setIsLoading(false);
+      }
+      
     }
   }, [session, status]);
 
@@ -165,7 +170,14 @@ const Navbar = ({
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('email', "==", session?.user?.email));
     const querySnapshot = await getDocs(q);
-
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      const userData = doc.data() as UserData;
+      const { id, ...rest } = userData;
+      setUser({ id: doc.id, ...rest });
+    } else {
+      return null;
+    }
 
   }
 
@@ -195,19 +207,15 @@ const Navbar = ({
             {status === "authenticated" ? (
               <Dropdown placement="bottom-end">
                 <DropdownTrigger>
-                  <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={userData?.profileImage} />
+                  <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={user?.profileImage} />
                 </DropdownTrigger>
                 <DrodownHeroui aria-label="Profile Actions" variant="flat">
                   <DropdownItem key="profile" className="h-14 gap-2">
                     <p className="font-semibold">Conectado como</p>
                     <p className="font-semibold">{session?.user?.email}</p>
                   </DropdownItem>
-                  <DropdownItem key="settings">My Settings</DropdownItem>
-                  <DropdownItem key="team_settings">Team Settings</DropdownItem>
-                  <DropdownItem key="analytics">Analytics</DropdownItem>
-                  <DropdownItem key="system">System</DropdownItem>
-                  <DropdownItem key="configurations">Configurations</DropdownItem>
-                  <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+                  <DropdownItem key="dashboard"><Link href="/dashboard">Dashboard</Link></DropdownItem>
+                  <DropdownItem key="dashboard" href={`/perfil/${user?.id}`}>Meu perfil</DropdownItem>
                   <DropdownItem key="logout" color="danger">
                     <button className="w-full h-full text-left" onClick={() => signOut()}>Sair</button>
                   </DropdownItem>
@@ -250,7 +258,7 @@ const Navbar = ({
                   <div className="flex items-center gap-4 pb-4 mb-4 border-b">
                     {status === "authenticated" ? (
                       <div className="flex items-center gap-3">
-                        <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={userData?.profileImage} />
+                        <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={user?.profileImage} />
                         <div className="flex flex-col">
                           <span className="text-sm font-medium">{session.user?.name}</span>
                           <span className="text-xs text-muted-foreground">{session.user?.email}</span>
@@ -305,7 +313,7 @@ const Navbar = ({
                             Dashboard
                           </Link>
                           <Link
-                            href="/profile"
+                            href={`/perfil/${user?.id}`}
                             className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
                           >
                             Perfil

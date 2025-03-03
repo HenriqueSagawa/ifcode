@@ -10,7 +10,7 @@ export const Hero = () => {
   return (
     <section className="container mx-auto grid grid-cols-1 xl:grid-cols-2 place-items-center py-20 md:py-32 gap-10">
       <div className="text-center xl:text-start space-y-6">
-        <main className="text-4xl md:text-6xl font-bold">
+        <main className="relative text-4xl md:text-6xl font-bold">
           <h1 className="inline">
             <span className="inline bg-gradient-to-r from-[#80C342]  to-[#118B44] text-transparent bg-clip-text">
               IF Code
