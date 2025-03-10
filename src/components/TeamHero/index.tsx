@@ -31,7 +31,7 @@ export function TeamHero() {
         />
 
         {/* Radial Gradient to prevent sharp edges */}
-        <div className="absolute inset-0 w-full h-full bg-white dark:bg-[#121212] [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,black)] dark:[mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
+        <div className="absolute inset-0 w-full h-full bg-white dark:bg-[#000] [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,black)] dark:[mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
       </div>
     </div>
   );

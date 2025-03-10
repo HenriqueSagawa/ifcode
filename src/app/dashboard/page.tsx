@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { db } from "@/services/firebaseConnection";
@@ -13,11 +13,7 @@ import { addToast } from "@heroui/toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShareIcon, PencilIcon, GithubIcon, PhoneIcon, ChevronLeft, ChevronRight, Calendar, ImageIcon, Code, Send, PenSquare, MessageSquare, ThumbsUp } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CreatePost } from "@/components/CreatePost";
 import Link from "next/link";
 import { EditProfile } from "@/components/EditProfile";
 import { Spinner } from "@heroui/spinner";
@@ -68,61 +64,7 @@ export default function DashboardPage() {
     ];
 
     const allComments: Comment[] = [
-        {
-            id: "comment1",
-            postId: "post1",
-            postTitle: "Introdução ao Next.js 14",
-            author: {
-                name: "Maria Oliveira",
-                avatar: "/avatar-maria.png"
-            },
-            content: "Excelente artigo! Consegui entender perfeitamente as novas funcionalidades do Next.js 14.",
-            date: "24 Fev 2025"
-        },
-        {
-            id: "comment2",
-            postId: "post2",
-            postTitle: "Como configurar um projeto com TypeScript",
-            author: {
-                name: "Pedro Santos",
-                avatar: "/avatar-pedro.png"
-            },
-            content: "Você poderia explicar melhor a parte de configuração do tsconfig.json?",
-            date: "20 Fev 2025"
-        },
-        {
-            id: "comment3",
-            postId: "post3",
-            postTitle: "Tailwind CSS vs. CSS Modules",
-            author: {
-                name: "Ana Lima",
-                avatar: "/avatar-ana.png"
-            },
-            content: "Concordo com sua análise. Tenho usado o Tailwind há alguns meses e a produtividade aumentou bastante.",
-            date: "15 Fev 2025"
-        },
-        {
-            id: "comment4",
-            postId: "post4",
-            postTitle: "Criando uma API REST com Next.js",
-            author: {
-                name: "Carlos Mendes",
-                avatar: "/avatar-carlos.png"
-            },
-            content: "Consegui implementar a API seguindo seu tutorial. Muito obrigado pela ajuda!",
-            date: "12 Fev 2025"
-        },
-        {
-            id: "comment5",
-            postId: "post5",
-            postTitle: "Como otimizar o desempenho do seu site Next.js",
-            author: {
-                name: "Juliana Costa",
-                avatar: "/avatar-juliana.png"
-            },
-            content: "As dicas de otimização de imagens foram muito úteis. Meu site carrega muito mais rápido agora.",
-            date: "07 Fev 2025"
-        },
+        
     ];
 
     const commentsPerPage = 3;
@@ -131,9 +73,16 @@ export default function DashboardPage() {
     const currentComments = allComments.slice(indexOfFirstComment, indexOfLastComment);
     const totalPages = Math.ceil(allComments.length / commentsPerPage);
 
+    const dataFetched = useRef(false);
+
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
+            return;
+        }
+
+        if (dataFetched.current) {
+            console.log("Dados já carregados, saindo do useEffect.");
             return;
         }
 
@@ -149,6 +98,7 @@ export default function DashboardPage() {
                     const userData = doc.data() as UserData;
                     const { id, ...rest } = userData;
                     setUser({ id: doc.id, ...rest });
+                    dataFetched.current = true; // Define como true após o primeiro carregamento
                 } else {
                     return null;
                 }
@@ -161,8 +111,8 @@ export default function DashboardPage() {
         }
 
         fetchData();
-    }, [session, router, status]);
-
+    }, [session, status, router]);
+    
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -302,144 +252,8 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Create Post */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-xl font-semibold">Criar Nova Publicação</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleCreatePostSubmit} className="space-y-4">
-                            <div>
-                                <Label htmlFor="post-title">Título</Label>
-                                <Input
-                                    id="post-title"
-                                    placeholder="Digite o título da sua publicação"
-                                    value={postTitle}
-                                    onChange={(e) => setPostTitle(e.target.value)}
-                                    className="mt-1"
-                                />
-                            </div>
-
-                            <div>
-                                <Label>Conteúdo</Label>
-                                <Tabs defaultValue="text" className="w-full mt-2">
-                                    <TabsList className="grid w-full grid-cols-3">
-                                        <TabsTrigger value="text">Texto</TabsTrigger>
-                                        <TabsTrigger value="code">
-                                            <Code className="h-4 w-4 mr-1" />
-                                            Código
-                                        </TabsTrigger>
-                                        <TabsTrigger value="image">
-                                            <ImageIcon className="h-4 w-4 mr-1" />
-                                            Imagem
-                                        </TabsTrigger>
-                                    </TabsList>
-
-                                    <TabsContent value="text" className="mt-2">
-                                        <Textarea
-                                            placeholder="Escreva o conteúdo da sua publicação aqui..."
-                                            value={postContent}
-                                            onChange={(e) => setPostContent(e.target.value)}
-                                            className="min-h-32"
-                                        />
-                                    </TabsContent>
-
-                                    <TabsContent value="code" className="mt-2">
-                                        <Textarea
-                                            placeholder="Cole ou escreva seu código aqui..."
-                                            value={postContent}
-                                            onChange={(e) => setPostContent(e.target.value)}
-                                            className="min-h-32 font-mono"
-                                        />
-                                        <div className="mt-2">
-                                            <Label htmlFor="language" className="text-sm">Linguagem</Label>
-                                            <Select>
-                                                <SelectTrigger id="language" className="w-full mt-1">
-                                                    <SelectValue placeholder="Selecione a linguagem" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="javascript">JavaScript</SelectItem>
-                                                    <SelectItem value="typescript">TypeScript</SelectItem>
-                                                    <SelectItem value="python">Python</SelectItem>
-                                                    <SelectItem value="java">Java</SelectItem>
-                                                    <SelectItem value="csharp">C#</SelectItem>
-                                                    <SelectItem value="cpp">C++</SelectItem>
-                                                    <SelectItem value="php">PHP</SelectItem>
-                                                    <SelectItem value="ruby">Ruby</SelectItem>
-                                                    <SelectItem value="go">Go</SelectItem>
-                                                    <SelectItem value="other">Outra</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    </TabsContent>
-
-                                    <TabsContent value="image" className="mt-2">
-                                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
-                                            <ImageIcon className="h-12 w-12 text-gray-400 mb-2" />
-                                            <p className="text-sm text-gray-500 mb-2">Arraste e solte uma imagem aqui ou clique para selecionar</p>
-                                            <Button variant="outline" size="sm">Selecionar Imagem</Button>
-                                        </div>
-                                        <Input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            id="image-upload"
-                                        />
-                                    </TabsContent>
-                                </Tabs>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div className="w-1/3">
-                                    <Label htmlFor="post-type">Tipo de Publicação</Label>
-                                    <Select value={postType} onValueChange={setPostType}>
-                                        <SelectTrigger id="post-type" className="mt-1">
-                                            <SelectValue placeholder="Selecione o tipo" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="article">Artigo</SelectItem>
-                                            <SelectItem value="tutorial">Tutorial</SelectItem>
-                                            <SelectItem value="question">Pergunta</SelectItem>
-                                            <SelectItem value="discussion">Discussão</SelectItem>
-                                            <SelectItem value="project">Projeto</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                <Button type="submit" className="flex items-center gap-2">
-                                    <Send className="h-4 w-4" />
-                                    Publicar
-                                </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
-
-                {/* User Stats */}
-                <Card>
-                    <CardContent className="p-6">
-                        <h2 className="text-xl font-semibold mb-4">Estatísticas do Usuário</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {stats.map((stat, index) => (
-                                <div key={index} className="rounded-lg bg-white p-4 shadow-sm">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-500">{stat.title}</p>
-                                            <h3 className="text-2xl font-bold">{stat.value.toLocaleString()}</h3>
-                                            {stat.trend && (
-                                                <p className={`text-xs ${stat.trend.positive ? 'text-green-500' : 'text-red-500'}`}>
-                                                    {stat.trend.positive ? '+' : ''}{stat.trend.value}% desde o último mês
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="rounded-full bg-primary/10 p-2">
-                                            {stat.icon}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                
+                <CreatePost author={user?.name} userImage={user?.profileImage} id={user?.id} email={user?.email} />
 
                 {/* Recent Content */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -16,6 +16,7 @@ import { z } from 'zod';
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Spinner } from '@heroui/spinner';
 
 
 // Definição do esquema de validação com Zod
@@ -43,6 +44,7 @@ export function ProfileStepperForm() {
     const [newSkill, setNewSkill] = useState<string>('');
     const [profilePreview, setProfilePreview] = useState<string | null>(null);
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
 
     // Configuração do React Hook Form com Zod
@@ -149,10 +151,9 @@ export function ProfileStepperForm() {
     // Envia o formulário
     const onSubmit = async (data: FormSchemaType) => {
         try {
+            setLoading(true);
             const profileImageUrl = await uploadImageToCloudinary(data.profilePicture);
             const bannerImageUrl = await uploadImageToCloudinary(data.profileBanner);
-
-            console.log("Imagens enviadas com sucesso:", profileImageUrl, bannerImageUrl);
 
             const userData = {
                 birthDate: data.birthDate,
@@ -179,10 +180,11 @@ export function ProfileStepperForm() {
             }
 
             const result = await response.json();
-            console.log(result.message);
             route.push("/dashboard");
         } catch (error) {
             console.error("Erro ao enviar formulário:", error)
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -504,7 +506,8 @@ export function ProfileStepperForm() {
                             </Button>
 
                             {currentStep === 4 ? (
-                                <Button color="primary" type="submit">
+                                <Button color="primary" type="submit" disabled={loading}>
+                                    <Spinner size="sm" className={loading ? "hidden" : "flex"} />
                                     Enviar
                                 </Button>
                             ) : (

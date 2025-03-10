@@ -231,7 +231,7 @@ export function EditProfile({ user }: { user: userDataProps }) {
                                         />
                                         <label htmlFor="banner-upload" className="cursor-pointer flex flex-col items-center">
                                             <Upload className="w-6 h-6 text-white" />
-                                            <span className="text-sm text-white mt-1">Upload Banner</span>
+                                            <span className="text-sm text-white mt-1">Capa do perfil</span>
                                         </label>
                                     </div>
                                 </div>

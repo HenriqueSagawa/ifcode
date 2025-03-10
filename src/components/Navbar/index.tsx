@@ -122,7 +122,7 @@ const Navbar = ({
           title: "Perguntas e respostas",
           description: "Get all the answers you need right here",
           icon: <FaQuestion className="size-5 shrink-0" />,
-          url: "#",
+          url: "/posts",
         },
         {
           title: "Converse com IA",

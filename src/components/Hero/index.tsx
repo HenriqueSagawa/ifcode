@@ -4,6 +4,7 @@ import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { InfiniteMovingCardsDemo } from "../MovingCards";
 import { MoveRight } from "lucide-react";
 import { LinkPreview } from "../ui/link-preview";
+import Link from "next/link";
 
 
 export const Hero = () => {
@@ -30,7 +31,9 @@ export const Hero = () => {
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
-          <Button className="w-[80%] md:w-1/3 !bg-zinc-900 dark:!bg-zinc-50 text-zinc-50 dark:text-zinc-900">Comece já {" "} <MoveRight /></Button>
+          <Link href="/posts">
+            <Button className="w-[80%] md:w-1/3 !bg-zinc-900 dark:!bg-zinc-50 text-zinc-50 dark:text-zinc-900">Comece já {" "} <MoveRight /></Button>
+          </Link>
 
           <Button color="default" variant="ghost" className="w-[80%] md:w-1/3 ">
             <LinkPreview

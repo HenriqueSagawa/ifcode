@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import favicon from "../../public/img/logo ifcode.png";
 import { Providers } from "./provider";
+import { useEffect } from "react";
 
 
 const geistSans = localFont({
@@ -28,6 +29,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <head>
