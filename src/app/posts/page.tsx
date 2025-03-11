@@ -333,13 +333,16 @@ const PostsPage: React.FC = () => {
                 className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-200 dark:border-gray-700"
               >
                 <CardHeader className="flex items-start gap-3 pb-2">
-                  <Avatar
-                    src={post?.authorImage ?? undefined}
-                    size="md"
-                    isBordered
-                    color="primary"
-                    className="flex-shrink-0"
-                  />
+                  <Link href={`perfil/${post?.userId}`}>
+                    <Avatar
+                      src={post?.authorImage ?? undefined}
+                      size="md"
+                      isBordered
+                      color="primary"
+                      className="flex-shrink-0 bg-white hover:brightness-75 transition-all"
+                    />
+                  </Link>
+
                   <div className="flex flex-col flex-grow">
                     <Chip
                       size="sm"

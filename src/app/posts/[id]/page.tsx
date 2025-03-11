@@ -19,6 +19,12 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { FaArrowLeft } from "react-icons/fa";
+import { FaRegShareSquare } from "react-icons/fa";
+import { addToast } from "@heroui/toast";
+import Link from "next/link";
+
+
 
 interface PostDataProps {
   author: string;
@@ -34,6 +40,7 @@ interface PostDataProps {
   title: string;
   type: string;
   userImage: string;
+  userId: string;
 }
 
 interface CommentProps {
@@ -52,7 +59,7 @@ export default function PostPage() {
   const [newComment, setNewComment] = useState("");
   const [user, setUser] = useState({ name: "Usuário", photoURL: "/placeholder/user.png" });
   const [isLiked, setIsLiked] = useState(false);
-  
+
   // Estado para controlar o modal de imagem
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -77,7 +84,7 @@ export default function PostPage() {
     if (dataFetched.current) {
       return;
     }
-    
+
     try {
       setLoading(true);
       const postRef = doc(db, "posts", postId);
@@ -87,16 +94,16 @@ export default function PostPage() {
         const postData = postSnap.data() as PostDataProps;
         setPost(postData);
         dataFetched.current = true;
-        
+
         // Buscar comentários após carregar o post
         fetchComments(postId);
       } else {
-        console.warn("Post não encontrado!"); 
+        console.warn("Post não encontrado!");
         setPost(null);
       }
     } catch (err) {
       console.error("Erro ao buscar o post:", err);
-      setPost(null); 
+      setPost(null);
     } finally {
       setLoading(false);
     }
@@ -108,12 +115,12 @@ export default function PostPage() {
       const commentsRef = collection(db, "posts", postId, "comments");
       const q = query(commentsRef, orderBy("createdAt", "desc"));
       const commentsSnap = await getDocs(q);
-      
+
       const commentsData = commentsSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as CommentProps[];
-      
+
       setComments(commentsData);
     } catch (err) {
       console.error("Erro ao buscar comentários:", err);
@@ -123,7 +130,7 @@ export default function PostPage() {
   // Função para adicionar um comentário
   const handleAddComment = async () => {
     if (!newComment.trim() || !id) return;
-    
+
     setCommentLoading(true);
     try {
       const commentsRef = collection(db, "posts", id as string, "comments");
@@ -133,7 +140,7 @@ export default function PostPage() {
         authorImage: user.photoURL,
         createdAt: serverTimestamp()
       });
-      
+
       setNewComment("");
       // Recarregar comentários
       fetchComments(id as string);
@@ -161,6 +168,15 @@ export default function PostPage() {
     }
   }, [id, fetchPost]);
 
+  function handleShareProfile() {
+    navigator.clipboard.writeText(window.location.href);
+    addToast({
+      title: "Url do post copiado!",
+      color: "success",
+      variant: "flat"
+    })
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -174,35 +190,40 @@ export default function PostPage() {
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <h2 className="text-2xl font-bold mb-4">Post não encontrado</h2>
         <p className="text-gray-500 mb-6">O post que você está procurando não existe ou foi removido.</p>
-        <Button color="primary" href="/">Voltar para a página inicial</Button>
+        <Button color="primary" href="/"><FaArrowLeft /> Voltar para a página inicial</Button>
       </div>
     );
   }
 
-  const formattedDate = post.createdAt instanceof Date 
+  const formattedDate = post.createdAt instanceof Date
     ? formatDistanceToNow(post.createdAt, { addSuffix: true, locale: ptBR })
     : "Data desconhecida";
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      <Link href="/posts">
+        <Button color="default" className="my-4"><FaArrowLeft /> Voltar</Button>
+      </Link>
       <Card className="mb-8">
         <CardHeader className="justify-between">
           <div className="flex gap-3">
-            <User
-              name={post.author}
-              avatarProps={{
-                src: post.authorImage
-              }}
-              description={formattedDate}
-            />
+            <Link href={`/perfil/${post?.id}`} className="hover:brightness-75 transition-all">
+              <User
+                name={post.author}
+                avatarProps={{
+                  src: post.authorImage
+                }}
+                description={formattedDate}
+              />
+            </Link>
           </div>
           <Chip color="primary" variant="flat">{post.type}</Chip>
         </CardHeader>
-        
+
         <CardBody>
           <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
           <p className="text-gray-700 mb-6 whitespace-pre-wrap">{post.content}</p>
-          
+
           {post.codeContent && (
             <div className="mb-6">
               <SyntaxHighlighter language={post.codeLenguage} style={atomDark}>
@@ -210,12 +231,12 @@ export default function PostPage() {
               </SyntaxHighlighter>
             </div>
           )}
-          
+
           {post.images && post.images.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               {post.images.map((img, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="relative cursor-pointer overflow-hidden rounded-lg transition-transform hover:scale-[1.02]"
                   onClick={() => openImageModal(img)}
                 >
@@ -231,16 +252,17 @@ export default function PostPage() {
             </div>
           )}
         </CardBody>
-        
+
         <CardFooter className="flex justify-between">
-          <Button 
-            color={isLiked ? "danger" : "default"} 
-            variant="light" 
+          <Button
+            color={isLiked ? "danger" : "default"}
+            variant="light"
             startContent={<Heart fill={isLiked ? "currentColor" : "none"} />}
             onClick={handleLike}
           >
             {post.likes + (isLiked ? 1 : 0)}
           </Button>
+          <Button color="default" onPress={handleShareProfile}><FaRegShareSquare /> Compartilhar post</Button>
           <Button color="primary" variant="light">
             {comments.length} comentários
           </Button>
@@ -249,7 +271,7 @@ export default function PostPage() {
 
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Comentários</h2>
-        
+
         <div className="mb-6">
           <Textarea
             placeholder="Escreva seu comentário..."
@@ -258,18 +280,18 @@ export default function PostPage() {
             minRows={3}
             className="mb-2"
           />
-          <Button 
-            color="primary" 
-            onClick={handleAddComment} 
+          <Button
+            color="primary"
+            onClick={handleAddComment}
             isLoading={commentLoading}
             isDisabled={!newComment.trim()}
           >
             Publicar comentário
           </Button>
         </div>
-        
+
         <Divider className="my-4" />
-        
+
         {comments.length > 0 ? (
           <div className="space-y-4">
             {comments.map((comment) => (
@@ -299,8 +321,8 @@ export default function PostPage() {
       </div>
 
       {/* Modal de visualização da imagem */}
-      <Modal 
-        isOpen={isImageModalOpen} 
+      <Modal
+        isOpen={isImageModalOpen}
         onClose={closeImageModal}
         size="full"
         scrollBehavior="inside"
@@ -317,7 +339,7 @@ export default function PostPage() {
               >
                 <X size={24} />
               </Button>
-              
+
               {selectedImage && (
                 <div className="max-h-screen max-w-screen-lg">
                   <Image
