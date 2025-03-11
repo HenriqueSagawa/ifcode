@@ -16,7 +16,7 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@heroui/theme/dist/components/(avatar|button|card|checkbox|chip|dropdown|input|link|modal|pagination|progress|select|spinner|toast|ripple|form|menu|divider|popover|listbox|scroll-shadow).js"
+    "./node_modules/@heroui/theme/dist/components/(avatar|button|card|checkbox|chip|dropdown|image|input|link|modal|pagination|progress|select|spinner|toast|user|ripple|form|menu|divider|popover|listbox|scroll-shadow).js"
   ],
 	theme: {
     	extend: {
