@@ -7,11 +7,16 @@ import { Select, SelectItem } from "@heroui/select";
 import { Input } from '@heroui/input';
 import { Chip } from '@heroui/chip';
 import { Pagination } from "@heroui/pagination";
-import { SearchIcon, BookOpenIcon, TrendingUpIcon, CodeIcon } from 'lucide-react';
+import { SearchIcon, BookOpenIcon, TrendingUpIcon, CodeIcon, PlusIcon } from 'lucide-react';
 import { Avatar } from '@heroui/avatar';
 import { Checkbox } from '@heroui/checkbox';
 import { PostsProps } from '@/types/posts';
 import { HeartIcon } from '@/components/HeartIcon';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
+import { CreatePost } from '@/components/CreatePost';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+
 
 enum SortOption {
   TITLE_ASC = 'title_asc',
@@ -33,6 +38,8 @@ const PostsPage: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const { data: session, status } = useSession();
 
   const POSTS_PER_PAGE = 9;
 
@@ -64,7 +71,6 @@ const PostsPage: React.FC = () => {
 
     let result = [...posts];
 
-    // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       result = result.filter(
@@ -76,14 +82,12 @@ const PostsPage: React.FC = () => {
       );
     }
 
-    // Apply language filter (only if not "all")
     if (selectedLanguage && selectedLanguage !== "all") {
       result = result.filter(post =>
         post.codeLenguage && post.codeLenguage.toLowerCase() === selectedLanguage.toLowerCase()
       );
     }
 
-    // Apply type filter (only if not "all")
     if (selectedType && selectedType !== "all") {
       result = result.filter(post =>
         post.type && post.type.toLowerCase() === selectedType.toLowerCase()
@@ -116,7 +120,6 @@ const PostsPage: React.FC = () => {
     }
 
     setFilteredPosts(result);
-    // Reset to first page whenever filters change
     setCurrentPage(1);
   }, [posts, searchQuery, sortOption, selectedLanguage, selectedType]);
 
@@ -137,7 +140,6 @@ const PostsPage: React.FC = () => {
   };
 
   const getPostTypeColor = (type: string) => {
-    // Convert to lowercase for case-insensitive comparison
     const lowerType = type.toLowerCase();
 
     switch (lowerType) {
@@ -145,7 +147,7 @@ const PostsPage: React.FC = () => {
       case 'artigo': return 'primary';
       case 'pergunta': return 'warning';
       case 'discussão': return 'secondary';
-      case 'projeto': return 'danger'; // Fixed: 'projetos' -> 'projeto' to match singular form
+      case 'projeto': return 'danger';
       default: return 'default';
     }
   };
@@ -158,9 +160,8 @@ const PostsPage: React.FC = () => {
     setSearchQuery('');
     setSelectedLanguage(null);
     setSelectedType(null);
-    setSortOption(SortOption.DATE_NEWEST); // Reset to default sort option
+    setSortOption(SortOption.DATE_NEWEST);
   };
-
 
   return (
     <div className="min-h-screen">
@@ -169,18 +170,37 @@ const PostsPage: React.FC = () => {
         <div className="container mx-auto px-4 py-10">
           <div className="flex items-center justify-between">
             <div className="max-w-xl">
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Código & Desenvolvimento</h1>
-              <p className="text-white/90 text-lg">
+              <h1 className="text-3xl md:text-4xl font-bold dark:text-white text-black mb-2">Código & Desenvolvimento</h1>
+              <p className="text-black/90 dark:text-white/90 text-lg">
                 Tutoriais, artigos, perguntas, discussões e projetos.
               </p>
             </div>
-            <div className="hidden md:flex gap-2">
-              <TrendingUpIcon className="text-white w-6 h-6" />
-              <BookOpenIcon className="text-white w-6 h-6" />
+            <div className="hidden md:flex gap-4 items-center">
+              {status == "authenticated" ? (
+                <Link href="/dashboard">
+                  <Button
+                    color="primary"
+                    startContent={<PlusIcon size={18} />}
+                  >
+                    Publicar Post
+                  </Button>
+                </Link>
+              ) : (
+                <div className='flex flex-col gap-2'>
+                  <span>
+                    Faça login para publicar
+                  </span>
+                  <Link href="/login">
+                    <Button color='primary' className='w-full'>Entrar</Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+
 
       <div className="container mx-auto px-4 py-8">
         {/* Área de Filtros e Busca */}

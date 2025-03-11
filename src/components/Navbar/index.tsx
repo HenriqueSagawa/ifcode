@@ -214,7 +214,7 @@ const Navbar = ({
                     <p className="font-semibold">Conectado como</p>
                     <p className="font-semibold">{session?.user?.email}</p>
                   </DropdownItem>
-                  <DropdownItem key="dashboard"><Link href="/dashboard">Dashboard</Link></DropdownItem>
+                  <DropdownItem key="dashboard"><Link href="/dashboard" className="block">Dashboard</Link></DropdownItem>
                   <DropdownItem key="dashboard" href={`/perfil/${user?.id}`}>Meu perfil</DropdownItem>
                   <DropdownItem key="logout" color="danger">
                     <button className="w-full h-full text-left" onClick={() => signOut()}>Sair</button>

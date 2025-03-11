@@ -87,7 +87,10 @@ export const HeroCards = () => {
         </CardHeader>
 
         <CardContent>
-          <Button className="w-full dark:bg-zinc-50 bg-zinc-900 text-zinc-50 dark:text-zinc-900">Encontrar ajuda</Button>
+          <Link href="/posts">
+            <Button className="w-full dark:bg-zinc-50 bg-zinc-900 text-zinc-50 dark:text-zinc-900">Encontrar ajuda</Button>
+
+          </Link>
         </CardContent>
 
         <hr className="w-4/5 m-auto mb-4" />

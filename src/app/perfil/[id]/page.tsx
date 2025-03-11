@@ -7,13 +7,13 @@ import { FaGithub, FaShareAlt } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
 import Link from "next/link";
 import { Spinner } from "@heroui/spinner";
-import { SuccessMessage } from "@/components/ui/success-message";
+import { ArrowLeft } from "lucide-react";
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
-import {addToast} from "@heroui/toast";
+import { addToast } from "@heroui/toast";
 
 interface UserProps {
   name: string,
@@ -56,6 +56,7 @@ export default function ProfilePage() {
         }
 
         const data = await response.json();
+
         setUser(data);
       } catch (err) {
         setError('Não foi possível carregar o perfil. Tente novamente mais tarde.');
@@ -75,6 +76,17 @@ export default function ProfilePage() {
         <Spinner color="success" label="Seja paciente! Não quebre o monitor" size="lg" />
       </div>
     );
+  }
+
+  if (user?.fullData === false) {
+    return (
+      <div className="w-full flex flex-col items-center">
+        <h1 className="text-2xl font-semibold mt-12 mb-4">Este usuário não completou o cadastro :(</h1>
+        <Link href="/">
+          <Button color="success" variant="shadow"><ArrowLeft /> Voltar ao início</Button>
+        </Link>
+      </div>
+    )
   }
 
   if (error) {
