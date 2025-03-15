@@ -89,6 +89,8 @@ export function SignInForm() {
 
       setShowSuccess(true);
       setLoading(false);
+    
+      localStorage.setItem('userData', JSON.stringify(data));
 
       setTimeout(() => {
         setShowSuccess(false);

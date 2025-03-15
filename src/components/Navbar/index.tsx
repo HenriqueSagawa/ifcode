@@ -37,6 +37,7 @@ import { Separator } from "../ui/separator";
 import { useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/services/firebaseConnection";
+import { Spinner } from "@heroui/spinner";
 
 interface MenuItem {
   title: string;
@@ -145,24 +146,15 @@ const Navbar = ({
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (status === "authenticated") {
-      try {
-        setIsLoading(true);
-        getUser().then(user => {
-          if (user) {
-            setUser(user);
-          }
-        });
-      } catch (error) {
-        setError("Ocorreu um erro ao carregar os dados do usuário.");
-      } finally {
-        setIsLoading(false);
-      }
-      
+      getUser().then(user => {
+        if (user) {
+          setUser(user);
+        }
+      });
     }
   }, [session, status]);
 
@@ -174,13 +166,15 @@ const Navbar = ({
       const doc = querySnapshot.docs[0];
       const userData = doc.data() as UserData;
       const { id, ...rest } = userData;
-      setUser({ id: doc.id, ...rest });
+      return { id: doc.id, ...rest }; // Return the user data
     } else {
       return null;
     }
-
   }
 
+  function handleLogout() {
+    signOut();
+  }
 
   return (
     <section className="py-4 z-50">
@@ -204,7 +198,9 @@ const Navbar = ({
           <div className="flex items-center gap-2">
             <ModeToggle />
 
-            {status === "authenticated" ? (
+            {status === "loading" ? (
+                <Spinner size="sm" color="success" />
+            ) : status === "authenticated" ? (
               <Dropdown placement="bottom-end">
                 <DropdownTrigger>
                   <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={user?.profileImage} />
@@ -217,7 +213,7 @@ const Navbar = ({
                   <DropdownItem key="dashboard"><Link href="/dashboard" className="block">Dashboard</Link></DropdownItem>
                   <DropdownItem key="dashboard" href={`/perfil/${user?.id}`}>Meu perfil</DropdownItem>
                   <DropdownItem key="logout" color="danger">
-                    <button className="w-full h-full text-left" onClick={() => signOut()}>Sair</button>
+                    <button className="w-full h-full text-left" onClick={handleLogout}>Sair</button>
                   </DropdownItem>
                 </DrodownHeroui>
               </Dropdown>
@@ -256,7 +252,9 @@ const Navbar = ({
                 <SheetContent className="overflow-y-auto">
                   {/* Header com Avatar/Logo */}
                   <div className="flex items-center gap-4 pb-4 mb-4 border-b">
-                    {status === "authenticated" ? (
+                    {status === "loading" ? (
+                      <Spinner />
+                    ) : status === "authenticated" ? (
                       <div className="flex items-center gap-3">
                         <Avatar isBordered as="button" className="transition-transform" color="success" name={session?.user?.name as string} size="sm" src={user?.profileImage} />
                         <div className="flex flex-col">
@@ -304,7 +302,9 @@ const Navbar = ({
 
                     {/* Opções do Usuário ou Autenticação */}
                     <div className="mt-4 pt-4 border-t">
-                      {status === "authenticated" ? (
+                      {status === "loading" ? (
+                        <Spinner />
+                      ) : status === "authenticated" ? (
                         <div className="flex flex-col gap-1">
                           <Link
                             href="/dashboard"
@@ -318,24 +318,21 @@ const Navbar = ({
                           >
                             Perfil
                           </Link>
-                          <Select onValueChange={() => signOut()}>
-                            <SelectTrigger className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 w-full text-left">
-                              <SelectValue placeholder="Sair" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="signOut">Sair</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <ButtonHeroUi onPress={handleLogout} variant="light" className="!text-left" color="danger" >Sair</ButtonHeroUi>
                         </div>
                       ) : (
-                        <div className="flex flex-col gap-2">
-                          <Button asChild variant="outline" className="w-full">
-                            <Link href={auth.login.url}>{auth.login.text}</Link>
-                          </Button>
-                          <Button asChild className="w-full">
-                            <Link href={auth.signup.url}>{auth.signup.text}</Link>
-                          </Button>
-                        </div>
+                        <>
+                          <Link href={auth.login.url}>
+                            <ButtonHeroUi color="default" size="sm" variant="ghost">
+                              {auth.login.text}
+                            </ButtonHeroUi>
+                          </Link>
+                          <Link href={auth.signup.url}>
+                            <ButtonHeroUi className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900" size="sm">
+                              {auth.signup.text}
+                            </ButtonHeroUi>
+                          </Link>
+                        </>
                       )}
                     </div>
                   </div>
