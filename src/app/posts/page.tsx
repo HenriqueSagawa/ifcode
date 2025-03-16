@@ -7,13 +7,19 @@ import { Select, SelectItem } from "@heroui/select";
 import { Input } from '@heroui/input';
 import { Chip } from '@heroui/chip';
 import { Pagination } from "@heroui/pagination";
-import { SearchIcon, BookOpenIcon, TrendingUpIcon, CodeIcon, PlusIcon } from 'lucide-react';
+import { SearchIcon, BookOpenIcon, TrendingUpIcon, PlusIcon, CodeIcon } from 'lucide-react';
+// Importando os ícones para as linguagens de programação
+import { 
+  FaJs, FaPython, FaJava, FaPhp, FaCode
+} from "react-icons/fa";
+import { DiRuby } from "react-icons/di";
+
+import { SiTypescript, SiCplusplus, SiGo } from "react-icons/si";
+import { TbBrandCSharp } from "react-icons/tb";
 import { Avatar } from '@heroui/avatar';
 import { Checkbox } from '@heroui/checkbox';
 import { PostsProps } from '@/types/posts';
 import { HeartIcon } from '@/components/HeartIcon';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
-import { CreatePost } from '@/components/CreatePost';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -152,8 +158,51 @@ const PostsPage: React.FC = () => {
     }
   };
 
+  // Função para obter o ícone da linguagem com a cor correspondente
   const getLanguageIcon = (language: string) => {
-    return <CodeIcon size={14} className="mr-1" />;
+    const lowerLang = language.toLowerCase();
+    
+    switch (lowerLang) {
+      case 'javascript':
+        return <FaJs size={14} className="mr-1" style={{ color: '#F7DF1E' }} />;
+      case 'typescript':
+        return <SiTypescript size={14} className="mr-1" style={{ color: '#3178C6' }} />;
+      case 'python':
+        return <FaPython size={14} className="mr-1" style={{ color: '#3776AB' }} />;
+      case 'java':
+        return <FaJava size={14} className="mr-1" style={{ color: '#ED8B00' }} />;
+      case 'c#':
+        return <TbBrandCSharp size={14} className="mr-1" style={{ color: '#239120' }} />;
+      case 'c++':
+        return <SiCplusplus size={14} className="mr-1" style={{ color: '#00599C' }} />;
+      case 'php':
+        return <FaPhp size={14} className="mr-1" style={{ color: '#777BB4' }} />;
+      case 'ruby':
+        return <DiRuby size={14} className="mr-1" style={{ color: '#CC342D' }} />;
+      case 'go':
+        return <SiGo size={14} className="mr-1" style={{ color: '#00ADD8' }} />;
+      case 'other':
+      default:
+        return <FaCode size={14} className="mr-1" style={{ color: '#718096' }} />;
+    }
+  };
+
+  // Função para obter a cor do chip da linguagem
+  const getLanguageColor = (language: string) => {
+    const lowerLang = language.toLowerCase();
+    
+    switch (lowerLang) {
+      case 'javascript': return 'warning';
+      case 'typescript': return 'primary';
+      case 'python': return 'secondary';
+      case 'java': return 'warning';
+      case 'c#': return 'success';
+      case 'c++': return 'primary';
+      case 'php': return 'secondary';
+      case 'ruby': return 'danger';
+      case 'go': return 'primary';
+      default: return 'default';
+    }
   };
 
   const handleClearFilters = () => {
@@ -250,11 +299,11 @@ const PostsPage: React.FC = () => {
               </Select>
             </div>
 
-            {/* Filtro de Linguagem */}
+            {/* Filtro de Linguagem com Ícones */}
             <div className="md:col-span-2">
               <Select
                 label="Linguagem"
-                selectedKeys={selectedLanguage ? [selectedLanguage] : ["all"]} // Default to "all"
+                selectedKeys={selectedLanguage ? [selectedLanguage] : ["all"]}
                 onChange={(e: any) => setSelectedLanguage(e.target.value)}
                 className="w-full"
                 size="sm"
@@ -268,7 +317,10 @@ const PostsPage: React.FC = () => {
                   </SelectItem>
                   {
                     allLanguages.map((lang) => (
-                      <SelectItem key={lang}>
+                      <SelectItem 
+                        key={lang}
+                        startContent={getLanguageIcon(lang)}
+                      >
                         {lang.charAt(0).toUpperCase() + lang.slice(1)}
                       </SelectItem>
                     ))}
@@ -280,7 +332,7 @@ const PostsPage: React.FC = () => {
             <div className="md:col-span-3">
               <Select
                 label="Tipo de post"
-                selectedKeys={selectedType ? [selectedType] : ["all"]} // Default to "all"
+                selectedKeys={selectedType ? [selectedType] : ["all"]}
                 onChange={(e: any) => setSelectedType(e.target.value)}
                 className="w-full"
                 size="sm"
@@ -370,7 +422,7 @@ const PostsPage: React.FC = () => {
                         <Chip
                           size="sm"
                           variant="dot"
-                          color="default"
+                          color={getLanguageColor(post.codeLenguage)}
                           startContent={getLanguageIcon(post.codeLenguage)}
                         >
                           {post.codeLenguage}
@@ -440,4 +492,3 @@ const PostsPage: React.FC = () => {
 };
 
 export default PostsPage;
-

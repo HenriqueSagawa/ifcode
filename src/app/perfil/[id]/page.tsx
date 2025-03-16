@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { addToast } from "@heroui/toast";
-import { FaArrowLeft } from "react-icons/fa";  
+import { FaArrowLeft } from "react-icons/fa";
 
 interface UserProps {
   name: string,
@@ -50,7 +50,7 @@ export default function ProfilePage() {
       try {
         setLoading(true);
 
-        const response = await fetch(`/api/profile/${id}`);
+        const response = await fetch(`/api/users/${id}`);
 
         if (!response.ok) {
           throw new Error("Erro ao carregar o perfil");
@@ -113,9 +113,9 @@ export default function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto p-4">
 
-      <Link href="/posts">
-        <Button color="default" className="my-4" onPress={() => window.history.back} ><FaArrowLeft /> Voltar</Button>
-      </Link>
+
+      <Button color="default" className="my-4" onPress={() => router.back()} ><FaArrowLeft /> Voltar</Button>
+
 
       <div className="relative">
         <img

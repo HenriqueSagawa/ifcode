@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { db } from "@/services/firebaseConnection";
 import { doc, getDoc, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where } from "firebase/firestore";
@@ -59,13 +59,14 @@ export default function PostPage() {
     const [post, setPost] = useState<PostDataProps | null>(null);
     const [comments, setComments] = useState<CommentProps[]>([]);
     const [newComment, setNewComment] = useState("");
-    const [user, setUser] = useState<any>(null); // Inicializa como null
+    const [user, setUser] = useState<any>(null);
     const [isLiked, setIsLiked] = useState(false);
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState("");
 
     const { data: session, status } = useSession();
+    const router = useRouter();
 
     const { id } = useParams();
     const dataFetched = useRef(false);
@@ -118,13 +119,20 @@ export default function PostPage() {
             setLoading(true);
             const postRef = doc(db, "posts", postId);
             const postSnap = await getDoc(postRef);
-
+    
             if (postSnap.exists()) {
                 const postData = postSnap.data() as PostDataProps;
-                setPost(postData);
+    
+                
+                const updatedPostData = {
+                    ...postData,
+                    codeLenguage: getPrismLanguage(postData.codeLenguage as string)
+                };
+    
+                setPost(updatedPostData); 
                 dataFetched.current = true;
                 fetchComments(postId);
-
+    
             } else {
                 console.warn("Post não encontrado!");
                 setPost(null);
@@ -151,13 +159,12 @@ export default function PostPage() {
 
             const commentsData = commentsSnap.docs.map(doc => {
                 const data = doc.data();
-                // Converter Timestamp para Date
                 const createdAt = data.createdAt ? (data.createdAt as Timestamp).toDate() : null;
 
                 return {
                     id: doc.id,
                     ...data,
-                    createdAt: createdAt // Usar o Date convertido
+                    createdAt: createdAt
                 };
             }) as CommentProps[];
 
@@ -187,7 +194,7 @@ export default function PostPage() {
             });
 
             setNewComment("");
-            await fetchComments(id as string); // await para garantir que os comentários sejam buscados após adicionar
+            await fetchComments(id as string);
             addToast({
                 title: "Comentário adicionado com sucesso!",
                 color: "success",
@@ -210,7 +217,7 @@ export default function PostPage() {
     };
 
     useEffect(() => {
-        if (status !== "loading") { // Garante que a sessão foi carregada antes de buscar o usuário
+        if (status !== "loading") {
             fetchUser();
         }
     }, [status, fetchUser]);
@@ -252,15 +259,44 @@ export default function PostPage() {
         );
     }
 
-    const formattedDate = post.createdAt instanceof Date
-        ? formatDistanceToNow(post.createdAt, { addSuffix: true, locale: ptBR })
+    const formattedDate = post.createdAt
+        ? (post.createdAt instanceof Timestamp
+            ? formatDistanceToNow(post.createdAt.toDate(), { addSuffix: true, locale: ptBR })
+            : (post.createdAt instanceof Date
+                ? formatDistanceToNow(post.createdAt, { addSuffix: true, locale: ptBR })
+                : "Data desconhecida"))
         : "Data desconhecida";
+
+    function getPrismLanguage(codeLanguage: string): string {
+        switch (codeLanguage) {
+            case "javascript":
+                return "javascript";
+            case "typescript":
+                return "typescript";
+            case "python":
+                return "python";
+            case "java":
+                return "java";
+            case "c#":
+                return "csharp";
+            case "c++":
+                return "cpp";
+            case "php":
+                return "php";
+            case "ruby":
+                return "ruby";
+            case "go":
+                return "go";
+            case "other":
+                return "";
+            default:
+                return "";
+        }
+    }
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
-            <Link href="/posts">
-                <Button color="default" className="my-4"><FaArrowLeft /> Voltar</Button>
-            </Link>
+            <Button color="default" className="my-4" onPress={() => router.back()}><FaArrowLeft /> Voltar</Button>
             <Card className="mb-8">
                 <CardHeader className="justify-between">
                     <div className="flex gap-3">
@@ -341,7 +377,7 @@ export default function PostPage() {
                         color="primary"
                         onPress={handleAddComment}
                         isLoading={commentLoading}
-                        isDisabled={!newComment.trim() || !user} // Garante que o usuário está carregado
+                        isDisabled={!newComment.trim() || !user}
                     >
                         Publicar comentário
                     </Button>
