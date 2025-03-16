@@ -119,20 +119,20 @@ export default function PostPage() {
             setLoading(true);
             const postRef = doc(db, "posts", postId);
             const postSnap = await getDoc(postRef);
-    
+
             if (postSnap.exists()) {
                 const postData = postSnap.data() as PostDataProps;
-    
-                
+
+
                 const updatedPostData = {
                     ...postData,
                     codeLenguage: getPrismLanguage(postData.codeLenguage as string)
                 };
-    
-                setPost(updatedPostData); 
+
+                setPost(updatedPostData);
                 dataFetched.current = true;
                 fetchComments(postId);
-    
+
             } else {
                 console.warn("Post não encontrado!");
                 setPost(null);
@@ -179,6 +179,28 @@ export default function PostPage() {
         }
     }, []);
 
+    async function createNotification(notificationData: any) {
+        try {
+            const response = await fetch("/api/notifications/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(notificationData)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Notificação criada!", data);
+            } else {
+                console.error('Erro ao criar notificação:', response.status);
+            }
+        } catch (error) {
+            console.error('Erro ao criar notificação:', error);
+            return null;
+        }
+    }
+
     const handleAddComment = async () => {
         if (!newComment.trim() || !id || !user) return;
 
@@ -195,6 +217,17 @@ export default function PostPage() {
 
             setNewComment("");
             await fetchComments(id as string);
+
+            createNotification({
+                type: "comment",
+                senderName: user.name,
+                senderId: user.id,
+                senderAvatar: user.profileImage || "",
+                receiverId: post?.id,
+                postTitle: post?.title,
+                postId: id,
+            })
+
             addToast({
                 title: "Comentário adicionado com sucesso!",
                 color: "success",

@@ -17,7 +17,7 @@ import { CreatePost } from "@/components/CreatePost";
 import Link from "next/link";
 import { EditProfile } from "@/components/EditProfile";
 import { Spinner } from "@heroui/spinner";
-
+import { NotificationDropdown } from "@/components/Notification";
 
 // Types
 type Comment = {
@@ -163,6 +163,11 @@ export default function DashboardPage() {
 
     return (
         <div className="container mx-auto py-6 px-4 lg:px-8">
+            {/* Header com notificações */}
+            <div className="flex justify-end mb-6">
+                <NotificationDropdown />
+            </div>
+            
             <div className="grid gap-6">
                 {/* User Header */}
                 <Card className="overflow-hidden bg-white shadow-md">
@@ -252,7 +257,6 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Create Post */}
-                
                 <CreatePost author={user?.name} userImage={user?.profileImage} id={user?.id} email={user?.email} />
 
                 {/* Recent Content */}
@@ -326,6 +330,6 @@ export default function DashboardPage() {
                     </Card>
                 </div>
             </div>
-        </div >
+        </div>
     );
 }
