@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BellIcon } from "lucide-react";
+import { BellIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -41,11 +41,21 @@ interface Notification {
   time: string;
 }
 
-export function NotificationDropdown(): JSX.Element {
+interface Props {
+  userId: string;
+}
+
+export function NotificationDropdown({ userId }: Props): JSX.Element {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // Número inicial de notificações a mostrar
+  const INITIAL_NOTIFICATIONS_COUNT = 4;
 
   // Função para formatar a data relativa
   const formatRelativeTime = (date: Date): string => {
@@ -67,10 +77,8 @@ export function NotificationDropdown(): JSX.Element {
       try {
         setLoading(true);
         setError(null);
-
-        // Obter ID do usuário da sessão atual
-        // Em um app real, isso viria do seu sistema de autenticação
-        const currentUserId = "dcZNOfJPbR6oFxpTH1qC"; // Use seu método de autenticação aqui
+        
+        const currentUserId = userId;
 
         const notificationsRef = collection(db, "notifications");
         const q = query(notificationsRef, where("receiverId", "==", currentUserId));
@@ -117,7 +125,8 @@ export function NotificationDropdown(): JSX.Element {
           return dateB.getTime() - dateA.getTime();
         });
 
-        setNotifications(notificationsData);
+        setAllNotifications(notificationsData);
+        setNotifications(notificationsData.slice(0, INITIAL_NOTIFICATIONS_COUNT));
         setUnreadCount(unreadCounter);
       } catch (error) {
         console.error("Erro ao buscar notificações:", error);
@@ -128,21 +137,25 @@ export function NotificationDropdown(): JSX.Element {
     };
 
     fetchNotifications();
-  }, []);
+  }, [userId]);
 
   const markAllAsRead = async (): Promise<void> => {
     try {
       // Atualizar estado localmente primeiro para UI responsiva
-      const updatedNotifications = notifications.map(notification => ({
+      const updatedAllNotifications = allNotifications.map(notification => ({
         ...notification,
         read: true
       }));
 
-      setNotifications(updatedNotifications);
+      setAllNotifications(updatedAllNotifications);
+      setNotifications(showAll 
+        ? updatedAllNotifications 
+        : updatedAllNotifications.slice(0, INITIAL_NOTIFICATIONS_COUNT)
+      );
       setUnreadCount(0);
 
       // Atualizar no Firestore
-      const promises = notifications
+      const promises = allNotifications
         .filter(notification => !notification.read)
         .map(notification =>
           updateDoc(doc(db, "notifications", notification.id), {
@@ -154,10 +167,13 @@ export function NotificationDropdown(): JSX.Element {
     } catch (error) {
       console.error("Erro ao marcar notificações como lidas:", error);
       // Reverter estado em caso de erro
-      const originalNotifications = [...notifications];
-      setNotifications(originalNotifications);
+      setAllNotifications([...allNotifications]);
+      setNotifications(showAll 
+        ? [...allNotifications] 
+        : [...allNotifications].slice(0, INITIAL_NOTIFICATIONS_COUNT)
+      );
 
-      const unreadCounter = originalNotifications.filter(n => !n.read).length;
+      const unreadCounter = allNotifications.filter(n => !n.read).length;
       setUnreadCount(unreadCounter);
 
       setError("Não foi possível marcar as notificações como lidas");
@@ -180,8 +196,20 @@ export function NotificationDropdown(): JSX.Element {
     }
   };
 
+  const toggleShowAllNotifications = (): void => {
+    setShowAll(prev => {
+      const newShowAll = !prev;
+      if (newShowAll) {
+        setNotifications(allNotifications);
+      } else {
+        setNotifications(allNotifications.slice(0, INITIAL_NOTIFICATIONS_COUNT));
+      }
+      return newShowAll;
+    });
+  };
+
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <BellIcon className="h-5 w-5" />
@@ -206,7 +234,7 @@ export function NotificationDropdown(): JSX.Element {
             </Button>
           )}
         </div>
-        <div className="max-h-80 overflow-y-auto">
+        <div className={`overflow-y-auto ${showAll ? 'max-h-96' : 'max-h-80'}`}>
           {loading ? (
             <div className="p-4 text-center text-gray-500">
               Carregando notificações...
@@ -223,14 +251,17 @@ export function NotificationDropdown(): JSX.Element {
             notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`flex items-start gap-3 p-3 hover:bg-gray-50 text-gray-600 ${!notification.read ? 'bg-blue-50' : ''}`}
+                className={`flex items-start gap-3 p-3  transition-all hover:bg-gray-50 text-gray-600 ${!notification.read ? 'bg-blue-50' : ''}`}
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={notification.senderAvatar} alt={notification.senderName} />
                   <AvatarFallback>{notification.senderName ? notification.senderName[0] : '?'}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
-                  <Link href={`/posts/${notification.postId}`}>
+                  <Link 
+                    href={`/posts/${notification.postId}`} 
+                    onClick={() => setIsOpen(false)}
+                  >
                     <p className="text-sm hover:underline">
                       <span className="font-medium">{notification.senderName}</span>{" "}
                       {formatNotificationContent(notification)}
@@ -245,15 +276,28 @@ export function NotificationDropdown(): JSX.Element {
             ))
           )}
         </div>
-        <div className="border-t p-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full text-sm text-gray-600 hover:text-gray-800"
-          >
-            Ver todas as notificações
-          </Button>
-        </div>
+        {!loading && allNotifications.length > INITIAL_NOTIFICATIONS_COUNT && (
+          <div className="border-t p-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-sm text-gray-600 hover:text-gray-800 flex items-center justify-center gap-1"
+              onClick={toggleShowAllNotifications}
+            >
+              {showAll ? (
+                <>
+                  Mostrar menos notificações
+                  <ChevronUpIcon className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Ver todas as notificações ({allNotifications.length})
+                  <ChevronDownIcon className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );

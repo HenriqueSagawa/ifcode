@@ -165,7 +165,7 @@ export default function DashboardPage() {
         <div className="container mx-auto py-6 px-4 lg:px-8">
             {/* Header com notificações */}
             <div className="flex justify-end mb-6">
-                <NotificationDropdown />
+                <NotificationDropdown userId={user?.id} />
             </div>
             
             <div className="grid gap-6">
