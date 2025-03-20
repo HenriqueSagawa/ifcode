@@ -121,15 +121,15 @@ const Navbar = ({
       items: [
         {
           title: "Perguntas e respostas",
-          description: "Get all the answers you need right here",
+          description: "Encontre soluções para seus problemas ou ajude alguém",
           icon: <FaQuestion className="size-5 shrink-0" />,
           url: "/posts",
         },
         {
           title: "Converse com IA",
-          description: "We are here to help you with any questions you have",
+          description: "Converse com nosso chatbot para encontrar ajuda",
           icon: <FaRobot className="size-5 shrink-0" />,
-          url: "#",
+          url: "/chat",
         },
       ],
     },
