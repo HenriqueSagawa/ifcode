@@ -12,12 +12,12 @@ export default function NotFound() {
   useEffect(() => {
     setMounted(true);
     
-    // Contador regressivo para redirecionamento
-    const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
     if (counter === 0) {
       window.location.href = '/';
+      return;
     }
     
+    const timer = setInterval(() => setCounter(prev => prev - 1), 1000);
     return () => clearInterval(timer);
   }, [counter]);
 
