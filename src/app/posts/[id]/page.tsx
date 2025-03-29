@@ -410,7 +410,7 @@ export default function PostPage() {
                         color="primary"
                         onPress={handleAddComment}
                         isLoading={commentLoading}
-                        isDisabled={!newComment.trim() || !user}
+                        isDisabled={!newComment.trim() || !session}
                     >
                         Publicar comentário
                     </Button>

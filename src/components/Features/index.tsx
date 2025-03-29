@@ -115,9 +115,9 @@ export const SkeletonOne = () => {
           <Image
             src="/img/fotoifcodecapa.jpg"
             alt="header"
-            width={800}
-            height={800}
-            className="h-full w-full aspect-square object-cover rounded-sm"
+            width={400}
+            height={400}
+            className="w-full h-full aspect-square object-cover rounded-sm"
           />
         </div>
       </div>

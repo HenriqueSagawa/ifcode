@@ -15,6 +15,7 @@ import { LightBulbIcon } from "../Hero/Icons";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { LinkPreview } from "../ui/link-preview";
+import Image from "next/image";
 
 
 const CardMotion = motion(Card);
@@ -67,7 +68,7 @@ export const HeroCards = () => {
         </CardContent>
 
         <CardFooter>
-          <Link href="https://gemini.google.com/app?hl=pt-BR">
+          <Link href="/chat">
             <Button className="dark:bg-zinc-50 bg-zinc-900 text-zinc-50 dark:text-zinc-900">
               Conheça
             </Button>
@@ -114,8 +115,8 @@ export const HeroCards = () => {
 
       <CardMotion animate={{ y: [10, -5, 10] }} transition={{ repeat: Infinity, duration: 5.4 }} className="absolute 2xl:scale-100 w-[270px] h-[auto] 2xl:w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[10px] bottom-[-210px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="space-y-1 flex md:flex-row justify-start items-start gap-4">
-          <div className="mt-1 invert bg-primary/20 p-1 rounded-2xl">
-            <LightBulbIcon />
+          <div className="mt-1 p-1 rounded-2xl ">
+            <Image src="/img/logo ifpr.png" alt="Logo do IFPR" width={100} height={100} />
           </div>
           <div>
             <CardTitle>O IFPR</CardTitle>

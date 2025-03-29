@@ -47,14 +47,13 @@ export async function GET(request: Request) {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Format the timestamp properly if it exists
             const createdAt = data.createdAt instanceof Date 
                 ? data.createdAt.toISOString() 
                 : data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString();
             
             posts.push({
                 id: doc.id,
-                userId: data.id, // Map from the 'id' field in Firestore
+                userId: data.id,
                 title: data.title || "",
                 content: data.content || "",
                 createdAt: createdAt,

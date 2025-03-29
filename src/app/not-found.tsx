@@ -1,4 +1,3 @@
-// app/not-found.js
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -22,7 +21,7 @@ export default function NotFound() {
   }, [counter]);
 
   return (
-    <div className="relative min-h-screen w-full bg-black flex items-center justify-center p-4 overflow-hidden">
+    <div className="relative mt-12 w-full bg-black flex  justify-center p-4 overflow-hidden">
       {/* Elementos decorativos de fundo */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
@@ -61,7 +60,7 @@ export default function NotFound() {
           {/* Texto de erro */}
           <h2 className="text-3xl font-bold text-white mb-4">Página não encontrada</h2>
           <p className="text-gray-400 text-lg mb-8">
-            O caminho que você está procurando parece ter se perdido no espaço digital.
+            O caminho que você está procurando não existe, você deve ter se perdido.
           </p>
           
           {/* Linha decorativa */}

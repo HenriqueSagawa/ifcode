@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { db } from "@/services/firebaseConnection";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
 import { UserData } from "@/types/userData";
 
 // UI Components
@@ -18,6 +18,8 @@ import Link from "next/link";
 import { EditProfile } from "@/components/EditProfile";
 import { Spinner } from "@heroui/spinner";
 import { NotificationDropdown } from "@/components/Notification";
+
+import { PostsProps } from "@/types/posts";
 
 // Types
 type Comment = {
@@ -41,6 +43,7 @@ export default function DashboardPage() {
     const [postType, setPostType] = useState("article");
     const [recentCommentsCurrentPage, setRecentCommentsCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [posts, setPosts] = useState<PostsProps[]>([]);
 
     const stats = [
         {
@@ -64,7 +67,7 @@ export default function DashboardPage() {
     ];
 
     const allComments: Comment[] = [
-        
+
     ];
 
     const commentsPerPage = 3;
@@ -98,10 +101,27 @@ export default function DashboardPage() {
                     const userData = doc.data() as UserData;
                     const { id, ...rest } = userData;
                     setUser({ id: doc.id, ...rest });
-                    dataFetched.current = true; // Define como true após o primeiro carregamento
+                    dataFetched.current = true;
+
+
+                    const postsRef = collection(db, "posts");
+                    const postsQuery = query(
+                        postsRef,
+                        orderBy("createdAt", "desc"),
+                    );
+                    const postsSnapshot = await getDocs(postsQuery);
+                    const postsData = postsSnapshot.docs.map(doc => ({
+                        postId: doc.id,
+                        ...doc.data()
+                    })) as PostsProps[];
+
+
+                    const filteredPosts = postsData.filter(post => post.id === doc.id);
+                    setPosts(filteredPosts);
                 } else {
                     return null;
                 }
+
             } catch (error) {
                 console.error("Error fetching data:", error);
                 return null;
@@ -111,8 +131,9 @@ export default function DashboardPage() {
         }
 
         fetchData();
+
     }, [session, status, router]);
-    
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -121,42 +142,51 @@ export default function DashboardPage() {
         )
     }
 
+    const formatDate = (timestamp: any): string => {
+        if (!timestamp) return "Data desconhecida";
+
+        try {
+
+            if (timestamp && typeof timestamp === 'object' && 'seconds' in timestamp) {
+
+                const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+
+            else if (typeof timestamp === 'string') {
+                const date = new Date(timestamp);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+            return "Formato de data inválido";
+        } catch (error) {
+            console.error("Erro ao formatar a data:", error);
+            return "Data inválida";
+        }
+    };
+
+
     const handleShareProfile = () => {
         navigator.clipboard.writeText(`https://ifcode.com.br/perfil/${user?.id}`);
         addToast({
             title: "Url do Perfil",
             description: "Url do perfil copiado com sucesso!",
             color: "success"
-          });
-    };
-
-    const handleCreatePostSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log({
-            title: postTitle,
-            content: postContent,
-            type: postType
         });
-        setPostTitle("");
-        setPostContent("");
     };
 
-    const goToNextPage = () => setRecentCommentsCurrentPage(prev => Math.min(prev + 1, totalPages));
-    const goToPrevPage = () => setRecentCommentsCurrentPage(prev => Math.max(prev - 1, 1));
-
-    const formatDate = (dateString: string | undefined): string => {
-        if (!dateString) return "Data desconhecida";
-
-        try {
-            const date = new Date(dateString);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses são de 0 a 11
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        } catch (error) {
-            console.error("Erro ao formatar a data:", error);
-            return "Data inválida";
-        }
+    const handlePostNavigation = (postId: string) => {
+        addToast({
+            title: "Navegando para o post",
+            description: "Redirecionando para o conteúdo completo...",
+            color: "warning"
+        });
+        router.push(`/posts/${postId}`);
     };
 
     const skillColors = ["bg-red-200", "bg-blue-200", "bg-green-200", "bg-yellow-200", "bg-purple-200", "bg-pink-200"];
@@ -167,7 +197,7 @@ export default function DashboardPage() {
             <div className="flex justify-end mb-6">
                 <NotificationDropdown userId={user?.id} />
             </div>
-            
+
             <div className="grid gap-6">
                 {/* User Header */}
                 <Card className="overflow-hidden bg-white shadow-md">
@@ -259,73 +289,67 @@ export default function DashboardPage() {
                 {/* Create Post */}
                 <CreatePost author={user?.name} userImage={user?.profileImage} id={user?.id} email={user?.email} />
 
-                {/* Recent Content */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Recent Posts (Placeholder) */}
-                    <Card className="h-full">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-xl font-semibold">Posts Recentes</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>Conteúdo de posts recentes...</p>
-                        </CardContent>
-                    </Card>
 
-                    {/* Recent Comments */}
-                    <Card className="h-full">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-xl font-semibold">Últimos Comentários</CardTitle>
+                {/* Posts Recentes */}
+                <div className="mt-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2">
+                                <PenSquare className="h-5 w-5" />
+                                Posts Recentes
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {currentComments.map(comment => (
-                                    <div key={comment.id} className="rounded-lg border p-4">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <Link href={`/posts/${comment.postId}`} className="text-sm font-medium text-primary hover:underline">
-                                                {comment.postTitle}
-                                            </Link>
-                                            <div className="flex items-center text-xs text-gray-500">
-                                                <Calendar className="h-3 w-3 mr-1" />
-                                                {comment.date}
+                                {posts.length === 0 ? (
+                                    <div className="text-center py-8">
+                                        <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                                        <p className="text-muted-foreground text-lg font-medium">Nenhum post encontrado</p>
+                                        <p className="text-gray-500 mt-2">Comece a compartilhar seu conhecimento criando um novo post!</p>
+                                    </div>
+                                ) : (
+                                    posts.map((post) => (
+                                        <div
+                                            key={post.id}
+                                            onClick={() => post?.postId && handlePostNavigation(post.postId)}
+                                            className="flex items-start space-x-4 p-4 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-200"
+                                        >
+                                            <Avatar>
+                                                <AvatarImage src={user?.profileImage} />
+                                                <AvatarFallback>{user?.name?.charAt(0)}{user?.lastName?.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex-1 space-y-1">
+                                                <h3 className="font-semibold">{post.title}</h3>
+                                                <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
+                                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                                    <span className="flex items-center gap-1">
+                                                        <Calendar className="h-3 w-3" />
+                                                        {formatDate(post.createdAt)}
+                                                    </span>
+                                                    <span className="flex items-center gap-1">
+                                                        <MessageSquare className="h-3 w-3" />
+                                                        comentários
+                                                    </span>
+                                                    <span className="flex items-center gap-1">
+                                                        <ThumbsUp className="h-3 w-3" />
+                                                         curtidas
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{comment.content}</p>
-
-                                        <div className="flex items-center mt-2">
-                                            <Avatar className="h-6 w-6 mr-2">
-                                                <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
-                                                <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <span className="text-xs font-medium">{comment.author.name}</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </div>
-
-                            <div className="flex items-center justify-between mt-4">
-                                <p className="text-sm text-gray-500">
-                                    Página {recentCommentsCurrentPage} de {totalPages}
-                                </p>
-                                <div className="flex space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={goToPrevPage}
-                                        disabled={recentCommentsCurrentPage === 1}
-                                    >
-                                        <ChevronLeft className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={goToNextPage}
-                                        disabled={recentCommentsCurrentPage === totalPages}
-                                    >
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Button>
+                            {posts.length > 0 && (
+                                <div className="mt-4 flex justify-center">
+                                    <Link href="/posts">
+                                        <Button variant="outline" size="sm" className="flex items-center gap-1">
+                                            <ChevronRight className="h-4 w-4" />
+                                            Ver todos os posts
+                                        </Button>
+                                    </Link>
                                 </div>
-                            </div>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

@@ -39,12 +39,8 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col py-4 mx-auto overflow-x-hidden`}>
 
 
-
         <Providers>
-
-
           <Navbar />
-
 
           <div className="grow">
             {children}

@@ -12,4 +12,5 @@ export interface PostsProps {
     author: string,
     authorImage?: string | null
     likes: number,
+    postId?: string,
 }

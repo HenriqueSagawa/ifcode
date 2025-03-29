@@ -59,11 +59,15 @@ export function CardFeature() {
     },
   ];
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-10 my-32 max-w-7xl mx-auto">
-      {features.map((feature, index) => (
-        <Feature key={feature.title} {...feature} index={index} />
-      ))}
+    <div>
+      <h1 className="md:text-7xl sm:text-5xl text-3xl text-center font-bold">Sobre a plataforma</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-10 mt-12 mb-32 max-w-7xl mx-auto">
+        {features.map((feature, index) => (
+          <Feature key={feature.title} {...feature} index={index} />
+        ))}
+      </div>
     </div>
+
   );
 }
 
