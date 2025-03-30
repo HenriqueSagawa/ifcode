@@ -9,21 +9,20 @@ export async function POST(request: Request) {
 
         const postsRef = collection(db, "posts");
 
-        // Create the post object with the correct field structure
         const newPost = {
             title: body.title,
             content: body.content,
-            createdAt: new Date(), // This will be stored as a Firestore timestamp
+            createdAt: new Date(), 
             codeContent: body.codeContent || "",
             codeLenguage: body.codeLenguage || "",
-            type: body.type, // Make sure this matches the SelectItem values in your form
+            type: body.type,
             images: body.images || [],
-            id: body.idUser, // Note: this becomes userId in GET response
+            id: body.idUser,
             email: body.emailUser,
             author: body.author,
             likes: 0,
             userImage: body.userImage || "",
-            authorImage: body.userImage || "", // Add this to match the GET response structure
+            authorImage: body.userImage || "",
         }
 
         const docRef = await addDoc(postsRef, newPost);
@@ -65,6 +64,7 @@ export async function GET(request: Request) {
                 author: data.author || "",
                 authorImage: data.authorImage || data.userImage || "",
                 likes: data.likes || 0,
+                comments: []
             });
         });
 
