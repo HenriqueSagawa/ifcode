@@ -60,7 +60,6 @@ export default function PostPage() {
     const [comments, setComments] = useState<CommentProps[]>([]);
     const [newComment, setNewComment] = useState("");
     const [user, setUser] = useState<any>(null);
-    const [isLiked, setIsLiked] = useState(false);
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState("");
@@ -245,10 +244,6 @@ export default function PostPage() {
         }
     };
 
-    const handleLike = () => {
-        setIsLiked(!isLiked);
-    };
-
     useEffect(() => {
         if (status !== "loading") {
             fetchUser();
@@ -380,14 +375,6 @@ export default function PostPage() {
                 </CardBody>
 
                 <CardFooter className="flex justify-between">
-                    <Button
-                        color={isLiked ? "danger" : "default"}
-                        variant="light"
-                        startContent={<Heart fill={isLiked ? "currentColor" : "none"} />}
-                        onPress={handleLike}
-                    >
-                        {post.likes + (isLiked ? 1 : 0)}
-                    </Button>
                     <Button color="default" onPress={handleShareProfile}><FaRegShareSquare /> Compartilhar post</Button>
                     <Button color="primary" variant="light">
                         {comments.length} comentários

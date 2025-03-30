@@ -18,10 +18,10 @@ import { SiTypescript, SiCplusplus, SiGo } from "react-icons/si";
 import { TbBrandCSharp } from "react-icons/tb";
 import { Avatar } from '@heroui/avatar';
 import { Checkbox } from '@heroui/checkbox';
-import { PostsProps } from '@/types/posts';
 import { HeartIcon } from '@/components/HeartIcon';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { LikeButton } from '@/components/LikeButton';
 
 
 enum SortOption {
@@ -34,6 +34,22 @@ enum SortOption {
   MOST_LIKED = 'most_liked'
 }
 
+interface PostsProps {
+    id: string;
+    title: string;
+    content: string;
+    createdAt: string;
+    codeLenguage?: string | null;
+    codeContent?: string | null;
+    userId: string;
+    email: string;
+    images?: string[] | null;
+    likes: string[];
+    comments: any[];
+    author?: string;
+    type?: string;
+    authorImage?: string;
+}
 
 const PostsPage: React.FC = () => {
   const [posts, setPosts] = useState<PostsProps[]>([]);
@@ -83,7 +99,7 @@ const PostsPage: React.FC = () => {
         post =>
           post.title.toLowerCase().includes(query) ||
           post.content.toLowerCase().includes(query) ||
-          post.author.toLowerCase().includes(query) ||
+          post.author?.toLowerCase().includes(query) ||
           (post.codeLenguage && post.codeLenguage.toLowerCase().includes(query))
       );
     }
@@ -115,13 +131,21 @@ const PostsPage: React.FC = () => {
         result.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         break;
       case SortOption.AUTHOR_ASC:
-        result.sort((a, b) => a.author.localeCompare(b.author));
+        result.sort((a, b) => {
+          const authorA = a.author || a.title;
+          const authorB = b.author || b.title;
+          return authorA.localeCompare(authorB);
+        });
         break;
       case SortOption.AUTHOR_DESC:
-        result.sort((a, b) => b.author.localeCompare(a.author));
+        result.sort((a, b) => {
+          const authorA = a.author || a.title;
+          const authorB = b.author || b.title;
+          return authorB.localeCompare(authorA);
+        });
         break;
       case SortOption.MOST_LIKED:
-        result.sort((a, b) => b.likes - a.likes);
+        result.sort((a, b) => b.likes.length - a.likes.length);
         break;
     }
 
@@ -146,7 +170,7 @@ const PostsPage: React.FC = () => {
   };
 
   const getPostTypeColor = (type: string) => {
-    const lowerType = type.toLowerCase();
+    const lowerType = type?.toLowerCase() || '';
 
     switch (lowerType) {
       case 'tutorial': return 'success';
@@ -160,7 +184,7 @@ const PostsPage: React.FC = () => {
 
   // Função para obter o ícone da linguagem com a cor correspondente
   const getLanguageIcon = (language: string) => {
-    const lowerLang = language.toLowerCase();
+    const lowerLang = language?.toLowerCase() || '';
     
     switch (lowerLang) {
       case 'javascript':
@@ -189,7 +213,7 @@ const PostsPage: React.FC = () => {
 
   // Função para obter a cor do chip da linguagem
   const getLanguageColor = (language: string) => {
-    const lowerLang = language.toLowerCase();
+    const lowerLang = language?.toLowerCase() || '';
     
     switch (lowerLang) {
       case 'javascript': return 'warning';
@@ -398,7 +422,7 @@ const PostsPage: React.FC = () => {
                   <div className="flex flex-col flex-grow">
                     <Chip
                       size="sm"
-                      color={getPostTypeColor(post.type)}
+                      color={getPostTypeColor(post.type || '')}
                       variant="flat"
                       className="self-start mb-1"
                     >
@@ -430,9 +454,16 @@ const PostsPage: React.FC = () => {
                       )}
                     </div>
                     <div className="flex items-center gap-1 text-gray-500">
-                      <Checkbox className='!m-0' icon={<HeartIcon />} >
-                        {post.likes}
-                      </Checkbox>
+                      <LikeButton 
+                        postId={post.id}
+                        userId={session?.user?.email || ''}
+                        initialLikes={Array.isArray(post.likes) ? post.likes : []}
+                        onLikeChange={(newLikes) => {
+                          setPosts(posts.map(p => 
+                            p.id === post.id ? { ...p, likes: newLikes } : p
+                          ));
+                        }}
+                      />
                     </div>
                   </div>
                 </CardBody>
