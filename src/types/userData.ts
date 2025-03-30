@@ -9,6 +9,7 @@ export interface UserData {
     github?: string;
     phone?: string;
     profileImage?: string;
+    bannerImage?: string;
     fullData?: any;
     skills?: string[];
   }

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { db } from "@/services/firebaseConnection";
 import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
 import { UserData } from "@/types/userData";
+import { PostsProps } from "@/types/posts";
 
-// UI Components
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { addToast } from "@heroui/toast";
 import { Button } from "@/components/ui/button";
@@ -19,9 +19,6 @@ import { EditProfile } from "@/components/EditProfile";
 import { Spinner } from "@heroui/spinner";
 import { NotificationDropdown } from "@/components/Notification";
 
-import { PostsProps } from "@/types/posts";
-
-// Types
 type Comment = {
     id: string;
     postId: string;
@@ -34,49 +31,46 @@ type Comment = {
     date: string;
 };
 
+const SKILL_COLORS = ["bg-red-200", "bg-blue-200", "bg-green-200", "bg-yellow-200", "bg-purple-200", "bg-pink-200"];
+const COMMENTS_PER_PAGE = 3;
+
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [user, setUser] = useState<any>();
-    const [postTitle, setPostTitle] = useState("");
-    const [postContent, setPostContent] = useState("");
-    const [postType, setPostType] = useState("article");
-    const [recentCommentsCurrentPage, setRecentCommentsCurrentPage] = useState(1);
+    const [user, setUser] = useState<UserData | null>(null);
     const [loading, setLoading] = useState(false);
     const [posts, setPosts] = useState<PostsProps[]>([]);
+    const [recentCommentsCurrentPage, setRecentCommentsCurrentPage] = useState(1);
+    const dataFetched = useRef(false);
 
-    const stats = [
+    const stats = useMemo(() => [
         {
             title: "Total de Posts",
-            value: 147,
+            value: posts.length,
             icon: <PenSquare className="h-5 w-5 text-primary" />,
             trend: { value: 12.4, positive: true }
         },
         {
             title: "Comentários",
-            value: 842,
+            value: posts.reduce((acc, post) => acc + (post.comments?.length || 0), 0),
             icon: <MessageSquare className="h-5 w-5 text-primary" />,
             trend: { value: 8.2, positive: true }
         },
         {
             title: "Curtidas Recebidas",
-            value: 3254,
+            value: posts.reduce((acc, post) => acc + (Array.isArray(post.likes) ? post.likes.length : 0), 0),
             icon: <ThumbsUp className="h-5 w-5 text-primary" />,
             trend: { value: 24.1, positive: true }
         }
-    ];
+    ], [posts]);
 
-    const allComments: Comment[] = [
-
-    ];
-
-    const commentsPerPage = 3;
-    const indexOfLastComment = recentCommentsCurrentPage * commentsPerPage;
-    const indexOfFirstComment = indexOfLastComment - commentsPerPage;
-    const currentComments = allComments.slice(indexOfFirstComment, indexOfLastComment);
-    const totalPages = Math.ceil(allComments.length / commentsPerPage);
-
-    const dataFetched = useRef(false);
+    const pagination = useMemo(() => {
+        const indexOfLastComment = recentCommentsCurrentPage * COMMENTS_PER_PAGE;
+        const indexOfFirstComment = indexOfLastComment - COMMENTS_PER_PAGE;
+        const currentComments = posts.slice(indexOfFirstComment, indexOfLastComment);
+        const totalPages = Math.ceil(posts.length / COMMENTS_PER_PAGE);
+        return { currentComments, totalPages };
+    }, [posts, recentCommentsCurrentPage]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -84,10 +78,7 @@ export default function DashboardPage() {
             return;
         }
 
-        if (dataFetched.current) {
-            console.log("Dados já carregados, saindo do useEffect.");
-            return;
-        }
+        if (dataFetched.current) return;
 
         async function fetchData() {
             try {
@@ -97,82 +88,53 @@ export default function DashboardPage() {
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
-                    const doc = querySnapshot.docs[0];
-                    const userData = doc.data() as UserData;
-                    const { id, ...rest } = userData;
-                    setUser({ id: doc.id, ...rest });
-                    dataFetched.current = true;
-
+                    const docSnapshot = querySnapshot.docs[0];
+                    const userData = docSnapshot.data() as UserData;
+                    setUser({ 
+                        ...userData,
+                        id: docSnapshot.id
+                    });
 
                     const postsRef = collection(db, "posts");
-                    const postsQuery = query(
-                        postsRef,
-                        orderBy("createdAt", "desc"),
-                    );
+                    const postsQuery = query(postsRef, orderBy("createdAt", "desc"), limit(5));
                     const postsSnapshot = await getDocs(postsQuery);
                     const postsData = postsSnapshot.docs.map(doc => ({
                         postId: doc.id,
                         ...doc.data()
                     })) as PostsProps[];
-
-
-                    const filteredPosts = postsData.filter(post => post.id === doc.id);
-                    setPosts(filteredPosts);
-                } else {
-                    return null;
+                    setPosts(postsData);
                 }
-
             } catch (error) {
                 console.error("Error fetching data:", error);
-                return null;
             } finally {
                 setLoading(false);
+                dataFetched.current = true;
             }
         }
 
         fetchData();
-
     }, [session, status, router]);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Spinner color="success" label="Seja paciente! Não quebre o monitor" size="lg" />
-            </div>
-        )
-    }
-
-    const formatDate = (timestamp: any): string => {
+    const formatDate = useMemo(() => (timestamp: any): string => {
         if (!timestamp) return "Data desconhecida";
 
         try {
-
             if (timestamp && typeof timestamp === 'object' && 'seconds' in timestamp) {
-
                 const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
-            }
-
-            else if (typeof timestamp === 'string') {
-                const date = new Date(timestamp);
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
+                return date.toLocaleDateString('pt-BR');
+            } else if (typeof timestamp === 'string') {
+                return new Date(timestamp).toLocaleDateString('pt-BR');
             }
             return "Formato de data inválido";
         } catch (error) {
             console.error("Erro ao formatar a data:", error);
             return "Data inválida";
         }
-    };
-
+    }, []);
 
     const handleShareProfile = () => {
-        navigator.clipboard.writeText(`https://ifcode.com.br/perfil/${user?.id}`);
+        if (!user?.id) return;
+        navigator.clipboard.writeText(`https://ifcode.com.br/perfil/${user.id}`);
         addToast({
             title: "Url do Perfil",
             description: "Url do perfil copiado com sucesso!",
@@ -189,19 +151,64 @@ export default function DashboardPage() {
         router.push(`/posts/${postId}`);
     };
 
-    const skillColors = ["bg-red-200", "bg-blue-200", "bg-green-200", "bg-yellow-200", "bg-purple-200", "bg-pink-200"];
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Spinner color="success" label="Seja paciente! Não quebre o monitor" size="lg" />
+            </div>
+        );
+    }
+
+    const UserInfo = () => (
+        <div className="flex flex-wrap gap-4 mt-4">
+            {user?.github ? (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <GithubIcon className="h-4 w-4" />
+                    {user.github}
+                </div>
+            ) : (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <GithubIcon className="h-4 w-4" />
+                    Não disponível
+                </div>
+            )}
+            {user?.phone ? (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <PhoneIcon className="h-4 w-4" />
+                    {user.phone}
+                </div>
+            ) : (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <PhoneIcon className="h-4 w-4" />
+                    Não disponível
+                </div>
+            )}
+        </div>
+    );
+
+    const UserSkills = () => (
+        user?.skills && user.skills.length > 0 && (
+            <div className="mt-4">
+                <h3 className="text-lg font-semibold">Habilidades</h3>
+                <div className="flex flex-wrap gap-2 mt-2">
+                    {user.skills.map((skill: string, index: number) => (
+                        <span key={index} className={`text-zinc-800 px-3 py-1 ${SKILL_COLORS[index % SKILL_COLORS.length]} text-sm rounded-full`}>
+                            {skill}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        )
+    );
 
     return (
         <div className="container mx-auto py-6 px-4 lg:px-8">
-            {/* Header com notificações */}
             <div className="flex justify-end mb-6">
-                <NotificationDropdown userId={user?.id} />
+                <NotificationDropdown userId={user?.id || ""} />
             </div>
 
             <div className="grid gap-6">
-                {/* User Header */}
                 <Card className="overflow-hidden bg-white shadow-md">
-                    {/* Banner do usuário */}
                     <div className="h-48 w-full bg-cover bg-center" style={{ backgroundImage: `url(${user?.bannerImage || '/default-banner.jpg'})` }}></div>
 
                     <CardContent className="p-6 relative">
@@ -224,46 +231,11 @@ export default function DashboardPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <p className="text-sm text-gray-700">{user?.bio ? user?.bio : "Não disponível"}</p>
-                                    <div className="flex flex-wrap gap-4 mt-4">
-                                        {user?.github ? (
-                                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                <GithubIcon className="h-4 w-4" />
-                                                {user?.github}
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                <GithubIcon className="h-4 w-4" />
-                                                Não disponível
-                                            </div>
-                                        )}
-                                        {user?.phone ? (
-                                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                <PhoneIcon className="h-4 w-4" />
-                                                {user?.phone}
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                <PhoneIcon className="h-4 w-4" />
-                                                Não disponível
-                                            </div>
-                                        )}
-                                    </div>
+                                    <p className="text-sm text-gray-700">{user?.bio || "Não disponível"}</p>
+                                    <UserInfo />
                                 </div>
 
-                                {/* Habilidades */}
-                                {user?.skills && user.skills.length > 0 && (
-                                    <div className="mt-4">
-                                        <h3 className="text-lg font-semibold">Habilidades</h3>
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {user.skills.map((skill: string, index: number) => (
-                                                <span key={index} className={`text-zinc-800 px-3 py-1 ${skillColors[index % skillColors.length]} text-sm rounded-full`}>
-                                                    {skill}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                <UserSkills />
                             </div>
 
                             <div className="flex gap-2 mt-4 md:mt-0 md:self-start">
@@ -286,73 +258,77 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
 
-                {/* Create Post */}
-                <CreatePost author={user?.name} userImage={user?.profileImage} id={user?.id} email={user?.email} />
+                <CreatePost 
+                  author={user?.name || ""} 
+                  userImage={user?.profileImage || ""} 
+                  id={user?.id || ""} 
+                  email={user?.email || ""} 
+                />
 
-
-                {/* Posts Recentes */}
-                <div className="mt-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-xl font-bold flex items-center gap-2">
-                                <PenSquare className="h-5 w-5" />
-                                Posts Recentes
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {posts.length === 0 ? (
-                                    <div className="text-center py-8">
-                                        <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                                        <p className="text-muted-foreground text-lg font-medium">Nenhum post encontrado</p>
-                                        <p className="text-gray-500 mt-2">Comece a compartilhar seu conhecimento criando um novo post!</p>
-                                    </div>
-                                ) : (
-                                    posts.map((post) => (
-                                        <div
-                                            key={post.id}
-                                            onClick={() => post?.postId && handlePostNavigation(post.postId)}
-                                            className="flex items-start space-x-4 p-4 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-200"
-                                        >
-                                            <Avatar>
-                                                <AvatarImage src={user?.profileImage} />
-                                                <AvatarFallback>{user?.name?.charAt(0)}{user?.lastName?.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex-1 space-y-1">
-                                                <h3 className="font-semibold">{post.title}</h3>
-                                                <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
-                                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                                    <span className="flex items-center gap-1">
-                                                        <Calendar className="h-3 w-3" />
-                                                        {formatDate(post.createdAt)}
-                                                    </span>
-                                                    <span className="flex items-center gap-1">
-                                                        <MessageSquare className="h-3 w-3" />
-                                                        comentários
-                                                    </span>
-                                                    <span className="flex items-center gap-1">
-                                                        <ThumbsUp className="h-3 w-3" />
-                                                         curtidas
-                                                    </span>
-                                                </div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-xl font-bold flex items-center gap-2">
+                            <PenSquare className="h-5 w-5" />
+                            Posts Recentes
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {posts.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                                    <p className="text-muted-foreground text-lg font-medium">Nenhum post encontrado</p>
+                                    <p className="text-gray-500 mt-2">Comece a compartilhar seu conhecimento criando um novo post!</p>
+                                </div>
+                            ) : (
+                                posts.map((post) => (
+                                    <div
+                                        key={post.postId}
+                                        onClick={() => post?.postId && handlePostNavigation(post.postId)}
+                                        className="flex items-start space-x-4 p-4 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-200"
+                                    >
+                                        <Avatar>
+                                            <AvatarImage src={user?.profileImage} />
+                                            <AvatarFallback>{user?.name?.charAt(0)}{user?.lastName?.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1 space-y-1">
+                                            <h3 className="font-semibold">{post.title}</h3>
+                                            <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
+                                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                                <span className="flex items-center gap-1">
+                                                    <Calendar className="h-3 w-3" />
+                                                    {formatDate(post.createdAt)}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <MessageSquare className="h-3 w-3" />
+                                                    {post.comments?.length || 0} comentários
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <ThumbsUp className="h-3 w-3" />
+                                                    {typeof post.likes === 'number' 
+                                                        ? post.likes 
+                                                        : Array.isArray(post.likes) 
+                                                            ? post.likes
+                                                            : 0} curtidas
+                                                </span>
                                             </div>
                                         </div>
-                                    ))
-                                )}
-                            </div>
-                            {posts.length > 0 && (
-                                <div className="mt-4 flex justify-center">
-                                    <Link href="/posts">
-                                        <Button variant="outline" size="sm" className="flex items-center gap-1">
-                                            <ChevronRight className="h-4 w-4" />
-                                            Ver todos os posts
-                                        </Button>
-                                    </Link>
-                                </div>
+                                    </div>
+                                ))
                             )}
-                        </CardContent>
-                    </Card>
-                </div>
+                        </div>
+                        {posts.length > 0 && (
+                            <div className="mt-4 flex justify-center">
+                                <Link href="/posts">
+                                    <Button variant="outline" size="sm" className="flex items-center gap-1">
+                                        <ChevronRight className="h-4 w-4" />
+                                        Ver todos os posts
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
