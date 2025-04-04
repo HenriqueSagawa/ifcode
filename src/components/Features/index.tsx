@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import YoutubeIfcode from "../../../public/img/capa if code vídeo.jpg"
-import { useSpring } from '@react-spring/web';
+import { useSpring } from 'react-spring';
 
 export function Feature() {
   const features = [
@@ -230,108 +230,131 @@ export const SkeletonTwo = () => {
 
 export const SkeletonFour = () => {
   return (
-    <div className="h-60 md:h-60  flex flex-col items-center relative bg-transparent dark:bg-transparent mt-10">
-      <Globe className="absolute -right-10 md:-right-10 -bottom-80 md:-bottom-72" />
+    <div className="h-[600px] w-full flex flex-col items-center justify-center relative bg-transparent dark:bg-transparent">
+      <Globe className="absolute transform scale-90 md:scale-125" />
     </div>
   );
 };
 
 export const Globe = ({ className }: { className?: string }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0 });
-  const [autoRotate, setAutoRotate] = useState(true);
-  
-  // Usando React Spring para suavizar o movimento
-  const [{ phi }, api] = useSpring(() => ({ 
-    phi: 0,
-    config: { mass: 1, tension: 280, friction: 60 }
+  const pointerInteracting = useRef<number | null>(null);
+  const pointerInteractionMovement = useRef(0);
+  const [{ r }, api] = useSpring(() => ({
+    r: 0,
+    config: {
+      mass: 1,
+      tension: 280,
+      friction: 40,
+      precision: 0.001,
+    },
   }));
 
   useEffect(() => {
+    let phi = 0;
+    let width = 0;
+    
+    const onResize = () => canvasRef.current && (width = canvasRef.current.offsetWidth);
+    window.addEventListener('resize', onResize);
+    onResize();
+    
     if (!canvasRef.current) return;
-
+    
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: 2,
-      width: 600 * 2,
-      height: 600 * 2,
+      width: width * 2,
+      height: width * 2,
       phi: 0,
-      theta: 0,
+      theta: 0.3,
       dark: 1,
-      diffuse: 1.2,
+      diffuse: 3,
       mapSamples: 16000,
-      mapBrightness: 6,
-      baseColor: [0.3, 0.3, 0.3],
-      markerColor: [0.1, 0.8, 1],
-      glowColor: [1, 1, 1],
+      mapBrightness: 1.2,
+      baseColor: [1, 1, 1],
+      markerColor: [251 / 255, 100 / 255, 21 / 255],
+      glowColor: [1.2, 1.2, 1.2],
       markers: [
         // longitude latitude
         { location: [ -22.5120468, -58.4054826], size: 0.1 },
       ],
       onRender: (state: any) => {
-        // Atualiza a rotação automática quando não estiver arrastando
-        if (autoRotate && !isDragging) {
-          state.phi = phi.get();
-        } else {
-          state.phi = phi.get();
+        if (!pointerInteracting.current) {
+          phi += 0.005;
         }
-      },
+        state.phi = phi + r.get();
+        state.width = width * 2;
+        state.height = width * 2;
+      }
     });
-
-    // Função para lidar com o início do arrasto
-    const handleMouseDown = (e: MouseEvent) => {
-      setIsDragging(true);
-      setAutoRotate(false);
-      setDragStart({ x: e.clientX });
-    };
-
-    // Função para lidar com o movimento do mouse durante o arrasto
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      
-      const dx = e.clientX - dragStart.x;
-      api.start({ phi: phi.get() + dx * 0.009 }); // Mantive a sensibilidade aumentada
-      setDragStart({ x: e.clientX });
-    };
-
-    // Função para lidar com o fim do arrasto
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      // Reativa a rotação automática após um curto período
-      setTimeout(() => {
-        setAutoRotate(true);
-      }, 3000);
-    };
-
-    // Adiciona os event listeners
-    canvasRef.current.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-
-    // Inicia a rotação automática
-    const autoRotateInterval = setInterval(() => {
-      if (autoRotate && !isDragging) {
-        api.start({ phi: phi.get() + 0.01 });
-      }
-    }, 16); // Aproximadamente 60fps
-
-    return () => {
-      // Remove os event listeners
+    
+    setTimeout(() => {
       if (canvasRef.current) {
-        canvasRef.current.removeEventListener('mousedown', handleMouseDown);
+        canvasRef.current.style.opacity = '1';
       }
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      clearInterval(autoRotateInterval);
+    });
+    
+    return () => {
       globe.destroy();
+      window.removeEventListener('resize', onResize);
     };
-  }, [autoRotate, isDragging, api, phi]);
+  }, [r]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1, cursor: isDragging ? 'grabbing' : 'grab' }}
-      className={className}
-    />
+    <div style={{
+      width: '600px',
+      maxWidth: '100%',
+      aspectRatio: 1,
+      margin: 'auto',
+      position: 'relative',
+    }}>
+      <canvas
+        ref={canvasRef}
+        onPointerDown={(e) => {
+          pointerInteracting.current = e.clientX - pointerInteractionMovement.current;
+          if (canvasRef.current) {
+            canvasRef.current.style.cursor = 'grabbing';
+          }
+        }}
+        onPointerUp={() => {
+          pointerInteracting.current = null;
+          if (canvasRef.current) {
+            canvasRef.current.style.cursor = 'grab';
+          }
+        }}
+        onPointerOut={() => {
+          pointerInteracting.current = null;
+          if (canvasRef.current) {
+            canvasRef.current.style.cursor = 'grab';
+          }
+        }}
+        onMouseMove={(e) => {
+          if (pointerInteracting.current !== null) {
+            const delta = e.clientX - pointerInteracting.current;
+            pointerInteractionMovement.current = delta;
+            api.start({
+              r: delta / 200,
+            });
+          }
+        }}
+        onTouchMove={(e) => {
+          if (pointerInteracting.current !== null && e.touches[0]) {
+            const delta = e.touches[0].clientX - pointerInteracting.current;
+            pointerInteractionMovement.current = delta;
+            api.start({
+              r: delta / 100,
+            });
+          }
+        }}
+        style={{
+          width: '100%',
+          height: '100%',
+          cursor: 'grab',
+          contain: 'layout paint size',
+          opacity: 0,
+          transition: 'opacity 1s ease',
+        }}
+        className={className}
+      />
+    </div>
   );
 };
