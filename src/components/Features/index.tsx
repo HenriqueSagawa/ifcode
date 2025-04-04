@@ -4,11 +4,12 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import createGlobe from "cobe";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import YoutubeIfcode from "../../../public/img/capa if code vídeo.jpg"
+import { useSpring } from '@react-spring/web';
 
 export function Feature() {
   const features = [
@@ -237,10 +238,17 @@ export const SkeletonFour = () => {
 
 export const Globe = ({ className }: { className?: string }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0 });
+  const [autoRotate, setAutoRotate] = useState(true);
+  
+  // Usando React Spring para suavizar o movimento
+  const [{ phi }, api] = useSpring(() => ({ 
+    phi: 0,
+    config: { mass: 1, tension: 280, friction: 60 }
+  }));
 
   useEffect(() => {
-    let phi = 0;
-
     if (!canvasRef.current) return;
 
     const globe = createGlobe(canvasRef.current, {
@@ -261,22 +269,68 @@ export const Globe = ({ className }: { className?: string }) => {
         { location: [ -22.5120468, -58.4054826], size: 0.1 },
       ],
       onRender: (state: any) => {
-        // Called on every animation frame.
-        // `state` will be an empty object, return updated params.
-        state.phi = phi;
-        phi += 0.01;
+        // Atualiza a rotação automática quando não estiver arrastando
+        if (autoRotate && !isDragging) {
+          state.phi = phi.get();
+        } else {
+          state.phi = phi.get();
+        }
       },
     });
 
+    // Função para lidar com o início do arrasto
+    const handleMouseDown = (e: MouseEvent) => {
+      setIsDragging(true);
+      setAutoRotate(false);
+      setDragStart({ x: e.clientX });
+    };
+
+    // Função para lidar com o movimento do mouse durante o arrasto
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      
+      const dx = e.clientX - dragStart.x;
+      api.start({ phi: phi.get() + dx * 0.009 }); // Mantive a sensibilidade aumentada
+      setDragStart({ x: e.clientX });
+    };
+
+    // Função para lidar com o fim do arrasto
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      // Reativa a rotação automática após um curto período
+      setTimeout(() => {
+        setAutoRotate(true);
+      }, 3000);
+    };
+
+    // Adiciona os event listeners
+    canvasRef.current.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    // Inicia a rotação automática
+    const autoRotateInterval = setInterval(() => {
+      if (autoRotate && !isDragging) {
+        api.start({ phi: phi.get() + 0.01 });
+      }
+    }, 16); // Aproximadamente 60fps
+
     return () => {
+      // Remove os event listeners
+      if (canvasRef.current) {
+        canvasRef.current.removeEventListener('mousedown', handleMouseDown);
+      }
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      clearInterval(autoRotateInterval);
       globe.destroy();
     };
-  }, []);
+  }, [autoRotate, isDragging, api, phi]);
 
   return (
     <canvas
       ref={canvasRef}
-      style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1 }}
+      style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1, cursor: isDragging ? 'grabbing' : 'grab' }}
       className={className}
     />
   );
