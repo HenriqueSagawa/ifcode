@@ -7,7 +7,7 @@ import { FaGithub, FaShareAlt } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
 import Link from "next/link";
 import { Spinner } from "@heroui/spinner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Calendar, MessageSquare, ThumbsUp } from "lucide-react";
 
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +15,8 @@ import { useSession } from "next-auth/react";
 
 import { addToast } from "@heroui/toast";
 import { FaArrowLeft } from "react-icons/fa";
+import { PostsProps } from "@/types/posts";
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface UserProps {
   name: string,
@@ -39,6 +41,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [posts, setPosts] = useState<PostsProps[]>();
 
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -59,10 +62,36 @@ export default function ProfilePage() {
         const data = await response.json();
 
         setUser(data);
+
+
+        const fetchPost = await fetchPosts();
+
+        const dataPost = fetchPost.posts;
+
+
+        //@ts-ignore
+        const filteredPosts = dataPost.filter(post => post.userId === id);
+
+
+        setPosts(filteredPosts);
+
+
       } catch (err) {
         setError('Não foi possível carregar o perfil. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
+      }
+    }
+
+    async function fetchPosts() {
+      try {
+        const response = await fetch("/api/posts");
+
+        const data = response.json();
+
+        return data;
+      } catch (error) {
+        console.log("Erro ao buscar posts", error)
       }
     }
 
@@ -107,6 +136,32 @@ export default function ProfilePage() {
 
   const shareProfile = () => {
     navigator.clipboard.writeText(window.location.href);
+  };
+
+  const handlePostNavigation = (postId: string) => {
+    addToast({
+      title: "Navegando para o post",
+      description: "Redirecionando para o conteúdo completo...",
+      color: "warning"
+    });
+    router.push(`/posts/${postId}`);
+  };
+
+  const formatDate = (createdAt: string) => (timestamp: any): string => {
+    if (!timestamp) return "Data desconhecida";
+
+    try {
+      if (timestamp && typeof timestamp === 'object' && 'seconds' in timestamp) {
+        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+        return date.toLocaleDateString('pt-BR');
+      } else if (typeof timestamp === 'string') {
+        return new Date(timestamp).toLocaleDateString('pt-BR');
+      }
+      return "Formato de data inválido";
+    } catch (error) {
+      console.error("Erro ao formatar a data:", error);
+      return "Data inválida";
+    }
   };
 
 
@@ -175,7 +230,45 @@ export default function ProfilePage() {
       <Card className="mt-6 p-4">
         <h2 className="text-xl font-semibold">Posts Recentes</h2>
         <div className="mt-2 space-y-4">
-
+          {(posts ?? []).length > 0 ? (
+            posts?.map((post) => (
+              <div
+                key={post.postId}
+                onClick={() => post?.postId && handlePostNavigation(post.postId)}
+                className="flex items-start space-x-4 p-4 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-200"
+              >
+                <Avatar
+                  src={user?.profileImage}
+                  className=""
+                />
+                <div className="flex-1 space-y-1">
+                  <h3 className="font-semibold">{post.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {formatDate('')(post.createdAt)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MessageSquare className="h-3 w-3" />
+                      {post.comments?.length || 0} comentários
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <ThumbsUp className="h-3 w-3" />
+                      {typeof post.likes === 'number'
+                        ? post.likes
+                        : Array.isArray(post.likes)
+                          //@ts-ignore
+                          ? post.likes.length || 0
+                          : 0} curtidas
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">Nenhum post encontrado.</p>
+          )}
         </div>
       </Card>
     </div>

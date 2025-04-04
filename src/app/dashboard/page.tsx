@@ -32,14 +32,16 @@ type Comment = {
 };
 
 const SKILL_COLORS = ["bg-red-200", "bg-blue-200", "bg-green-200", "bg-yellow-200", "bg-purple-200", "bg-pink-200"];
+const POSTS_PER_PAGE = 3;
 const COMMENTS_PER_PAGE = 3;
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [user, setUser] = useState<UserData | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [posts, setPosts] = useState<PostsProps[]>([]);
+    const [postsCurrentPage, setPostsCurrentPage] = useState(1);
     const [recentCommentsCurrentPage, setRecentCommentsCurrentPage] = useState(1);
     const dataFetched = useRef(false);
 
@@ -64,6 +66,14 @@ export default function DashboardPage() {
         }
     ], [posts]);
 
+    const postsPagination = useMemo(() => {
+        const indexOfLastPost = postsCurrentPage * POSTS_PER_PAGE;
+        const indexOfFirstPost = indexOfLastPost - POSTS_PER_PAGE;
+        const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+        const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+        return { currentPosts, totalPages };
+    }, [posts, postsCurrentPage]);
+
     const pagination = useMemo(() => {
         const indexOfLastComment = recentCommentsCurrentPage * COMMENTS_PER_PAGE;
         const indexOfFirstComment = indexOfLastComment - COMMENTS_PER_PAGE;
@@ -73,18 +83,24 @@ export default function DashboardPage() {
     }, [posts, recentCommentsCurrentPage]);
 
     useEffect(() => {
+        if (status === "loading") return;
+
         if (status === "unauthenticated") {
             router.push("/login");
             return;
         }
 
-        if (dataFetched.current) return;
+        if (dataFetched.current) {
+            return;
+        }
 
         async function fetchData() {
+            if (!session?.user?.email) return;
+
             try {
                 setLoading(true);
                 const usersRef = collection(db, "users");
-                const q = query(usersRef, where("email", "==", session?.user?.email));
+                const q = query(usersRef, where("email", "==", session.user.email));
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
@@ -96,13 +112,15 @@ export default function DashboardPage() {
                     });
 
                     const postsRef = collection(db, "posts");
-                    const postsQuery = query(postsRef, orderBy("createdAt", "desc"), limit(5));
+                    const postsQuery = query(postsRef, orderBy("createdAt", "desc"));
                     const postsSnapshot = await getDocs(postsQuery);
                     const postsData = postsSnapshot.docs.map(doc => ({
                         postId: doc.id,
                         ...doc.data()
                     })) as PostsProps[];
-                    setPosts(postsData);
+
+                    const filteredPosts = postsData.filter(post => post.id === docSnapshot.id);
+                    setPosts(filteredPosts);
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -149,6 +167,10 @@ export default function DashboardPage() {
             color: "warning"
         });
         router.push(`/posts/${postId}`);
+    };
+
+    const handlePageChange = (pageNumber: number) => {
+        setPostsCurrentPage(pageNumber);
     };
 
     if (loading) {
@@ -200,6 +222,46 @@ export default function DashboardPage() {
             </div>
         )
     );
+
+    const Pagination = ({ currentPage, totalPages, onPageChange }: { currentPage: number; totalPages: number; onPageChange: (page: number) => void }) => {
+        return (
+            <div className="flex justify-center items-center mt-6 gap-2">
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    disabled={currentPage === 1}
+                    onClick={() => onPageChange(currentPage - 1)}
+                    className="p-2"
+                >
+                    <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <Button
+                            key={page}
+                            variant={currentPage === page ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => onPageChange(page)}
+                            className="w-8 h-8 p-0"
+                        >
+                            {page}
+                        </Button>
+                    ))}
+                </div>
+                
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    disabled={currentPage === totalPages}
+                    onClick={() => onPageChange(currentPage + 1)}
+                    className="p-2"
+                >
+                    <ChevronRight className="h-4 w-4" />
+                </Button>
+            </div>
+        );
+    };
 
     return (
         <div className="container mx-auto py-6 px-4 lg:px-8">
@@ -281,7 +343,7 @@ export default function DashboardPage() {
                                     <p className="text-gray-500 mt-2">Comece a compartilhar seu conhecimento criando um novo post!</p>
                                 </div>
                             ) : (
-                                posts.map((post) => (
+                                postsPagination.currentPosts.map((post) => (
                                     <div
                                         key={post.postId}
                                         onClick={() => post?.postId && handlePostNavigation(post.postId)}
@@ -307,8 +369,9 @@ export default function DashboardPage() {
                                                     <ThumbsUp className="h-3 w-3" />
                                                     {typeof post.likes === 'number' 
                                                         ? post.likes 
-                                                        : Array.isArray(post.likes) 
-                                                            ? post.likes
+                                                        : Array.isArray(post.likes)
+                                                        //@ts-ignore
+                                                            ? post.likes.length || 0
                                                             : 0} curtidas
                                                 </span>
                                             </div>
@@ -317,14 +380,25 @@ export default function DashboardPage() {
                                 ))
                             )}
                         </div>
+
                         {posts.length > 0 && (
-                            <div className="mt-4 flex justify-center">
-                                <Link href="/posts">
-                                    <Button variant="outline" size="sm" className="flex items-center gap-1">
-                                        <ChevronRight className="h-4 w-4" />
-                                        Ver todos os posts
-                                    </Button>
-                                </Link>
+                            <div className="mt-4 flex flex-col items-center">
+                                {posts.length > POSTS_PER_PAGE && (
+                                    <Pagination 
+                                        currentPage={postsCurrentPage} 
+                                        totalPages={postsPagination.totalPages} 
+                                        onPageChange={handlePageChange} 
+                                    />
+                                )}
+                                
+                                <div className="mt-4">
+                                    <Link href="/posts">
+                                        <Button variant="outline" size="sm" className="flex items-center gap-1">
+                                            <ChevronRight className="h-4 w-4" />
+                                            Ver todos os posts
+                                        </Button>
+                                    </Link>
+                                </div>
                             </div>
                         )}
                     </CardContent>

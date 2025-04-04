@@ -8,7 +8,7 @@ import { Input } from '@heroui/input';
 import { Chip } from '@heroui/chip';
 import { Pagination } from "@heroui/pagination";
 import { SearchIcon, BookOpenIcon, TrendingUpIcon, PlusIcon, CodeIcon } from 'lucide-react';
-// Importando os ícones para as linguagens de programação
+
 import { 
   FaJs, FaPython, FaJava, FaPhp, FaCode
 } from "react-icons/fa";
@@ -17,8 +17,6 @@ import { DiRuby } from "react-icons/di";
 import { SiTypescript, SiCplusplus, SiGo } from "react-icons/si";
 import { TbBrandCSharp } from "react-icons/tb";
 import { Avatar } from '@heroui/avatar';
-import { Checkbox } from '@heroui/checkbox';
-import { HeartIcon } from '@/components/HeartIcon';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { LikeButton } from '@/components/LikeButton';
