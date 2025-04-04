@@ -5,11 +5,10 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import createGlobe from "cobe";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import YoutubeIfcode from "../../../public/img/capa if code vídeo.jpg"
-import { useSpring } from 'react-spring';
 
 export function Feature() {
   const features = [
@@ -240,15 +239,7 @@ export const Globe = ({ className }: { className?: string }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerInteracting = useRef<number | null>(null);
   const pointerInteractionMovement = useRef(0);
-  const [{ r }, api] = useSpring(() => ({
-    r: 0,
-    config: {
-      mass: 1,
-      tension: 280,
-      friction: 40,
-      precision: 0.001,
-    },
-  }));
+  const rotationValue = useMotionValue(0);
 
   useEffect(() => {
     let phi = 0;
@@ -274,14 +265,13 @@ export const Globe = ({ className }: { className?: string }) => {
       markerColor: [251 / 255, 100 / 255, 21 / 255],
       glowColor: [1.2, 1.2, 1.2],
       markers: [
-        // longitude latitude
         { location: [ -22.5120468, -58.4054826], size: 0.1 },
       ],
       onRender: (state: any) => {
         if (!pointerInteracting.current) {
           phi += 0.005;
         }
-        state.phi = phi + r.get();
+        state.phi = phi + rotationValue.get();
         state.width = width * 2;
         state.height = width * 2;
       }
@@ -297,11 +287,11 @@ export const Globe = ({ className }: { className?: string }) => {
       globe.destroy();
       window.removeEventListener('resize', onResize);
     };
-  }, [r]);
+  }, [rotationValue]);
 
   return (
     <div style={{
-      width: '600px',
+      width: '800px',
       maxWidth: '100%',
       aspectRatio: 1,
       margin: 'auto',
@@ -331,18 +321,14 @@ export const Globe = ({ className }: { className?: string }) => {
           if (pointerInteracting.current !== null) {
             const delta = e.clientX - pointerInteracting.current;
             pointerInteractionMovement.current = delta;
-            api.start({
-              r: delta / 200,
-            });
+            rotationValue.set(delta / 200);
           }
         }}
         onTouchMove={(e) => {
           if (pointerInteracting.current !== null && e.touches[0]) {
             const delta = e.touches[0].clientX - pointerInteracting.current;
             pointerInteractionMovement.current = delta;
-            api.start({
-              r: delta / 100,
-            });
+            rotationValue.set(delta / 100);
           }
         }}
         style={{
