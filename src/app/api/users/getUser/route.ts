@@ -1,4 +1,4 @@
-import { db } from "@/services/firebaseConnection"; // Adapte o caminho se necessário
+import { db } from "@/services/firebaseConnection";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
@@ -19,7 +19,6 @@ export async function GET(request: Request) {
       return NextResponse.json({ user: null, message: "Usuário não encontrado" }, { status: 404 });
     }
 
-    // Assumindo que só haverá um usuário com esse email (o que deve ser o caso).
     const userData = querySnapshot.docs[0].data();
     const userId = querySnapshot.docs[0].id;
 

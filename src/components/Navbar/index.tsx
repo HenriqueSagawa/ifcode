@@ -177,7 +177,7 @@ const Navbar = ({
   }
 
   return (
-    <section className="py-4 h-16 z-50">
+    <section className="h-16 z-50">
       <div className="container mx-auto">
         {/* Desktop Navigation */}
         <nav className="hidden justify-between lg:flex">

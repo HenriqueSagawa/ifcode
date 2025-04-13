@@ -41,10 +41,9 @@ export function DinamicMessage() {
     }, [])
 
     return (
-        <div className="flex flex-col items-center justify-center text-center p-4">
-            <h1 className="font-bold text-5xl">{greeting}</h1>
-            <p className="text-gray-400">Agora são {currentTime}</p>
+        <div className="flex flex-col items-center justify-center text-center p-2 sm:p-4">
+            <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl break-words">{greeting}</h1>
+            <p className="text-gray-400 text-sm sm:text-base">Agora são {currentTime}</p>
         </div>
-
     )
 }
