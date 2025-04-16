@@ -10,6 +10,10 @@ import { Message } from "@/components/Chatbot/Message";
 import { ChatMessage } from "@/services/gemini/chat.service";
 import { LoadingMessage } from '@/components/Chatbot/LoadingMessage';
 import { useSession } from 'next-auth/react';
+import { addToast } from "@heroui/toast"
+import { ChatService } from '@/services/gemini/chat.service';
+
+const chatService = ChatService.getInstance();
 
 const exampleCards = [
   {
@@ -35,42 +39,29 @@ export default function ChatbotPage() {
     const [isLoading, setIsLoading] = useState(false);
     const { data: session } = useSession();
 
-    const handleSendMessage = async (message: string, model: string) => {
-        if (!session) return;
-
-        const newMessage: ChatMessage = {
-            role: 'user',
-            content: message
-        };
-
-        setMessages(prev => [...prev, newMessage]);
-        setIsLoading(true);
+    const handleSendMessage = async (message: string) => {
+        if (!message.trim()) return;
 
         try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    messages: [...messages, newMessage],
-                    model
-                }),
-            });
+            setIsLoading(true);
+            
+            // Adiciona a mensagem do usuário
+            const userMessage: ChatMessage = { role: "user", content: message };
+            setMessages(prev => [...prev, userMessage]);
 
-            if (!response.ok) {
-                throw new Error('Erro ao enviar mensagem');
-            }
-
-            const data = await response.json();
-            const assistantMessage: ChatMessage = {
-                role: 'assistant',
-                content: data.response
-            };
-
-            setMessages(prev => [...prev, assistantMessage]);
+            // Obtém a resposta do bot
+            const response = await chatService.sendMessage([...messages, userMessage]);
+            
+            // Adiciona a resposta do bot
+            const botMessage: ChatMessage = { role: "model", content: response };
+            setMessages(prev => [...prev, botMessage]);
         } catch (error) {
-            console.error('Erro:', error);
+            console.error("Erro ao enviar mensagem:", error);
+            addToast({
+                title: "Erro",
+                description: "Não foi possível enviar a mensagem. Tente novamente.",
+                color: "foreground",
+            });
         } finally {
             setIsLoading(false);
         }

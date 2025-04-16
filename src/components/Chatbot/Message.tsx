@@ -4,6 +4,9 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChatMessage } from "@/services/gemini/chat.service";
 import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Image from "next/image";
 
 interface MessageProps {
   message: ChatMessage;
@@ -15,12 +18,8 @@ export function Message({ message }: MessageProps) {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2 mb-4`}>
       {!isUser && (
-        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
-            <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+        <div className="h-8 w-8 rounded-full bg-transparent flex items-center justify-center">
+          <Image src="/img/logo ifcode.png" alt="Logo" width={100} priority height={100} className="rounded-full w-full h-full" />
         </div>
       )}
       
@@ -29,7 +28,33 @@ export function Message({ message }: MessageProps) {
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         ) : (
           <div className="prose prose-invert max-w-none dark:prose-invert">
-            <ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                code({ node, inline, className, children, ...props }: any) {
+                  const match = /language-(\w+)/.exec(className || '');
+                  return !inline && match ? (
+                    <div className="relative">
+                      <div className="absolute right-2 top-2 text-xs text-muted-foreground">
+                        {match[1]}
+                      </div>
+                      <SyntaxHighlighter
+                        style={vscDarkPlus as any}
+                        language={match[1]}
+                        PreTag="div"
+                        {...props}
+                        className="rounded-lg"
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    </div>
+                  ) : (
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
+                  );
+                }
+              }}
+            >
               {message.content}
             </ReactMarkdown>
           </div>
