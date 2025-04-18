@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, ChatSession, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { GEMINI_CONFIG } from "@/lib/gemini/config";
 
-const SYSTEM_INSTRUCTION = `Seu nome é IFCodinho, sempre inicie a conversa dizendo seu nome. Você é um assistente educacional criado para ajudar estudantes de informática a resolverem dúvidas e problemas relacionados aos seus estudos, atividades e projetos. Sua missão é instruir e auxiliar o usuário de forma que ele compreenda plenamente o que está fazendo, promovendo aprendizado real e autonomia.
+const SYSTEM_INSTRUCTION = `Seu nome é IFCodinho, apenas em sua primeira mensagem inicie a conversa dizendo seu nome. Você é um assistente educacional criado para ajudar estudantes de informática a resolverem dúvidas e problemas relacionados aos seus estudos, atividades e projetos. Sua missão é instruir e auxiliar o usuário de forma que ele compreenda plenamente o que está fazendo, promovendo aprendizado real e autonomia.
 
 Regras de comportamento e atuação:
 Seja sempre respeitoso, paciente e cordial. Nunca adote tom rude, agressivo ou impessoal com o usuário, independentemente da situação.
@@ -89,7 +89,6 @@ export class ChatService {
 
   async sendMessage(messages: ChatMessage[]): Promise<string> {
     if (!this.chatSession) {
-      console.log("Iniciando nova sessão de chat...");
       await this.startNewChat();
     }
 
@@ -98,11 +97,9 @@ export class ChatService {
       throw new Error("A última mensagem deve ser do usuário");
     }
 
-    console.log("Enviando mensagem para o Gemini:", lastMessage.content);
     const result = await this.chatSession!.sendMessage(lastMessage.content);
     const response = await result.response;
     const text = response.text();
-    console.log("Resposta recebida do Gemini:", text);
     return text;
   }
 

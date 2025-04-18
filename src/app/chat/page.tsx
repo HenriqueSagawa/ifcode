@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PlusIcon } from "lucide-react"
@@ -18,19 +18,23 @@ const chatService = ChatService.getInstance();
 const exampleCards = [
   {
       title: "Quais são as vantagens",
-      subtitle: "de usar Next.js?"
+      subtitle: "de usar Next.js?",
+      message: "Quais são as vantagens de usar Next.js?"
   },
   {
       title: "Me ajuda a escrever",
-      subtitle: "um algoritmo para calcular o IMC"
+      subtitle: "um algoritmo para calcular o IMC",
+      message: "Me ajuda a escrever um algoritmo para calcular o IMC"
   },
   {
       title: "Eu não consigo entender",
-      subtitle: "esse código em Python"
+      subtitle: "esse código em Python",
+      message: "Eu não consigo entender esse código em Python"
   },
   {
       title: "O que é um",
-      subtitle: "loop for na programação?"
+      subtitle: "loop for na programação?",
+      message: "O que é um loop for na programação?"
   }
 ]
 
@@ -38,6 +42,15 @@ export default function ChatbotPage() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const { data: session } = useSession();
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const handleSendMessage = async (message: string) => {
         if (!message.trim()) return;
@@ -78,13 +91,14 @@ export default function ChatbotPage() {
 
             {/* Main content */}
             <div className="flex-1 flex flex-col min-h-0">
-                <div className="flex-1 overflow-y-auto px-4 py-2 sm:p-6 max-w-3xl mx-auto w-full">
+                <div className="flex-1 overflow-y-auto px-4 py-2 sm:p-6 max-w-5xl mx-auto w-full">
                     {/* Messages */}
                     <div className="w-full space-y-4 mb-4">
                         {messages.map((message, index) => (
                             <Message key={index} message={message} />
                         ))}
                         {isLoading && <LoadingMessage />}
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* Logo */}
@@ -110,6 +124,7 @@ export default function ChatbotPage() {
                             {exampleCards.map((prompt, index) => (
                                 <Card 
                                     key={index}
+                                    onClick={() => handleSendMessage(prompt.message)}
                                     className="bg-muted transition-all hover:bg-muted/80 cursor-pointer p-3 sm:p-4 rounded-xl shadow-sm hover:shadow-md border border-border/50 hover:scale-105 hover:border-primary/50 group relative overflow-hidden"
                                 >
                                     <div className="space-y-1 z-10 relative">
