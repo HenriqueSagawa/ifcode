@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button"
+import { Button as ButtonHeroUi } from "@heroui/button";
 import { Card } from "@/components/ui/card"
 import { PlusIcon } from "lucide-react"
 import { DinamicMessage } from "@/components/Chatbot/DinamicMessage";
@@ -12,30 +13,33 @@ import { LoadingMessage } from '@/components/Chatbot/LoadingMessage';
 import { useSession } from 'next-auth/react';
 import { addToast } from "@heroui/toast"
 import { ChatService } from '@/services/gemini/chat.service';
+import { cn } from "@heroui/theme";
+import Link from "next/link";
+import { UserData } from "@/types/userData";
 
 const chatService = ChatService.getInstance();
 
 const exampleCards = [
-  {
-      title: "Quais são as vantagens",
-      subtitle: "de usar Next.js?",
-      message: "Quais são as vantagens de usar Next.js?"
-  },
-  {
-      title: "Me ajuda a escrever",
-      subtitle: "um algoritmo para calcular o IMC",
-      message: "Me ajuda a escrever um algoritmo para calcular o IMC"
-  },
-  {
-      title: "Eu não consigo entender",
-      subtitle: "esse código em Python",
-      message: "Eu não consigo entender esse código em Python"
-  },
-  {
-      title: "O que é um",
-      subtitle: "loop for na programação?",
-      message: "O que é um loop for na programação?"
-  }
+    {
+        title: "Quais são as vantagens",
+        subtitle: "de usar Next.js?",
+        message: "Quais são as vantagens de usar Next.js?"
+    },
+    {
+        title: "Me ajuda a escrever",
+        subtitle: "um algoritmo para calcular o IMC",
+        message: "Me ajuda a escrever um algoritmo para calcular o IMC"
+    },
+    {
+        title: "Eu não consigo entender",
+        subtitle: "esse código em Python",
+        message: "Eu não consigo entender esse código em Python"
+    },
+    {
+        title: "O que é um",
+        subtitle: "loop for na programação?",
+        message: "O que é um loop for na programação?"
+    }
 ]
 
 export default function ChatbotPage() {
@@ -43,6 +47,33 @@ export default function ChatbotPage() {
     const [isLoading, setIsLoading] = useState(false);
     const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [user, setUser] = useState<UserData>()
+
+    const dataFetch = useRef(false);
+
+    useEffect(() => {
+        async function fetchUser() {
+            if (dataFetch.current) return;
+            if (session) {
+                try {
+                    const response = await fetch(`/api/users/getUser?email=${session.user?.email}`);
+                    const data = await response.json();
+                    if (data.error) {
+                        console.error("Erro ao buscar usuário:", data.error);
+                    } else {
+                        console.log("Usuário:", data.user);
+                        setUser(data.user);
+                        dataFetch.current = true;
+
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar usuário:", error);
+                }
+            }
+        }
+
+        fetchUser();
+    }, [session])
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,15 +88,12 @@ export default function ChatbotPage() {
 
         try {
             setIsLoading(true);
-            
-            // Adiciona a mensagem do usuário
+
             const userMessage: ChatMessage = { role: "user", content: message };
             setMessages(prev => [...prev, userMessage]);
 
-            // Obtém a resposta do bot
             const response = await chatService.sendMessage([...messages, userMessage]);
-            
-            // Adiciona a resposta do bot
+
             const botMessage: ChatMessage = { role: "model", content: response };
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
@@ -79,6 +107,39 @@ export default function ChatbotPage() {
             setIsLoading(false);
         }
     };
+
+    function handleClickCard(Message: string) {
+        if (!session) {
+            addToast({
+                title: "Acesso Negado",
+                description: "Você precisa estar logado para usar essa funcionalidade.",
+                classNames: {
+                    base: cn([
+                        "bg-default-50 dark:bg-background shadow-sm",
+                        "border border-l-8 rounded-md rounded-l-none",
+                        "flex flex-col items-start",
+                        "border-primary-200 dark:border-primary-100 border-l-primary",
+                    ]),
+                    icon: "w-6 h-6 fill-current",
+                },
+                endContent: (
+                    <div className="ms-11 my-2 flex gap-x-2">
+                        <ButtonHeroUi color={"primary"} size="sm" variant="bordered">
+                            <Link href="/login">Entrar</Link>
+                        </ButtonHeroUi>
+                        <ButtonHeroUi className="underline-offset-2" color={"primary"} size="sm" variant="light">
+                            <Link href="/register">Cadastre-se</Link>
+
+                        </ButtonHeroUi>
+                    </div>
+                ),
+                color: "primary",
+            });
+            return;
+        } else {
+            handleSendMessage(Message);
+        }
+    }
 
     return (
         <div className="flex flex-col h-[calc(100vh-5rem)] bg-background text-foreground max-w-screen-xl mx-auto">
@@ -95,7 +156,7 @@ export default function ChatbotPage() {
                     {/* Messages */}
                     <div className="w-full space-y-4 mb-4">
                         {messages.map((message, index) => (
-                            <Message key={index} message={message} />
+                            <Message key={index} message={message} userProfile={user?.profileImage as string} />
                         ))}
                         {isLoading && <LoadingMessage />}
                         <div ref={messagesEndRef} />
@@ -122,9 +183,9 @@ export default function ChatbotPage() {
                     {messages.length === 0 && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full mt-4 sm:mt-8">
                             {exampleCards.map((prompt, index) => (
-                                <Card 
+                                <Card
                                     key={index}
-                                    onClick={() => handleSendMessage(prompt.message)}
+                                    onClick={() => handleClickCard(prompt.message)}
                                     className="bg-muted transition-all hover:bg-muted/80 cursor-pointer p-3 sm:p-4 rounded-xl shadow-sm hover:shadow-md border border-border/50 hover:scale-105 hover:border-primary/50 group relative overflow-hidden"
                                 >
                                     <div className="space-y-1 z-10 relative">

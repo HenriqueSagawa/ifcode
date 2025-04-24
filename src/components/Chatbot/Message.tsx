@@ -17,9 +17,10 @@ interface MessageProps {
         role: "user" | "model";
         content: string;
     };
+    userProfile?: string
 }
 
-export function Message({ message }: MessageProps) {
+export function Message({ message, userProfile }: MessageProps) {
     const isUser = message.role === "user";
     const messageRef = useRef<HTMLDivElement>(null);
     const [isTypingComplete, setIsTypingComplete] = useState(false);
@@ -70,7 +71,6 @@ export function Message({ message }: MessageProps) {
         }
     }, [message.content, displayedText, userHasScrolled]);
 
-    // Reset userHasScrolled when a new message starts typing
     useEffect(() => {
         if (!isTypingComplete) {
             setUserHasScrolled(false);
@@ -98,7 +98,7 @@ export function Message({ message }: MessageProps) {
                     </div>
                 </Card>
                 <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://github.com/shadcn.png" alt="Usuário" />
+                    <AvatarImage src={userProfile} alt="Usuário" />
                     <AvatarFallback>U</AvatarFallback>
                 </Avatar>
             </div>

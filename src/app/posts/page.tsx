@@ -114,7 +114,6 @@ const PostsPage: React.FC = () => {
       );
     }
 
-    // Apply sorting
     switch (sortOption) {
       case SortOption.TITLE_ASC:
         result.sort((a, b) => a.title.localeCompare(b.title));
@@ -180,7 +179,6 @@ const PostsPage: React.FC = () => {
     }
   };
 
-  // Função para obter o ícone da linguagem com a cor correspondente
   const getLanguageIcon = (language: string) => {
     const lowerLang = language?.toLowerCase() || '';
     
@@ -209,7 +207,6 @@ const PostsPage: React.FC = () => {
     }
   };
 
-  // Função para obter a cor do chip da linguagem
   const getLanguageColor = (language: string) => {
     const lowerLang = language?.toLowerCase() || '';
     
