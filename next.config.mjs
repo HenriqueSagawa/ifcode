@@ -6,8 +6,10 @@ const nextConfig = {
     images: {
         domains: [
             "api.microlink.io",
-            "i.imgur.com",
-            "drive.google.com"
+            "assets.aceternity.com",
+            "images.unsplash.com",
+            "media.gettyimages.com",
+            "res.cloudinary.com"
         ]
     }
 };

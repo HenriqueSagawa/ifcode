@@ -1,7 +1,10 @@
-"use client"
+// Indica que este é um Client Component no Next.js App Router.
+// Necessário para uso de hooks como os do framer-motion e interações do lado do cliente.
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "@/components/ui/button";
+// Importações de componentes de UI e utilitários
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"; // Componente para exibir avatares
+import { Button } from "@heroui/button"; // Componente de botão da biblioteca HeroUI
 import {
   Card,
   CardContent,
@@ -9,53 +12,95 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card";
-import { Check } from "lucide-react";
-import { LightBulbIcon } from "../Hero/Icons";
-import Link from "next/link";
-import { motion } from "motion/react";
-import { LinkPreview } from "../ui/link-preview";
-
-const CardMotion = motion(Card); // Cria um componente Card animado usando framer-motion.
+} from "@/components/ui/card"; // Componentes para estruturar cards (provavelmente Shadcn/ui)
+import { Check } from "lucide-react"; // Ícone de "check" da biblioteca Lucide
+import { LightBulbIcon } from "../Hero/Icons"; // Ícone customizado (não utilizado neste snippet, mas importado)
+import Link from "next/link"; // Componente do Next.js para navegação entre páginas
+import { motion } from "motion/react"; // Biblioteca Framer Motion para animações
+import { LinkPreview } from "../ui/link-preview"; // Componente customizado para preview de links
+import Image from "next/image"; // Componente do Next.js para otimização de imagens
 
 /**
- * Componente que renderiza um conjunto de cards animados na seção Hero.
+ * @file HeroCards.tsx - Componente da Seção Hero com Cards Animados.
+ * @module components/HeroCards
  *
- * Este componente exibe cards com informações sobre o IF Code, o Gemini,
- * e outros benefícios da plataforma. Os cards são animados com movimentos
- * sutis para criar um efeito visual atraente.
+ * @description
+ * O componente `HeroCards` é responsável por renderizar um conjunto de cards
+ * interativos e animados que compõem a seção principal (Hero) da página.
+ * Ele utiliza `framer-motion` para aplicar animações de flutuação aos cards,
+ * tornando a interface mais dinâmica e engajadora.
  *
- * @returns {JSX.Element} O conjunto de cards da seção Hero renderizado.
+ * Cada card apresenta informações distintas:
+ * 1. Card do "IF Code" com link para o Instagram.
+ * 2. Card sobre "Gemini" (IA do Google) com um botão para "Conhecer".
+ * 3. Card destacando os benefícios do "IF Code" com um botão para "Encontrar ajuda".
+ * 4. Card informativo sobre o "IFPR".
+ *
+ * O layout é responsivo, ajustando o posicionamento e tamanho dos cards
+ * em diferentes tamanhos de tela (especialmente `lg` e `2xl`).
+ *
+ * @example
+ * // Em uma página Next.js:
+ * import { HeroCards } from '@/components/your-path/HeroCards';
+ *
+ * export default function HomePage() {
+ *   return (
+ *     <section>
+ *       <HeroCards />
+ *     </section>
+ *   );
+ * }
+ */
+
+// Cria um componente Card com capacidade de animação usando framer-motion.
+// Isso permite que o componente <Card> receba props de animação como `animate` e `transition`.
+const CardMotion = motion(Card);
+
+/**
+ * Componente `HeroCards`
+ * Renderiza uma coleção de cards animados para a seção Hero.
+ * Não recebe props.
+ *
+ * @returns {JSX.Element} Um container div com quatro componentes `CardMotion` animados.
  */
 export const HeroCards = () => {
   return (
-    <div className="lg:flex flex-row mt-12 xl:mt-0 flex-wrap gap-8 relative lg:mx-0 w-[550px] h-[350px] 2xl:w-[700px] 2xl:h-[500px]">
-      {/* Container principal para os cards. */}
+    // Container principal para os cards.
+    // Utiliza Flexbox para layout em telas maiores (lg).
+    // O posicionamento relativo é crucial para que os cards internos com posicionamento absoluto
+    // se orientem corretamente em relação a este container.
+    // As classes w-[...] h-[...] definem dimensões responsivas.
+    <div className="lg:flex flex-row mt-12 xl:mt-0 flex-wrap gap-8 relative lg:mx-0 w-[520px] h-[320px] 2xl:w-[700px] 2xl:h-[500px]">
+      {/* CARD 1: IF Code Instagram */}
       <CardMotion
-        animate={{ y: [10, -10, 10] }} // Define a animação vertical (para cima e para baixo).
+        // Define a animação: movimento vertical (eixo Y) entre 10px e -10px.
+        animate={{ y: [10, -10, 10] }}
+        // Define as propriedades da transição da animação.
         transition={{
-          repeat: Infinity, // Repete a animação indefinidamente.
-          duration: 4.2, // Define a duração de cada ciclo da animação.
+          repeat: Infinity, // A animação se repetirá indefinidamente.
+          duration: 4.2,    // Cada ciclo da animação dura 4.2 segundos.
         }}
-        className="absolute w-[290px] 2xl:w-[340px] -top-[15px] 2xl:scale-100 scale-[.8] 2xl:left-0 left-[-100px] drop-shadow-xl shadow-black/10 dark:shadow-white/10"
+        // Classes de estilização Tailwind CSS:
+        // - `absolute`: Posicionamento absoluto em relação ao pai (o div container).
+        // - `w-[250px]`, `2xl:w-[310px]`: Largura responsiva.
+        // - `-top-[15px]`, `scale-[.8]`, `left-[-100px]`: Posicionamento e escala para diferentes breakpoints.
+        // - `drop-shadow-xl`, `shadow-black/10`, `dark:shadow-white/10`: Efeitos de sombra.
+        className="absolute w-[250px] 2xl:w-[310px] -top-[15px] 2xl:scale-100 scale-[.8] 2xl:left-0 left-[-100px] drop-shadow-xl shadow-black/10 dark:shadow-white/10"
       >
-        {/* Card com informações sobre o Instagram do IF Code. */}
         <CardHeader className="flex flex-row items-center gap-4 pb-2">
-          {/* Header do card. */}
           <Avatar>
-            {/* Avatar do Instagram. */}
-            <AvatarImage
-              alt=""
-              src="https://i.imgur.com/UJCtFtt.png"
-            />
+            <AvatarImage alt="Logo IF Code" src="/img/logo ifcode.png" />
             <AvatarFallback>IF</AvatarFallback>
           </Avatar>
 
           <div className="flex flex-col">
-            {/* Informações do Instagram. */}
             <CardTitle className="text-lg">IF Code</CardTitle>
             <CardDescription>
-              <LinkPreview url="https://www.instagram.com/ifcode.assis/" className="dark:!text-gray-300 text-gay-600">
+              {/* Componente LinkPreview para exibir um preview do link do Instagram */}
+              <LinkPreview
+                url="https://www.instagram.com/ifcode.assis/"
+                className="dark:!text-gray-300 text-gay-600" // Note: "text-gay-600" parece um typo, deveria ser "text-gray-600"?
+              >
                 @ifcode.assis
               </LinkPreview>
             </CardDescription>
@@ -63,17 +108,17 @@ export const HeroCards = () => {
         </CardHeader>
 
         <CardContent>Siga nossa página no instagram</CardContent>
-        {/* Conteúdo do card. */}
       </CardMotion>
 
+      {/* CARD 2: Gemini AI */}
       <CardMotion
-        animate={{ y: [15, -15, 15] }} // Define a animação vertical (para cima e para baixo).
-        transition={{ repeat: Infinity, duration: 6 }} // Repete a animação indefinidamente.
-        className="absolute 2xl:scale-100 right-[30px] 2xl:right-[20px] 2xl:top-4 -top-1 w-64 h-[250px] 2xl:w-80 flex flex-col justify-center items-center drop-shadow-xl shadow-black/10 dark:shadow-white/10"
+        animate={{ y: [15, -15, 15] }}
+        transition={{ repeat: Infinity, duration: 6 }}
+        // Classes de estilização para posicionamento, tamanho e aparência.
+        className="absolute 2xl:scale-100 right-[30px] 2xl:right-[20px] 2xl:top-4 -top-1 w-60 h-[220px] 2xl:w-80 flex flex-col justify-center items-center drop-shadow-xl shadow-black/10 dark:shadow-white/10"
       >
-        {/* Card com informações sobre o Gemini. */}
         <CardHeader className="mt-8 flex justify-center items-center pb-2">
-          {/* Header do card. */}
+          {/* Imagem do logo Gemini posicionada sobre o card */}
           <img
             src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-PNG-Photo.png"
             alt="Gemini"
@@ -86,80 +131,86 @@ export const HeroCards = () => {
         </CardHeader>
 
         <CardContent className="text-center pb-2">
-          {/* Conteúdo do card. */}
-          <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae, nobis deserunt?
-          </p>
+          <p>O Gemini é um modelo de linguagem multimodal avançado do Google.</p>
         </CardContent>
 
         <CardFooter>
-          {/* Footer do card. */}
-          <Button>
-            <Link href="https://gemini.google.com/app?hl=pt-BR">Conheça</Link>
-          </Button>
+          {/* Link para a página de chat, estilizado como um botão */}
+          <Link href="/chat" legacyBehavior passHref>
+            <Button className="dark:bg-zinc-50 bg-zinc-900 text-zinc-50 dark:text-zinc-900">
+              Conheça
+            </Button>
+          </Link>
         </CardFooter>
       </CardMotion>
 
+      {/* CARD 3: IF Code Benefícios */}
       <CardMotion
-        animate={{ y: [5, -5, 5] }} // Define a animação vertical (para cima e para baixo).
-        transition={{ repeat: Infinity, duration: 4.7 }} // Repete a animação indefinidamente.
-        className="absolute 2xl:scale-100 2xl:top-[150px] top-[150px] left-[-50px] 2xl:left-[50px]  w-64 2xl:w-72  drop-shadow-xl shadow-black/10 dark:shadow-white/10"
+        animate={{ y: [5, -5, 5] }}
+        transition={{ repeat: Infinity, duration: 4.7 }}
+        className="absolute 2xl:scale-100 2xl:top-[150px] top-[170px] left-[-50px] 2xl:left-[50px]  w-64 2xl:w-72  drop-shadow-xl shadow-black/10 dark:shadow-white/10"
       >
-        {/* Card com informações sobre o IF Code. */}
         <CardHeader>
-          {/* Header do card. */}
           <CardTitle className="flex item-center justify-between">
             IF Code
           </CardTitle>
-
           <CardDescription>
-            Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.
+            IF Code soluciona suas dúvidas de forma rápida
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          {/* Conteúdo do card. */}
-          <Button className="w-full">Encontrar ajuda</Button>
+          {/* Link para a página de posts, estilizado como um botão */}
+          <Link href="/posts" legacyBehavior passHref>
+            <Button className="w-full dark:bg-zinc-50 bg-zinc-900 text-zinc-50 dark:text-zinc-900">
+              Encontrar ajuda
+            </Button>
+          </Link>
         </CardContent>
 
+        {/* Linha divisória */}
         <hr className="w-4/5 m-auto mb-4" />
 
         <CardFooter className="flex">
-          {/* Footer do card. */}
           <div className="space-y-4">
-            {/* Lista de benefícios. */}
-            {["Encontre ajuda", "Desenvolva projetos", "Participe de um grupo"].map(
-              (benefit: string) => (
-                <span
-                  key={benefit}
-                  className="flex"
-                >
-                  <Check className="text-green-500" />{" "}
-                  {/* Ícone de check. */}
-                  <h3 className="ml-2">{benefit}</h3>
-                </span>
-              )
-            )}
+            {/* Mapeia uma lista de strings para renderizar os benefícios com ícones de check */}
+            {[
+              "Encontre ajuda",
+              "Desenvolva projetos",
+              "Participe de um grupo",
+            ].map((benefit: string) => (
+              <span key={benefit} className="flex">
+                <Check className="text-green-500" />{" "}
+                <h3 className="ml-2">{benefit}</h3>
+              </span>
+            ))}
           </div>
         </CardFooter>
       </CardMotion>
 
+      {/* CARD 4: IFPR */}
       <CardMotion
-        animate={{ y: [10, -5, 10] }} // Define a animação vertical (para cima e para baixo).
-        transition={{ repeat: Infinity, duration: 5.4 }} // Repete a animação indefinidamente.
-        className="absolute 2xl:scale-100 w-[300px] h-[auto] 2xl:w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[35px] bottom-[-60px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10"
+        animate={{ y: [10, -5, 10] }}
+        transition={{ repeat: Infinity, duration: 5.4 }}
+        className="absolute 2xl:scale-100 w-[270px] h-[auto] 2xl:w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[10px] bottom-[-210px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10"
       >
-        {/* Card com informações sobre o Instituto Federal. */}
         <CardHeader className="space-y-1 flex md:flex-row justify-start items-start gap-4">
-          {/* Header do card. */}
-          <div className="mt-1 invert bg-primary/20 p-1 rounded-2xl">
-            <LightBulbIcon />
+          <div className="mt-1 p-1 rounded-2xl ">
+            {/* Componente Image do Next.js para otimização da imagem do logo IFPR */}
+            <Image
+              src="/img/logo ifpr.png"
+              alt="Logo do IFPR"
+              width={100}
+              height={100}
+            />
           </div>
           <div>
-            <CardTitle>O Instituto Federal</CardTitle>
-            <CardDescription className="text-md mt-2">
-              Lorem ipsum dolor sit amet consect adipisicing elit. Consectetur
-              natusm.
+            <CardTitle>O IFPR</CardTitle>
+            <CardDescription className="text-sm mt-2">
+              O Instituto Federal de Educação, Ciência e Tecnologia do Paraná
+              (IFPR) é uma instituição pública federal que oferece educação
+              profissional e tecnológica gratuita em diversas modalidades e
+              níveis de ensino.
             </CardDescription>
           </div>
         </CardHeader>
