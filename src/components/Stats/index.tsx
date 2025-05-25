@@ -1,4 +1,12 @@
-export function Stats() {
+import { PostsProps } from "@/types/posts";
+import { UserData } from "@/types/userData";
+
+interface StatsProps {
+    users: UserData[],
+    posts: PostsProps[],
+}
+
+export function Stats({ users, posts }: StatsProps) {
 
     const stats = [
         {
@@ -6,15 +14,11 @@ export function Stats() {
             desc: "Dúvidas respondidas"
         },
         {
-            data: "0",
+            data: users.length,
             desc: "Estudantes alcançados"
         },
         {
-            data: "0",
-            desc: "Mentores disponíveis"
-        },
-        {
-            data: "0",
+            data: posts.length,
             desc: "Perguntas publicadas"
         },
     ]

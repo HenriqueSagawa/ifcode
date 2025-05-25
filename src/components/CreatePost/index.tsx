@@ -26,9 +26,6 @@ import { addToast } from '@heroui/toast';
 
 type PostType = 'Artigo' | 'Tutorial' | 'Pergunta' | 'Discussão' | 'Projeto';
 
-// Note: We're removing the zod and hookform imports, and implementing a simpler form approach
-// since those libraries appear to be causing issues and aren't available
-
 interface CreatePostProps {
   id: string | number;
   email: string;
@@ -41,16 +38,16 @@ export function CreatePost({ id, email, author, userImage }: CreatePostProps) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   
-  // Form state
+
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     codeContent: '',
     codeLenguage: '',
-    type: 'Artigo' as PostType, // Default to 'Artigo' to match the PostsPage component
+    type: 'Artigo' as PostType, 
   });
 
-  // Simple validation function
+
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
     

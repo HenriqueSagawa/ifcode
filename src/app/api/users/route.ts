@@ -6,9 +6,8 @@ import bcrypt from "bcryptjs";
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        console.log("Dados recebidos"); // Log sem expor dados sensíveis
+        console.log("Dados recebidos"); 
 
-        // Verifica se os campos obrigatórios existem
         if (!body.email || !body.password || !body.name) {
             console.log("Dados incompletos");
             return NextResponse.json({
@@ -18,7 +17,6 @@ export async function POST(request: Request) {
 
         const usersRef = collection(db, "users");
 
-        // Verifica se o email já existe
         const q = query(usersRef, where("email", "==", body.email));
         const querySnapshot = await getDocs(q);
 
@@ -29,7 +27,6 @@ export async function POST(request: Request) {
             }, { status: 400 });
         }
 
-        // Criptografa a senha
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(body.password, salt);
 
@@ -47,7 +44,6 @@ export async function POST(request: Request) {
         const docRef = await addDoc(usersRef, newUser);
         console.log("Usuário criado com ID:", docRef.id);
 
-        // Retorna os dados sem a senha
         const { password, ...userWithoutPassword } = newUser;
         return NextResponse.json({
             id: docRef.id,

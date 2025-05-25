@@ -21,7 +21,6 @@ export async function POST(request: Request) {
             email: body.emailUser,
             author: body.author,
             likes: 0,
-            userImage: body.userImage || "",
             authorImage: body.userImage || "",
         }
 

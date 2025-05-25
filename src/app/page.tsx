@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Hero } from "@/components/Hero";
 import { GeminiSection } from "@/components/GeminiSection";
 import { Feature } from "@/components/Features";
@@ -8,8 +8,36 @@ import { Stats } from "@/components/Stats";
 import { CardFeature } from "@/components/CardFeature";
 import { motion } from "motion/react";
 
+import { useUser } from "@/hooks/useUser";
+import { usePosts } from "@/hooks/usePosts";
+
+import { useState } from "react";
+import { UserData } from "@/types/userData";
+import { PostsProps } from "@/types/posts";
+
 
 export default function Home() {
+
+  const { getUsers } = useUser();
+  const { getPosts } = usePosts();
+
+  const [posts, setPosts] = useState<PostsProps[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
+
+  async function fetchData() {
+    const usersFetch = await getUsers();
+    const postsFetch = await getPosts();
+    if (postsFetch) {
+      setPosts(postsFetch);
+    }
+    if (usersFetch) {
+      setUsers(usersFetch);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [])
 
   return (
     <div className="relative">
@@ -22,7 +50,7 @@ export default function Home() {
 
       <Feature />
 
-      <Stats />
+      <Stats users={users} posts={posts} />
 
       <CardFeature />
 

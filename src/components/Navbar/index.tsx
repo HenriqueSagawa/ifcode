@@ -10,6 +10,7 @@ import { Button as ButtonHeroUi } from "@heroui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/select";
 import { Dropdown, DropdownTrigger, DropdownItem, DropdownMenu as DrodownHeroui } from "@heroui/dropdown";
 import { Avatar } from "@heroui/avatar";
+import { useUser } from "@/hooks/useUser";
 import Link from "next/link";
 import {
   Accordion,
@@ -48,19 +49,19 @@ interface MenuItem {
 }
 
 interface UserData {
-  id?: string;
+  id: string;
   name: string;
+  lastName: string;
   email: string;
-  birthDate: string;
-  phone: string;
-  course: string;
-  period: string;
-  registration: string;
-  github: string;
-  bio: string;
-  profileImage: string;
+  bio?: string;
+  birthDate?: string;
   createdAt: string;
-  fullData: boolean;
+  github?: string;
+  phone?: string;
+  profileImage?: string;
+  bannerImage?: string;
+  fullData?: any;
+  skills?: string[];
 }
 
 interface Navbar1Props {
@@ -147,30 +148,22 @@ const Navbar = ({
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
 
+  const {
+    getUserByEmail,
+  } = useUser();
+
+  async function handleFetchUser() {
+    const userEmail = session?.user?.email;
+    const result = await getUserByEmail(userEmail as string);
+    setUser(result);
+  }
 
   useEffect(() => {
     if (status === "authenticated") {
-      getUser().then(user => {
-        if (user) {
-          setUser(user);
-        }
-      });
+      handleFetchUser();
     }
-  }, [session, status]);
-
-  async function getUser() {
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('email', "==", session?.user?.email));
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0];
-      const userData = doc.data() as UserData;
-      const { id, ...rest } = userData;
-      return { id: doc.id, ...rest }; // Return the user data
-    } else {
-      return null;
-    }
-  }
+  }, [status]);
+  
 
   function handleLogout() {
     signOut();
