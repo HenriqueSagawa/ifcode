@@ -172,8 +172,10 @@ export function usePosts(options: UsePostsOptions = {}) {
       return []
     }
 
+    console.log('Fetching posts for author:', authorId)
+
     const filters: PostFilter[] = [
-      { field: 'authorId', operator: '==', value: authorId }
+      { field: 'id', operator: '==', value: authorId }
     ]
 
     return getPosts({ 

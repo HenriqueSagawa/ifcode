@@ -3,8 +3,12 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
+import { usePosts } from "@/hooks/usePosts";
+
 import { db } from "@/services/firebaseConnection";
 import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
+
 import { UserData } from "@/types/userData";
 import { PostsProps } from "@/types/posts";
 
@@ -18,6 +22,7 @@ import Link from "next/link";
 import { EditProfile } from "@/components/EditProfile";
 import { Spinner } from "@heroui/spinner";
 import { NotificationDropdown } from "@/components/Notification";
+
 
 type Comment = {
     id: string;
@@ -44,6 +49,9 @@ export default function DashboardPage() {
     const [postsCurrentPage, setPostsCurrentPage] = useState(1);
     const [recentCommentsCurrentPage, setRecentCommentsCurrentPage] = useState(1);
     const dataFetched = useRef(false);
+
+    const { getUserByEmail } = useUser();
+    const { getPosts } = usePosts();
 
     const stats = useMemo(() => [
         {
@@ -99,29 +107,29 @@ export default function DashboardPage() {
 
             try {
                 setLoading(true);
-                const usersRef = collection(db, "users");
-                const q = query(usersRef, where("email", "==", session.user.email));
-                const querySnapshot = await getDocs(q);
 
-                if (!querySnapshot.empty) {
-                    const docSnapshot = querySnapshot.docs[0];
-                    const userData = docSnapshot.data() as UserData;
-                    setUser({ 
-                        ...userData,
-                        id: docSnapshot.id
-                    });
+                const userFetch = await getUserByEmail(session.user.email);
 
-                    const postsRef = collection(db, "posts");
-                    const postsQuery = query(postsRef, orderBy("createdAt", "desc"));
-                    const postsSnapshot = await getDocs(postsQuery);
-                    const postsData = postsSnapshot.docs.map(doc => ({
-                        postId: doc.id,
-                        ...doc.data()
-                    })) as PostsProps[];
+                setUser(userFetch);
 
-                    const filteredPosts = postsData.filter(post => post.id === docSnapshot.id);
-                    setPosts(filteredPosts);
+                if (userFetch?.id) {
+
+                    try {
+
+                        const postsData = await getPosts();
+
+                        const filteredPosts = postsData.filter(post => post.id === userFetch?.id);
+                        setPosts(filteredPosts);
+
+
+                    } catch (postsError) {
+                        console.error("Erro ao buscar posts:", postsError);
+                    }
                 }
+
+
+
+
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -226,16 +234,16 @@ export default function DashboardPage() {
     const Pagination = ({ currentPage, totalPages, onPageChange }: { currentPage: number; totalPages: number; onPageChange: (page: number) => void }) => {
         return (
             <div className="flex justify-center items-center mt-6 gap-2">
-                <Button 
-                    variant="outline" 
-                    size="sm" 
+                <Button
+                    variant="outline"
+                    size="sm"
                     disabled={currentPage === 1}
                     onClick={() => onPageChange(currentPage - 1)}
                     className="p-2"
                 >
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
-                
+
                 <div className="flex items-center gap-1">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                         <Button
@@ -249,10 +257,10 @@ export default function DashboardPage() {
                         </Button>
                     ))}
                 </div>
-                
-                <Button 
-                    variant="outline" 
-                    size="sm" 
+
+                <Button
+                    variant="outline"
+                    size="sm"
                     disabled={currentPage === totalPages}
                     onClick={() => onPageChange(currentPage + 1)}
                     className="p-2"
@@ -320,11 +328,11 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
 
-                <CreatePost 
-                  author={user?.name || ""} 
-                  userImage={user?.profileImage || ""} 
-                  id={user?.id || ""} 
-                  email={user?.email || ""} 
+                <CreatePost
+                    author={user?.name || ""}
+                    userImage={user?.profileImage || ""}
+                    id={user?.id || ""}
+                    email={user?.email || ""}
                 />
 
                 <Card>
@@ -367,10 +375,10 @@ export default function DashboardPage() {
                                                 </span>
                                                 <span className="flex items-center gap-1">
                                                     <ThumbsUp className="h-3 w-3" />
-                                                    {typeof post.likes === 'number' 
-                                                        ? post.likes 
+                                                    {typeof post.likes === 'number'
+                                                        ? post.likes
                                                         : Array.isArray(post.likes)
-                                                        //@ts-ignore
+                                                            //@ts-ignore
                                                             ? post.likes.length || 0
                                                             : 0} curtidas
                                                 </span>
@@ -384,13 +392,13 @@ export default function DashboardPage() {
                         {posts.length > 0 && (
                             <div className="mt-4 flex flex-col items-center">
                                 {posts.length > POSTS_PER_PAGE && (
-                                    <Pagination 
-                                        currentPage={postsCurrentPage} 
-                                        totalPages={postsPagination.totalPages} 
-                                        onPageChange={handlePageChange} 
+                                    <Pagination
+                                        currentPage={postsCurrentPage}
+                                        totalPages={postsPagination.totalPages}
+                                        onPageChange={handlePageChange}
                                     />
                                 )}
-                                
+
                                 <div className="mt-4">
                                     <Link href="/posts">
                                         <Button variant="outline" size="sm" className="flex items-center gap-1">
