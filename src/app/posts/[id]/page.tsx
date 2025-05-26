@@ -25,6 +25,9 @@ import { addToast } from "@heroui/toast";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Timestamp } from 'firebase/firestore';
+import { useComment } from "@/hooks/useComment";
+import { usePosts } from "@/hooks/usePosts";
+import { PostsProps } from "@/types/posts";
 
 
 
@@ -34,23 +37,24 @@ interface PostDataProps {
     codeContent: string;
     codeLenguage: string;
     content: string;
-    createdAt: Date | Timestamp;
+    createdAt: string | Date | Timestamp;
     email: string;
     id: string;
     images: string[];
     likes: number;
     title: string;
     type: string;
-    userImage: string;
     userId: string;
 }
 
 interface CommentProps {
     id: string;
-    text: string;
-    author: string;
-    authorImage: string;
-    createdAt: Date | Timestamp | null;
+    postId: string;
+    userId: string;
+    authorName: string;
+    authorImage?: string | null;
+    content: string;
+    createdAt: Timestamp | Date;
 }
 
 export default function PostPage() {
@@ -60,6 +64,9 @@ export default function PostPage() {
     const [comments, setComments] = useState<CommentProps[]>([]);
     const [newComment, setNewComment] = useState("");
     const [user, setUser] = useState<any>(null);
+
+    const { addComment, getCommentsByPostId } = useComment();
+    const { getPostById } = usePosts();
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState("");
@@ -116,26 +123,14 @@ export default function PostPage() {
     const fetchPost = useCallback(async (postId: string) => {
         try {
             setLoading(true);
-            const postRef = doc(db, "posts", postId);
-            const postSnap = await getDoc(postRef);
-
-            if (postSnap.exists()) {
-                const postData = postSnap.data() as PostDataProps;
+            setPost(await getPostById(postId) as PostDataProps)
 
 
-                const updatedPostData = {
-                    ...postData,
-                    codeLenguage: getPrismLanguage(postData.codeLenguage as string)
-                };
 
-                setPost(updatedPostData);
-                dataFetched.current = true;
-                fetchComments(postId);
+            const comments = await fetchComments(postId);
+            setComments(comments);
 
-            } else {
-                console.warn("Post não encontrado!");
-                setPost(null);
-            }
+
         } catch (err) {
             console.error("Erro ao buscar o post:", err);
             setPost(null);
@@ -151,31 +146,8 @@ export default function PostPage() {
 
 
     const fetchComments = useCallback(async (postId: string) => {
-        try {
-            const commentsRef = collection(db, "posts", postId, "comments");
-            const q = query(commentsRef, orderBy("createdAt", "desc"));
-            const commentsSnap = await getDocs(q);
-
-            const commentsData = commentsSnap.docs.map(doc => {
-                const data = doc.data();
-                const createdAt = data.createdAt ? (data.createdAt as Timestamp).toDate() : null;
-
-                return {
-                    id: doc.id,
-                    ...data,
-                    createdAt: createdAt
-                };
-            }) as CommentProps[];
-
-            setComments(commentsData);
-        } catch (err) {
-            console.error("Erro ao buscar comentários:", err);
-            addToast({
-                title: "Erro ao carregar comentarios.",
-                color: "danger",
-                variant: "flat"
-            });
-        }
+        const commentsFetch = await getCommentsByPostId(postId);
+        return commentsFetch;
     }, []);
 
     async function createNotification(notificationData: any) {
@@ -205,17 +177,21 @@ export default function PostPage() {
 
         setCommentLoading(true);
         try {
-            const commentsRef = collection(db, "posts", id as string, "comments");
-            await addDoc(commentsRef, {
-                text: newComment,
-                author: user.name,
-                authorImage: user.profileImage,
+
+            const commentData = {
+                postId: id as string,
                 userId: user.id,
-                createdAt: serverTimestamp()
-            });
+                authorName: user.name,
+                authorImage: user.profileImage || null,
+                content: newComment.trim()
+            };
+
+            console.log("Enviando para o db", newComment)
+
+            const result = await addComment(commentData);
 
             setNewComment("");
-            await fetchComments(id as string);
+            setComments(await getCommentsByPostId(id as string));
 
             createNotification({
                 type: "comment",
@@ -405,32 +381,35 @@ export default function PostPage() {
 
                 <Divider className="my-4" />
 
-                {comments.length > 0 ? (
-                    <div className="space-y-4">
-                        {comments.map((comment) => (
-                            <Card key={comment.id} className="mb-4">
-                                <CardHeader>
-                                    <Avatar src={comment.authorImage} className="mr-2" />
-                                    <div>
-                                        <p className="font-bold">{comment.author}</p>
-                                        <p className="text-gray-500 text-sm">
-                                            {comment.createdAt instanceof Date
-                                                ? formatDistanceToNow(comment.createdAt, { addSuffix: true, locale: ptBR })
-                                                : "Data desconhecida"}
-                                        </p>
-                                    </div>
-                                </CardHeader>
-                                <CardBody>
-                                    <p className="whitespace-pre-wrap">{comment.text}</p>
-                                </CardBody>
-                            </Card>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="text-gray-500 text-center py-6">
-                        Nenhum comentário ainda. Seja o primeiro a comentar!
-                    </p>
-                )}
+                {comments.map((comment) => (
+                    <Card key={comment.id} className="mb-4">
+                        <CardHeader>
+                            <Avatar src={comment.authorImage as string} className="mr-2" />
+                            <div>
+                                <p className="font-bold">{comment.authorName}</p>
+                                <p className="text-gray-500 text-sm">
+                                    {(() => {
+                                        if (comment.createdAt instanceof Timestamp) {
+                                            return formatDistanceToNow(comment.createdAt.toDate(), {
+                                                addSuffix: true,
+                                                locale: ptBR
+                                            });
+                                        } else if (comment.createdAt instanceof Date) {
+                                            return formatDistanceToNow(comment.createdAt, {
+                                                addSuffix: true,
+                                                locale: ptBR
+                                            });
+                                        }
+                                        return "Agora mesmo";
+                                    })()}
+                                </p>
+                            </div>
+                        </CardHeader>
+                        <CardBody>
+                            <p className="whitespace-pre-wrap">{comment.content}</p>
+                        </CardBody>
+                    </Card>
+                ))}
             </div>
 
             {/* Modal de visualização da imagem */}
