@@ -122,6 +122,41 @@ export function useComment(options: UseCommentOptions = {}) {
   }, []);
 
   /**
+   * Busca todos os comentários da coleção.
+   */
+  const getAllComments = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setComments([]);
+
+    try {
+      const commentsRef = collection(db, 'comments');
+      const q = query(
+        commentsRef,
+        orderBy(defaultSorting.field, defaultSorting.direction)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      
+      const fetchedComments = querySnapshot.docs.map(doc => {
+        const data = doc.data() as Omit<CommentData, 'id'>;
+        // Certifica que createdAt é um Timestamp do Firebase
+        const createdAt = data.createdAt instanceof Timestamp ? data.createdAt : Timestamp.now();
+        return { id: doc.id, ...data, createdAt } as CommentData;
+      });
+
+      setComments(fetchedComments);
+      return fetchedComments;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Erro ao buscar todos os comentários');
+      setError(error);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [defaultSorting]);
+
+  /**
    * Adiciona um novo comentário ao Firestore.
    */
   const addComment = useCallback(async (commentData: NewCommentData) => {
@@ -165,7 +200,7 @@ export function useComment(options: UseCommentOptions = {}) {
     error,
     getCommentsByPostId,
     getCommentsByUserId,
+    getAllComments,
     addComment
   };
 }
-

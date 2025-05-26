@@ -10,28 +10,46 @@ import { motion } from "motion/react";
 
 import { useUser } from "@/hooks/useUser";
 import { usePosts } from "@/hooks/usePosts";
+import { useComment } from "@/hooks/useComment";
 
 import { useState } from "react";
 import { UserData } from "@/types/userData";
 import { PostsProps } from "@/types/posts";
 
+import { Timestamp } from "firebase/firestore";
+
+export interface CommentData {
+  id: string;
+  postId: string;
+  userId: string;
+  authorName: string;
+  authorImage?: string | null;
+  content: string;
+  createdAt: Timestamp;
+}
 
 export default function Home() {
 
   const { getUsers } = useUser();
   const { getPosts } = usePosts();
+  const { getAllComments } = useComment();
 
   const [posts, setPosts] = useState<PostsProps[]>([]);
   const [users, setUsers] = useState<UserData[]>([]);
+  const [comments, setComments] = useState<CommentData[]>([]);
 
   async function fetchData() {
     const usersFetch = await getUsers();
     const postsFetch = await getPosts();
+    const commentsFetch = await getAllComments();
     if (postsFetch) {
       setPosts(postsFetch);
     }
     if (usersFetch) {
       setUsers(usersFetch);
+    }
+    if (commentsFetch) {
+      setComments(commentsFetch);
     }
   }
 
@@ -50,7 +68,7 @@ export default function Home() {
 
       <Feature />
 
-      <Stats users={users} posts={posts} />
+      <Stats users={users} posts={posts} comments={comments} />
 
       <CardFeature />
 

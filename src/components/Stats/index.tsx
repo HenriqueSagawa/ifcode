@@ -1,16 +1,18 @@
 import { PostsProps } from "@/types/posts";
 import { UserData } from "@/types/userData";
+import { CommentData } from "@/types/comments";
 
 interface StatsProps {
     users: UserData[],
     posts: PostsProps[],
+    comments: CommentData[]
 }
 
-export function Stats({ users, posts }: StatsProps) {
+export function Stats({ users, posts, comments }: StatsProps) {
 
     const stats = [
         {
-            data: "0",
+            data: comments.length,
             desc: "Dúvidas respondidas"
         },
         {
