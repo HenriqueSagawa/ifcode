@@ -18,6 +18,28 @@ import { PostsProps } from "@/types/posts";
 
 import { Timestamp } from "firebase/firestore";
 
+import dynamic from "next/dynamic";
+
+const DynamicGeminiSection = dynamic(() =>
+  import('@/components/GeminiSection').then(mod => mod.GeminiSection),
+  { loading: () => <p></p> } 
+);
+
+const DynamicCardFeature = dynamic(() =>
+  import('@/components/CardFeature').then(mod => mod.CardFeature),
+  { loading: () => <p></p> }
+);
+
+const DynamicStats = dynamic(() =>
+  import('@/components/Stats').then(mod => mod.Stats),
+  { loading: () => <p></p> }
+);
+
+const DynamicFeature = dynamic(() =>
+  import('@/components/Features').then(mod => mod.Feature),
+  { loading: () => <p></p> }
+);
+
 export interface CommentData {
   id: string;
   postId: string;
@@ -65,16 +87,13 @@ export default function Home() {
 
       <Hero />
 
+      <DynamicFeature />
 
-      <Feature />
+      <DynamicStats users={users} posts={posts} comments={comments} />
 
-      <Stats users={users} posts={posts} comments={comments} />
+      <DynamicCardFeature />
 
-      <CardFeature />
-
-
-
-      <GeminiSection />
+      <DynamicGeminiSection />
 
     </div>
   );
