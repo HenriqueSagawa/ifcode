@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue } from "framer-motion";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import Link from "next/link";
-import YoutubeIfcode from "../../../public/img/capa if code vídeo.jpg"
+import YoutubeIfcode from "../../../public/img/capa if code vídeo.webp"
 
 export function Feature() {
   const features = [
@@ -113,7 +113,7 @@ export const SkeletonOne = () => {
         <div className="flex flex-1 w-full h-full flex-col space-y-2  ">
           {/* TODO */}
           <Image
-            src="/img/fotoifcodecapa.jpg"
+            src="/img/fotoifcodecapa.webp"
             alt="header"
             width={400}
             height={400}
@@ -140,7 +140,7 @@ export const SkeletonThree = () => {
           {/* TODO */}
           <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " />
           <Image
-            src="/img/ifcodebanner.png"
+            src="/img/ifcodebanner.webp"
             alt="header"
             width={800}
             height={800}
@@ -154,11 +154,11 @@ export const SkeletonThree = () => {
 
 export const SkeletonTwo = () => {
   const images = [
-    "/img/equipeifcode.jpg",
-    "/img/ifcodefoto1.jpg",
-    "/img/ifcodefoto2.jpg",
-    "/img/ifcodefoto3.jpg",
-    "/img/ifcodefoto4.jpg",
+    "/img/equipeifcode.webp",
+    "/img/ifcodefoto1.webp",
+    "/img/ifcodefoto2.webp",
+    "/img/ifcodefoto3.webp",
+    "/img/ifcodefoto4.webp",
   ];
 
   const imageVariants = {

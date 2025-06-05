@@ -279,7 +279,7 @@ export default function DashboardPage() {
 
             <div className="grid gap-6">
                 <Card className="overflow-hidden bg-white shadow-md">
-                    <div className="h-48 w-full bg-cover bg-center" style={{ backgroundImage: `url(${user?.bannerImage || '/default-banner.jpg'})` }}></div>
+                    <div className="h-48 w-full bg-cover bg-center" style={{ backgroundImage: `url(${user?.bannerImage || '/default-banner.webp'})` }}></div>
 
                     <CardContent className="p-6 relative">
                         <div className="flex flex-col md:flex-row gap-6">

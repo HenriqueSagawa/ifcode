@@ -23,7 +23,7 @@ const teamMembers = [
   {
     name: "Michelli Cristina Galli",
     role: "Orientadora",
-    image: "/img/team/member3.jpg",
+    image: "/img/team/member3.webp",
     github: "",
     description: "Professora e dr. Estudos da Linguagem da Universidade Estadual de Londrina - UEL"
   },

@@ -2,7 +2,7 @@
 
 import { FaUsers, FaPhone, FaPaperclip, FaQuestion, FaRobot, FaBars } from "react-icons/fa";
 
-import LogoIFCode from "../../../public/img/logo ifcode.png";
+import LogoIFCode from "../../../public/img/logo ifcode.webp";
 import Image from "next/image";
 import { ModeToggle } from "../ModeToggle";
 import { useSession, signOut } from "next-auth/react";
@@ -87,7 +87,7 @@ interface Navbar1Props {
 const Navbar = ({
   logo = {
     url: "/",
-    src: '/img/logo ifcode.png',
+    src: '/img/logo ifcode.webp',
     alt: "logo",
     title: "IF Code",
   },

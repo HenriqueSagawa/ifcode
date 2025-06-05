@@ -2,10 +2,6 @@
 
 import React, { useEffect } from "react";
 import { Hero } from "@/components/Hero";
-import { GeminiSection } from "@/components/GeminiSection";
-import { Feature } from "@/components/Features";
-import { Stats } from "@/components/Stats";
-import { CardFeature } from "@/components/CardFeature";
 import { motion } from "motion/react";
 
 import { useUser } from "@/hooks/useUser";

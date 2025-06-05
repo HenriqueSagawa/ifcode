@@ -30,7 +30,7 @@ export const HeroCards = () => {
           <Avatar>
             <AvatarImage
               alt=""
-              src="/img/logo ifcode.png"
+              src="/img/logo ifcode.webp"
             />
             <AvatarFallback>IF</AvatarFallback>
           </Avatar>
@@ -116,7 +116,7 @@ export const HeroCards = () => {
       <CardMotion animate={{ y: [10, -5, 10] }} transition={{ repeat: Infinity, duration: 5.4 }} className="absolute 2xl:scale-100 w-[270px] h-[auto] 2xl:w-[350px] right-[5px] 2xl:-right-[10px] 2xl:bottom-[10px] bottom-[-210px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="space-y-1 flex md:flex-row justify-start items-start gap-4">
           <div className="mt-1 p-1 rounded-2xl ">
-            <Image src="/img/logo ifpr.png" alt="Logo do IFPR" width={100} height={100} />
+            <Image src="/img/logo ifpr.webp" alt="Logo do IFPR" width={100} height={100} />
           </div>
           <div>
             <CardTitle>O IFPR</CardTitle>

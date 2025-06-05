@@ -60,7 +60,7 @@ interface CommentProps {
 export default function PostPage() {
     const [loading, setLoading] = useState(true);
     const [commentLoading, setCommentLoading] = useState(false);
-    const [post, setPost] = useState<PostDataProps | null>(null);
+const [post, setPost] = useState<PostDataProps | null>(null);
     const [comments, setComments] = useState<CommentProps[]>([]);
     const [newComment, setNewComment] = useState("");
     const [user, setUser] = useState<any>(null);

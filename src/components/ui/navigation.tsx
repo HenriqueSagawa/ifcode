@@ -14,7 +14,7 @@ import {
   navigationMenuTriggerStyle,
 } from "./navigation-menu";
 import Image from "next/image";
-import logoIfcode from "../../../public/img/logo ifcode.png";
+import logoIfcode from "../../../public/img/logo ifcode.webp";
 
 
 const components: { title: string; href: string; description: string }[] = [
