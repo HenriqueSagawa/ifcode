@@ -134,7 +134,7 @@ export function Message({ message, userProfile }: MessageProps) {
     return (
         <div ref={messageRef} className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2 mb-4`}>
             <div className="h-8 w-8 rounded-full bg-transparent flex items-center justify-center">
-                <Image src="/img/logo ifcode.webp" alt="Logo" width={100} priority height={100} className="rounded-full w-full h-full" />
+                <Image src="/img/logo ifcode.webp" alt="Logo do ifcode" width={100} priority height={100} className="rounded-full w-full h-full" />
             </div>
             <Card className={`max-w-[70%] p-3 pb-6 ${isUser ? "bg-muted" : "bg-muted/50"} group relative`}>
                 <div className="prose prose-invert max-w-none dark:prose-invert">

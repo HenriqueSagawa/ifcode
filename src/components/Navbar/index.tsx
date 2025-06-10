@@ -88,7 +88,7 @@ const Navbar = ({
   logo = {
     url: "/",
     src: '/img/logo ifcode.webp',
-    alt: "logo",
+    alt: "logo do ifcode",
     title: "IF Code",
   },
   menu = [
@@ -176,7 +176,7 @@ const Navbar = ({
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <a href={logo.url} className="flex items-center gap-2">
-              <Image alt="" src={logo.src} width={100} height={100} className="w-8" quality={100} />
+              <Image alt="Logo do ifcode" src={logo.src} width={100} height={100} className="w-8" quality={100} />
               <span className="text-lg font-semibold">{logo.title}</span>
             </a>
             <div className="flex items-center">

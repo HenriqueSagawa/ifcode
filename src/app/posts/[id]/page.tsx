@@ -436,7 +436,7 @@ const [post, setPost] = useState<PostDataProps | null>(null);
                                 <div className="max-h-screen max-w-screen-lg">
                                     <Image
                                         src={selectedImage}
-                                        alt="Imagem ampliada"
+                                        alt="Imagem do post ampliada"
                                         width={1200}
                                         height={800}
                                         className="object-contain max-h-screen"

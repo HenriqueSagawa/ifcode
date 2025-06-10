@@ -114,7 +114,7 @@ export const SkeletonOne = () => {
           {/* TODO */}
           <Image
             src="/img/fotoifcodecapa.webp"
-            alt="header"
+            alt="capa do if code"
             width={400}
             height={400}
             className="w-full h-full aspect-square object-cover rounded-sm"
@@ -141,7 +141,7 @@ export const SkeletonThree = () => {
           <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " />
           <Image
             src="/img/ifcodebanner.webp"
-            alt="header"
+            alt="banner da playlist de desenvolvimento do ifcode"
             width={800}
             height={800}
             className="h-full w-full aspect-square object-contain rounded-sm blur-none group-hover/image:blur-md transition-all duration-200"
@@ -190,7 +190,7 @@ export const SkeletonTwo = () => {
           >
             <Image
               src={image}
-              alt="bali images"
+              alt="imagem do galeria de imagens do ifcode"
               width="500"
               height="500"
               className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover flex-shrink-0"
@@ -212,7 +212,7 @@ export const SkeletonTwo = () => {
           >
             <Image
               src={image}
-              alt="bali images"
+              alt="imagem do galeria de imagens do ifcode"
               width="500"
               height="500"
               className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover flex-shrink-0"
