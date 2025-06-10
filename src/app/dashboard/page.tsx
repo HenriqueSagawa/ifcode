@@ -6,9 +6,6 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { usePosts } from "@/hooks/usePosts";
 
-import { db } from "@/services/firebaseConnection";
-import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
-
 import { UserData } from "@/types/userData";
 import { PostsProps } from "@/types/posts";
 
@@ -16,12 +13,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { addToast } from "@heroui/toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShareIcon, PencilIcon, GithubIcon, PhoneIcon, ChevronLeft, ChevronRight, Calendar, ImageIcon, Code, Send, PenSquare, MessageSquare, ThumbsUp } from "lucide-react";
+import { ShareIcon, PencilIcon, GithubIcon, PhoneIcon, ChevronLeft, ChevronRight, Calendar, PenSquare, MessageSquare, ThumbsUp } from "lucide-react";
 import { CreatePost } from "@/components/CreatePost";
 import Link from "next/link";
 import { EditProfile } from "@/components/EditProfile";
 import { Spinner } from "@heroui/spinner";
 import { NotificationDropdown } from "@/components/Notification";
+import { RecentComments } from "@/components/Dashboard/recent-comments";
 
 
 type Comment = {
@@ -411,6 +409,15 @@ export default function DashboardPage() {
                         )}
                     </CardContent>
                 </Card>
+
+                {user?.id && (
+                    <RecentComments
+                        userId={user.id}
+                        userImage={user.profileImage}
+                        userName={`${user.name} ${user.lastName || ''}`.trim()}
+                        commentsPerPage={3}
+                    />
+                )}
             </div>
         </div>
     );

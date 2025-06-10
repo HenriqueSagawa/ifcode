@@ -144,7 +144,7 @@ export const LinkPreview = ({
                     layout={layout}
                     priority={true}
                     className="rounded-lg"
-                    alt="imagem de pré-visualização"
+                    alt="Imagem de pré-visualização"
                   />
                 </Link>
               </motion.div>

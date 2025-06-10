@@ -411,6 +411,7 @@ const PostsPage: React.FC = () => {
                       isBordered
                       color="primary"
                       className="flex-shrink-0 bg-white hover:brightness-75 transition-all"
+                      alt = {`Foto de perfil do dono do post ${post.author}`}
                     />
                   </Link>
 

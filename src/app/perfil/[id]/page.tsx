@@ -175,11 +175,12 @@ export default function ProfilePage() {
       <div className="relative">
         <img
           src={user?.bannerImage}
-          alt="Banner de"
+          alt={`Banner de ${user?.name}`}
           className="w-full h-40 object-cover rounded-lg"
         />
         <Avatar
           src={user?.profileImage}
+          alt={`Foto de perfil do usuário ${user?.name}`}
           className="absolute bottom-[-40px] left-4 w-24 h-24 border-4 border-white rounded-full"
         />
       </div>

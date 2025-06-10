@@ -46,7 +46,7 @@ export default function Navigation() {
                     className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/30 to-muted/10 p-6 no-underline outline-none focus:shadow-md"
                     href="/"
                   >
-                    <Image src={logoIfcode} alt="Logo if code" width={50} height={50} />
+                    <Image src={logoIfcode} alt="Logo IF code" width={50} height={50} />
                     <div className="mb-2 mt-4 text-lg font-medium">
                       IFCode
                     </div>
