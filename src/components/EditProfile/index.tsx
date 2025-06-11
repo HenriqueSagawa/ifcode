@@ -8,7 +8,6 @@ import {
 } from "@heroui/modal";
 
 import {
-    Mail,
     Phone,
     User,
     Pencil,
@@ -28,6 +27,7 @@ import { db } from "@/services/firebaseConnection";
 interface userDataProps {
     id?: string; // Add ID for document reference
     name?: string;
+    lastName?: string;
     email?: string;
     phone?: string;
     github?: string;
@@ -42,7 +42,7 @@ export function EditProfile({ user }: { user: userDataProps }) {
     // Initialize form data state with user data
     const [formData, setFormData] = useState<userDataProps>({
         name: user?.name || "",
-        email: user?.email || "",
+        lastName: user?.lastName || "",
         phone: user?.phone || "",
         github: user?.github || "",
         bio: user?.bio || "",
@@ -141,7 +141,7 @@ export function EditProfile({ user }: { user: userDataProps }) {
             // Object to hold updated data
             const updatedData: Record<string, any> = { 
                 name: formData.name,
-                email: formData.email,
+                lastName: formData.lastName,
                 phone: formData.phone,
                 github: formData.github,
                 bio: formData.bio,
@@ -278,14 +278,14 @@ export function EditProfile({ user }: { user: userDataProps }) {
                                     className="mb-4"
                                 />
 
-                                {/* Email */}
+                                {/* Sobrenome */}
                                 <Input
                                     endContent={
-                                        <Mail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                        <User className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                                     }
-                                    name="email"
-                                    label="Email"
-                                    value={formData.email}
+                                    name="lastName"
+                                    label="Sobrenome"
+                                    value={formData.lastName}
                                     onChange={handleInputChange}
                                     variant="bordered"
                                     className="mb-4"
