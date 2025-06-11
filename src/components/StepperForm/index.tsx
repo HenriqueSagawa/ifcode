@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { Spinner } from '@heroui/spinner';
 
 
-// Definição do esquema de validação com Zod
+
 const formSchema = z.object({
     birthDate: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
     phoneNumber: z.string().min(10, { message: "Número de telefone deve ter pelo menos 10 dígitos" }),
@@ -47,7 +47,6 @@ export function ProfileStepperForm() {
     const [loading, setLoading] = useState<boolean>(false);
 
 
-    // Configuração do React Hook Form com Zod
     const {
         control,
         register,
@@ -152,8 +151,18 @@ export function ProfileStepperForm() {
     const onSubmit = async (data: FormSchemaType) => {
         try {
             setLoading(true);
-            const profileImageUrl = await uploadImageToCloudinary(data.profilePicture);
-            const bannerImageUrl = await uploadImageToCloudinary(data.profileBanner);
+            
+            // Só faz upload se a imagem foi selecionada
+            let profileImageUrl = null;
+            let bannerImageUrl = null;
+
+            if (data.profilePicture && data.profilePicture instanceof File) {
+                profileImageUrl = await uploadImageToCloudinary(data.profilePicture);
+            }
+
+            if (data.profileBanner && data.profileBanner instanceof File) {
+                bannerImageUrl = await uploadImageToCloudinary(data.profileBanner);
+            }
 
             const userData = {
                 birthDate: data.birthDate,
@@ -161,8 +170,8 @@ export function ProfileStepperForm() {
                 github: data.github,
                 bio: data.bio,
                 profession: data.profession,
-                profileImage: profileImageUrl,
-                bannerImage: bannerImageUrl,
+                profileImage: profileImageUrl, // Será null se não houver imagem
+                bannerImage: bannerImageUrl,   // Será null se não houver banner
                 skills: data.skills,
                 email: session?.user?.email
             }
@@ -507,7 +516,7 @@ export function ProfileStepperForm() {
 
                             {currentStep === 4 ? (
                                 <Button color="primary" type="submit" disabled={loading}>
-                                    <Spinner size="sm" className={loading ? "hidden" : "flex"} />
+                                    {loading && <Spinner size="sm" />}
                                     Enviar
                                 </Button>
                             ) : (
