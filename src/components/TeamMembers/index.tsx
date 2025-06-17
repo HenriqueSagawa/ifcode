@@ -39,7 +39,7 @@ export function TeamMembers() {
     <div className="flex gap-4 max-w-full w-full dark:bg-[#121212] flex-wrap justify-center">
       {teamMembers.map((member, index) => (
         <CardContainer key={index} className="inter-var">
-          <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[fit] max-w-80 sm:max-w-none sm:w-[30rem] sm:h-[25rem] h-fit rounded-xl p-6 border">
+          <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[fit] max-w-80 sm:max-w-none sm:w-[24rem] sm:h-[22rem] h-fit rounded-xl p-5 border">
             <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
               {member.name}
             </CardItem>
@@ -47,13 +47,13 @@ export function TeamMembers() {
               {member.role}
             </CardItem>
             <CardItem translateZ="100" className="w-full mt-4">
-            <Image
-              src={member.image}
-              height="1000"
-              width="1000"
-              className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-              alt="membro da equipe do ifcode"
-            />
+              <Image
+                src={member.image}
+                height={1000}
+                width={1000}
+                className="h-52 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+                alt="membro da equipe do ifcode"
+              />
             </CardItem>
             <CardItem translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
               {member.description}
@@ -62,6 +62,5 @@ export function TeamMembers() {
         </CardContainer>
       ))}
     </div>
-
   );
-} 
+}
