@@ -1,36 +1,34 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
 
 const teamMembers = [
   {
     name: "Henrique Tutomu Sagawa",
     role: "Desenvolvedor Frontend e Backend",
-    image: "https://media.gettyimages.com/id/962792890/pt/foto/kiev-ukraine-cristiano-ronaldo-of-real-madrid-lifts-the-uefa-champions-league-trophy-following.jpg?s=2048x2048&w=gi&k=20&c=bHK_tF9_cMrXcIF8i_i9iDvhBKRxyFi0aGc13yywW7k=",
+    image: "/img/henrique.webp",
     github: "https://github.com/Henrique Sagawa",
     description: "Especialista em React e Next.js"
   },
   {
     name: "João Victor Nogueira Calassara",
-    role: "Documentador de código",
-    image: "https://media.gettyimages.com/id/2155285978/pt/foto/athens-greece-rodinei-of-olympiakos-poses-for-a-portrait-with-the-uefa-europa-conference.jpg?s=2048x2048&w=gi&k=20&c=GHouo3Aeqqlp5G9AgYRKwFaa43W2s6DvY51PWGW1lMc=",
+    role: "Desenvolvedor Frontend e Backend",
+    image: "/img/joao.webp",
     github: "",
-    description: "O maior documentador já conhecido na história"
+    description: "Aprendendo React e Next.js"
   },
   {
     name: "Michelli Cristina Galli",
     role: "Orientadora",
-    image: "/img/team/member3.webp",
+    image: "/img/michelli.webp",
     github: "",
     description: "Professora e dr. Estudos da Linguagem da Universidade Estadual de Londrina - UEL"
   },
   {
     name: "Vagner Simões Santos",
     role: "Orientador",
-    image: "",
+    image: "/img/vagner.webp",
     github: "",
     description: "Professor e me. em PI e TT para Inovação"
   }
