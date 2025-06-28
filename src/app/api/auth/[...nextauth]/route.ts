@@ -22,14 +22,26 @@ const handler = NextAuth({
                     const querySnapshot = await getDocs(q);
 
                     if (querySnapshot.empty) {
-                        throw new Error("Usuário não encontrado");
+                        throw new Error("Email ou senha incorretos");
                     }
 
                     const user = querySnapshot.docs[0].data();
+
+                    if (user?.provider === 'google') {
+                        throw new Error('Esta conta foi registrada pelo Google. Por favor, use o botão "Entrar com Google"');
+                    }
+                    if (user?.provider === 'github') {
+                        throw new Error('Esta conta foi registrada pelo Github. Por favor, use o botão "Entrar com Github"');
+                    }
+
+                    if (!user.password) {
+                        throw new Error('Email ou senha incorretos');
+                    }
+
                     const isValid = await bcrypt.compare(credentials.password, user.password);
 
                     if (!isValid) {
-                        return null;
+                        throw new Error('Email ou senha incorretos');
                     }
 
                     return {
@@ -38,8 +50,8 @@ const handler = NextAuth({
                         email: user.email,
                         image: user.image
                     }
-                } catch (err) {
-                    return null;
+                } catch (err: any) {
+                    throw new Error(err.message);
                 }
             }
         }),

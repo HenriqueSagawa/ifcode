@@ -65,9 +65,9 @@ export function LogInForm() {
       if (result?.error) {
         setAlertType('error');
         setAlertMessage(
-          result.error === "CredentialsSignin"
-            ? "Email ou senha incorretos"
-            : "Erro ao fazer login"
+          result.error.includes("Esta conta foi registrada pelo")
+            ? result.error // Usar a mensagem de erro original do NextAuth
+            : "Email ou senha incorretos"
         );
         setShowAlert(true);
 
