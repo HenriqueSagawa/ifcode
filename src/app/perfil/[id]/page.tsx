@@ -2,21 +2,18 @@
 
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
-import { Avatar } from "@heroui/avatar"
-import { FaGithub, FaShareAlt } from "react-icons/fa";
+import { Avatar } from "@heroui/avatar";
+import { FaGithub, FaShareAlt, FaArrowLeft } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
 import Link from "next/link";
+import Image from "next/image";
 import { Spinner } from "@heroui/spinner";
 import { ArrowLeft, Calendar, MessageSquare, ThumbsUp } from "lucide-react";
-
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, FC } from "react";
 import { useSession } from "next-auth/react";
-
 import { addToast } from "@heroui/toast";
-import { FaArrowLeft } from "react-icons/fa";
 import { PostsProps } from "@/types/posts";
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface UserProps {
   name: string,
@@ -36,242 +33,247 @@ interface UserProps {
   skills: string[]
 }
 
-export default function ProfilePage() {
-  const [user, setUser] = useState<UserProps>();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [posts, setPosts] = useState<PostsProps[]>();
+const getBrowser = () => {
+  if (typeof navigator === 'undefined') return "ssr";
+  const userAgent = navigator.userAgent;
+  if (userAgent.indexOf("Firefox") > -1) return "Firefox";
+  if (userAgent.indexOf("Edg") > -1) return "Edge";
+  if (userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Safari") > -1) return "Chrome";
+  if (userAgent.indexOf("Safari") > -1 && userAgent.indexOf("Chrome") === -1) return "Safari";
+  return "unknown";
+};
 
-  const router = useRouter();
-  const { data: session, status } = useSession();
-  const { id } = useParams();
+const RECOMMENDED_BROWSER = "Chrome";
+
+const BrowserRecommendationBanner: FC = () => {
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const currentBrowser = getBrowser();
+    if (currentBrowser !== "ssr" && currentBrowser !== RECOMMENDED_BROWSER) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  if (!isVisible) return null;
+
+  return (
+    <div style={{
+      backgroundColor: '#ffc107',
+      color: '#212529',
+      padding: '12px',
+      textAlign: 'center',
+      fontSize: '14px',
+      position: 'sticky',
+      top: 0,
+      left: 0,
+      width: '100%',
+      zIndex: 1000,
+      boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+    }}>
+      Para uma experiência otimizada, recomendamos o uso do navegador **{RECOMMENDED_BROWSER}**.
+      <button 
+        onClick={() => setIsVisible(false)} 
+        style={{ 
+          background: 'none', 
+          border: 'none', 
+          color: '#212529',
+          marginLeft: '20px', 
+          cursor: 'pointer',
+          fontWeight: 'bold',
+          fontSize: '16px'
+        }}>
+        &times;
+      </button>
+    </div>
+  );
+};
+
+function useUserProfile(id: string | string[] | undefined) {
+  const [user, setUser] = useState<UserProps | null>(null);
+  const [posts, setPosts] = useState<PostsProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    };
 
     async function fetchData() {
+      setLoading(true);
+      setError('');
       try {
-        setLoading(true);
+        const [userResponse, postsResponse] = await Promise.all([
+          fetch(`/api/users/${id}`),
+          fetch("/api/posts")
+        ]);
 
-        const response = await fetch(`/api/users/${id}`);
+        if (!userResponse.ok) {
+          throw new Error("Erro ao carregar o perfil do usuário.");
+        }
+        
+        const userData = await userResponse.json();
+        setUser(userData);
 
-        if (!response.ok) {
-          throw new Error("Erro ao carregar o perfil");
+        if (postsResponse.ok) {
+          const postsData = await postsResponse.json();
+          const filteredPosts = postsData.posts.filter((post: PostsProps) => post.userId === id);
+          setPosts(filteredPosts);
+        } else {
+           console.warn("Não foi possível carregar os posts.");
         }
 
-        const data = await response.json();
-
-        setUser(data);
-
-
-        const fetchPost = await fetchPosts();
-
-        const dataPost = fetchPost.posts;
-
-
-        //@ts-ignore
-        const filteredPosts = dataPost.filter(post => post.userId === id);
-
-
-        setPosts(filteredPosts);
-
-
-      } catch (err) {
-        setError('Não foi possível carregar o perfil. Tente novamente mais tarde.');
+      } catch (err: any) {
+        setError(err.message || 'Não foi possível carregar o perfil. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
     }
 
-    async function fetchPosts() {
-      try {
-        const response = await fetch("/api/posts");
-
-        const data = response.json();
-
-        return data;
-      } catch (error) {
-        console.log("Erro ao buscar posts", error)
-      }
-    }
-
     fetchData();
-
-
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spinner color="success" label="Seja paciente! Não quebre o monitor" size="lg" />
-      </div>
-    );
-  }
+  return { user, posts, loading, error };
+}
 
-  if (user?.fullData === false) {
-    return (
-      <div className="w-full flex flex-col items-center">
-        <h1 className="text-2xl font-semibold mt-12 mb-4">Este usuário não completou o cadastro :(</h1>
-        <Link href="/">
-          <Button color="success" variant="shadow"><ArrowLeft /> Voltar ao início</Button>
-        </Link>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h2 className="text-2xl font-bold text-red-500 mb-4">Erro</h2>
-        <p className="text-gray-700 dark:text-gray-300">{error || 'Usuário não encontrado'}</p>
-        <button
-          onClick={() => router.push('/')}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-        >
-          Voltar para a página inicial
-        </button>
-      </div>
-    );
-  }
-
-  const shareProfile = () => {
-    navigator.clipboard.writeText(window.location.href);
-  };
-
-  const handlePostNavigation = (postId: string) => {
-    addToast({
-      title: "Navegando para o post",
-      description: "Redirecionando para o conteúdo completo...",
-      color: "warning"
-    });
-    router.push(`/posts/${postId}`);
-  };
-
-  const formatDate = (createdAt: string) => (timestamp: any): string => {
+function formatDate(timestamp: any): string {
     if (!timestamp) return "Data desconhecida";
-
     try {
-      if (timestamp && typeof timestamp === 'object' && 'seconds' in timestamp) {
-        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-        return date.toLocaleDateString('pt-BR');
-      } else if (typeof timestamp === 'string') {
-        return new Date(timestamp).toLocaleDateString('pt-BR');
-      }
-      return "Formato de data inválido";
+      const date = timestamp.seconds 
+        ? new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000)
+        : new Date(timestamp);
+      return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
     } catch (error) {
       console.error("Erro ao formatar a data:", error);
       return "Data inválida";
     }
+}
+
+const ProfileHeader: FC<{ user: UserProps, onShare: () => void }> = ({ user, onShare }) => (
+  <>
+    <div className="relative">
+      <Image src={user.bannerImage} alt={`Banner de ${user.name}`} width={896} height={160} className="w-full h-40 object-cover rounded-lg" priority />
+      <div className="absolute bottom-[-40px] left-4 w-24 h-24 border-4 border-white rounded-full overflow-hidden">
+        <Image src={user.profileImage} alt={`Foto de perfil de ${user.name}`} width={96} height={96} className="object-cover w-full h-full" />
+      </div>
+    </div>
+    <div className="mt-12 p-4 text-center">
+      <h1 className="text-2xl font-bold">{user.name} {user.lastName}</h1>
+      <p className="text-gray-500">Membro desde {new Date(user.createdAt).toLocaleDateString()}</p>
+      <p className="mt-2 text-gray-700">{user.bio}</p>
+      <div className="flex justify-center gap-4 mt-4">
+        <Link href={`mailto:${user.email}`} className="text-gray-600"><MdEmail size={24} /></Link>
+        <Link href={user.github} target="_blank" rel="noopener noreferrer" className="text-gray-600"><FaGithub size={24} /></Link>
+        <Link href={`tel:${user.phone}`} className="text-gray-600"><MdPhone size={24} /></Link>
+      </div>
+      <Button variant="shadow" color="success" className="mt-4" onPress={onShare} startContent={<FaShareAlt />}>
+        Compartilhar Perfil
+      </Button>
+    </div>
+  </>
+);
+
+const SkillsCard: FC<{ skills: string[] }> = ({ skills }) => (
+  <Card className="mt-6 p-4">
+    <h2 className="text-xl font-semibold">Habilidades</h2>
+    <div className="flex flex-wrap gap-2 mt-2">
+      {skills?.map((skill, index) => (
+        <span key={index} className="bg-gray-200 text-zinc-900 px-3 py-1 rounded-full text-sm">
+          {skill}
+        </span>
+      ))}
+    </div>
+  </Card>
+);
+
+const RecentPosts: FC<{ posts: PostsProps[], userImage: string, onPostClick: (postId: string) => void }> = ({ posts, userImage, onPostClick }) => (
+  <Card className="mt-6 p-4">
+    <h2 className="text-xl font-semibold">Posts Recentes</h2>
+    <div className="mt-2 space-y-4">
+      {posts.length > 0 ? (
+        posts.map((post) => (
+          <div key={post.postId} onClick={() => post.postId && onPostClick(post.postId)} className="flex items-start space-x-4 p-4 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-200">
+            <Avatar src={userImage} />
+            <div className="flex-1 space-y-1">
+              <h3 className="font-semibold">{post.title}</h3>
+              <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
+              <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(post.createdAt)}</span>
+                <span className="flex items-center gap-1"><MessageSquare className="h-3 w-3" /> {post.comments?.length || 0}</span>
+                <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" /> {Array.isArray(post.likes) ? post.likes.length : 0}</span>
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-500">Nenhum post encontrado.</p>
+      )}
+    </div>
+  </Card>
+);
+
+const LoadingState = () => (
+    <div className="min-h-screen flex items-center justify-center">
+        <Spinner color="success" label="Buscando dados do perfil..." size="lg" />
+    </div>
+);
+
+const ErrorState: FC<{ message: string, onRetry: () => void }> = ({ message, onRetry }) => (
+     <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <h2 className="text-2xl font-bold text-red-500 mb-4">Ocorreu um Erro</h2>
+        <p className="text-gray-700 dark:text-gray-300">{message}</p>
+        <Button color="primary" onPress={onRetry} className="mt-6">Voltar para a página inicial</Button>
+    </div>
+);
+
+const IncompleteProfileState = () => (
+    <div className="w-full min-h-screen flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-semibold mt-12 mb-4">Este usuário não completou o cadastro :(</h1>
+        <Link href="/">
+            <Button color="success" variant="shadow" startContent={<ArrowLeft />}> Voltar ao início</Button>
+        </Link>
+    </div>
+);
+
+export default function ProfilePage() {
+  const router = useRouter();
+  const { id } = useParams();
+  const { user, posts, loading, error } = useUserProfile(id);
+
+  const shareProfile = () => {
+    navigator.clipboard.writeText(window.location.href);
+    addToast({
+      title: "URL Copiada!",
+      description: "A URL do perfil foi copiada para a área de transferência.",
+      color: "success"
+    });
   };
 
+  const handlePostNavigation = (postId: string) => {
+    router.push(`/posts/${postId}`);
+  };
+
+  if (loading) return <LoadingState />;
+  if (error) return <ErrorState message={error} onRetry={() => router.push('/')} />;
+  if (!user) return <ErrorState message="Usuário não encontrado." onRetry={() => router.push('/')} />;
+  if (user.fullData === false) return <IncompleteProfileState />;
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-
-
-      <Button color="default" className="my-4" onPress={() => router.back()} ><FaArrowLeft /> Voltar</Button>
-
-
-      <div className="relative">
-        <img
-          src={user?.bannerImage}
-          alt={`Banner de ${user?.name}`}
-          className="w-full h-40 object-cover rounded-lg"
-        />
-        <Avatar
-          src={user?.profileImage}
-          alt={`Foto de perfil do usuário ${user?.name}`}
-          className="absolute bottom-[-40px] left-4 w-24 h-24 border-4 border-white rounded-full"
-        />
-      </div>
-      <div className="mt-12 p-4 text-center">
-        <h1 className="text-2xl font-bold">
-          {user?.name} {user?.lastName}
-        </h1>
-        <p className="text-gray-500">Membro desde {new Date(user?.createdAt ?? '').toLocaleDateString()}</p>
-        <p className="mt-2 text-gray-700">{user?.bio}</p>
-        <div className="flex justify-center gap-4 mt-4">
-          <Link href="" className="text-gray-600">
-            <MdEmail size={24} />
-          </Link>
-          <Link href='' target="_blank" className="text-gray-600">
-            <FaGithub size={24} />
-          </Link>
-          <Link href='' className="text-gray-600">
-            <MdPhone size={24} />
-          </Link>
-        </div>
-        <Button
-          variant="shadow"
-          color="success"
-          className="mt-4"
-          onPress={() => {
-            shareProfile();
-            addToast({
-              title: "Url do Perfil",
-              description: "Url do perfil copiado com sucesso!",
-              color: "success"
-            })
-          }}
-          startContent={<FaShareAlt />}
-        >
-          Compartilhar Perfil
+    <>
+      <BrowserRecommendationBanner />
+      <div className="max-w-4xl mx-auto p-4">
+        <Button color="default" className="my-4" onPress={() => router.back()}>
+          <FaArrowLeft /> Voltar
         </Button>
+
+        <ProfileHeader user={user} onShare={shareProfile} />
+        
+        {user.skills && user.skills.length > 0 && <SkillsCard skills={user.skills} />}
+        
+        {posts && <RecentPosts posts={posts} userImage={user.profileImage} onPostClick={handlePostNavigation} />}
       </div>
-      <Card className="mt-6 p-4">
-        <h2 className="text-xl font-semibold">Habilidades</h2>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {user?.skills.map((skill, index) => (
-            <span key={index} className="bg-gray-200 text-zinc-900 px-3 py-1 rounded-full text-sm">
-              {skill}
-            </span>
-          ))}
-        </div>
-      </Card>
-      <Card className="mt-6 p-4">
-        <h2 className="text-xl font-semibold">Posts Recentes</h2>
-        <div className="mt-2 space-y-4">
-          {(posts ?? []).length > 0 ? (
-            posts?.map((post) => (
-              <div
-                key={post.postId}
-                onClick={() => post?.postId && handlePostNavigation(post.postId)}
-                className="flex items-start space-x-4 p-4 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-200"
-              >
-                <Avatar
-                  src={user?.profileImage}
-                  className=""
-                />
-                <div className="flex-1 space-y-1">
-                  <h3 className="font-semibold">{post.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{post.content}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate('')(post.createdAt)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MessageSquare className="h-3 w-3" />
-                      {post.comments?.length || 0} comentários
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <ThumbsUp className="h-3 w-3" />
-                      {typeof post.likes === 'number'
-                        ? post.likes
-                        : Array.isArray(post.likes)
-                          //@ts-ignore
-                          ? post.likes.length || 0
-                          : 0} curtidas
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500">Nenhum post encontrado.</p>
-          )}
-        </div>
-      </Card>
-    </div>
+    </>
   );
 }
