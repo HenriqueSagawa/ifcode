@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import dynamic from 'next/dynamic'; // 1. Importar o 'dynamic'
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
@@ -14,12 +15,55 @@ import { addToast } from "@heroui/toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShareIcon, PencilIcon, GithubIcon, PhoneIcon, ChevronLeft, ChevronRight, Calendar, PenSquare, MessageSquare, ThumbsUp } from "lucide-react";
-import { CreatePost } from "@/components/CreatePost";
 import Link from "next/link";
-import { EditProfile } from "@/components/EditProfile";
 import { Spinner } from "@heroui/spinner";
-import { NotificationDropdown } from "@/components/Notification";
-import { RecentComments } from "@/components/Dashboard/recent-comments";
+
+// 2. Definir os componentes dinâmicos
+// Eles serão carregados apenas quando forem necessários.
+// Adicionamos um estado de 'loading' para melhorar a experiência do usuário.
+
+const CreatePost = dynamic(() =>
+    import('@/components/CreatePost').then(mod => mod.CreatePost),
+    {
+        loading: () => <div className="h-48 flex justify-center items-center"><Spinner /></div>,
+        ssr: false // Geralmente componentes de criação/edição são apenas no cliente
+    }
+);
+
+const EditProfile = dynamic(() =>
+    import('@/components/EditProfile').then(mod => mod.EditProfile),
+    {
+        // O loading não é tão crítico aqui, pois o botão já está visível
+        ssr: false
+    }
+);
+
+const NotificationDropdown = dynamic(() =>
+    import('@/components/Notification').then(mod => mod.NotificationDropdown),
+    {
+        loading: () => <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />,
+        ssr: false
+    }
+);
+
+const RecentComments = dynamic(() =>
+    import('@/components/Dashboard/recent-comments').then(mod => mod.RecentComments),
+    {
+        loading: () => (
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-xl font-bold">Comentários Recentes</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-center py-8">
+                        <Spinner label="Carregando comentários..." />
+                    </div>
+                </CardContent>
+            </Card>
+        ),
+        ssr: false // Este componente busca dados no cliente, então desativar SSR é uma boa prática.
+    }
+);
 
 
 type Comment = {
