@@ -5,4 +5,4 @@ Os resultados obtidos na ferramenta Google ligthouse foram os seguintes:
 3 - Melhores práticas --> 100
 4 - SEO (Search Engine Optimization) --> 91
 
-![Resultado do google lighthouse](/img/lighthouse.png)
+![Resultado do google lighthouse](/public/img/lighthouse.png)
