@@ -1,8 +1,8 @@
-Os resultados obtidos na ferramenta Google ligthouse foram os seguintes:
+## 📊 Pontuações do Lighthouse
 
-1- Performace --> 90
-2- Acessibilidade --> 85
-3 - Melhores práticas --> 100
-4 - SEO (Search Engine Optimization) --> 91
+- ✅ **Performance:** 90
+- ✅ **Acessibilidade:** 85
+- ✅ **Melhores Práticas:** 100
+- ✅ **SEO:** 91
 
 ![Resultado do google lighthouse](/public/img/Lighthouse.png)
