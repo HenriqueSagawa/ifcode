@@ -45,14 +45,14 @@ export default function ContactInfo() {
     <div className="space-y-8">
       {/* Métodos de contato */}
       <div className="scroll-animate">
-        <h2 className="text-2xl font-bold mb-6">Outras formas de falar com a gente</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Outras formas de falar com a gente</h2>
         <div className="space-y-4">
           {contactMethods.map((method, index) => {
             const Icon = method.icon
             const content = (
               <Card
                 key={index}
-                className="bg-gray-900/30 border-gray-800 hover:border-green-500/30 transition-all duration-300"
+                className="bg-gray-50 dark:bg-gray-900/30 border-gray-200 dark:border-gray-800 hover:border-green-500/30 transition-all duration-300"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4">
@@ -60,8 +60,8 @@ export default function ContactInfo() {
                       <Icon className="h-6 w-6 text-green-500" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-white mb-1">{method.title}</h3>
-                      <p className="text-sm text-gray-400 mb-2">{method.description}</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{method.title}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{method.description}</p>
                       <p className="text-green-500 font-medium">{method.value}</p>
                     </div>
                   </div>
@@ -82,7 +82,7 @@ export default function ContactInfo() {
 
       {/* Redes Sociais */}
       <div className="scroll-animate">
-        <h3 className="text-xl font-semibold mb-4">Nos acompanhe</h3>
+        <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Nos acompanhe</h3>
         <div className="flex space-x-4">
           {socialLinks.map((social) => {
             const Icon = social.icon
@@ -90,9 +90,9 @@ export default function ContactInfo() {
               <Link
                 key={social.label}
                 href={social.href}
-                className="p-3 bg-gray-900/30 border border-gray-800 rounded-lg hover:border-green-500/30 hover:bg-green-500/5 transition-all duration-300 group"
+                className="p-3 bg-gray-50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-green-500/30 hover:bg-green-500/5 transition-all duration-300 group"
               >
-                <Icon className="h-6 w-6 text-gray-400 group-hover:text-green-500 transition-colors" />
+                <Icon className="h-6 w-6 text-gray-600 dark:text-gray-400 group-hover:text-green-500 transition-colors" />
               </Link>
             )
           })}
@@ -104,7 +104,7 @@ export default function ContactInfo() {
         <Card className="bg-green-500/5 border-green-500/20">
           <CardContent className="p-6">
             <h3 className="font-semibold text-green-500 mb-2">Precisa de ajuda agora?</h3>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
               Use nosso assistente de IA para obter respostas imediatas sobre programação e desenvolvimento.
             </p>
             <Link

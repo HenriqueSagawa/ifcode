@@ -38,27 +38,27 @@ export default function ContactFAQ() {
       <div className="container mx-auto max-w-4xl">
         <div className="text-center mb-12 scroll-animate">
           <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2 text-sm text-green-400 mb-4">
-            <i className="ri-question-mark text-lg"></i>
+            <HelpCircle className="h-4 w-4" />
             Perguntas em Destaque
           </div>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
             Respostas rápidas para as dúvidas mais comuns. Não encontrou o que procurava? Envie uma mensagem para a gente.
           </p>
         </div>
 
-        <Card className="bg-gray-900/30 border-gray-800 scroll-animate">
+        <Card className="bg-gray-50 dark:bg-gray-900/30 border-gray-200 dark:border-gray-800 scroll-animate">
           <CardContent className="p-8">
             <Accordion type="single" collapsible className="flex flex-col gap-2">
               {faqs.map((faq, index) => (
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="border-gray-800 hover:border-green-500/30 transition-colors"
+                  className="border-gray-200 dark:border-gray-800 hover:border-green-500/30 transition-colors"
                 >
-                  <AccordionTrigger className="text-left text-white hover:text-green-500 transition-colors">
+                  <AccordionTrigger className="text-left text-gray-900 dark:text-white hover:text-green-500 transition-colors">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-400 leading-relaxed pt-2">
+                  <AccordionContent className="text-gray-600 dark:text-gray-400 leading-relaxed pt-2">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>

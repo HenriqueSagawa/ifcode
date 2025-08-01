@@ -300,12 +300,13 @@ const NavbarContent = ({
                       <div className="flex items-center gap-3">
                         <Avatar 
                           isBordered 
-                          as="button" 
+                          as="button"
                           className="transition-transform" 
                           color="success" 
                           name={user!.name as string} 
                           size="sm" 
                           src={user!.image as string} 
+                          
                         />
                         <div className="flex flex-col">
                           <span className="text-sm font-medium">{user!.name}</span>

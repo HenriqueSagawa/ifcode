@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState } from "react"
 import { Send, CheckCircle } from "lucide-react"
 import emailjs from "@emailjs/browser"
+
 export default function ContactFormFields() {
   const [formData, setFormData] = useState({
     name: "",
@@ -85,8 +86,8 @@ export default function ContactFormFields() {
           />
         </svg>
 
-        <h3 className="text-xl font-semibold text-white mb-2">Mensagem enviada com sucesso!</h3>
-        <p className="text-gray-400">Entraremos em contato assim que possível.</p>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Mensagem enviada com sucesso!</h3>
+        <p className="text-gray-600 dark:text-gray-400">Entraremos em contato assim que possível.</p>
       </div>
     )
   }
@@ -95,7 +96,7 @@ export default function ContactFormFields() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-white">
+          <Label htmlFor="name" className="text-gray-900 dark:text-white">
             Nome *
           </Label>
           <Input
@@ -104,13 +105,13 @@ export default function ContactFormFields() {
             required
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
-            className="bg-gray-900/50 border-gray-700 text-white placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
+            className="bg-white dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
             placeholder="Seu nome completo"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-white">
+          <Label htmlFor="email" className="text-gray-900 dark:text-white">
             E-mail *
           </Label>
           <Input
@@ -119,7 +120,7 @@ export default function ContactFormFields() {
             required
             value={formData.email}
             onChange={(e) => handleChange("email", e.target.value)}
-            className="bg-gray-900/50 border-gray-700 text-white placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
+            className="bg-white dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
             placeholder="seu.email@exemplo.com"
           />
         </div>
@@ -127,14 +128,14 @@ export default function ContactFormFields() {
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="category" className="text-white">
+          <Label htmlFor="category" className="text-gray-900 dark:text-white">
             Categoria
           </Label>
           <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
-            <SelectTrigger className="bg-gray-900/50 border-gray-700 text-white focus:border-green-500 focus:ring-green-500">
+            <SelectTrigger className="bg-white dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white focus:border-green-500 focus:ring-green-500">
               <SelectValue placeholder="Selecione uma categoria" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-900 border-gray-700">
+            <SelectContent className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700">
               <SelectItem value="general">Dúvida Geral</SelectItem>
               <SelectItem value="technical">Suporte Técnico</SelectItem>
               <SelectItem value="feature">Sugestão de Funcionalidade</SelectItem>
@@ -146,7 +147,7 @@ export default function ContactFormFields() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="subject" className="text-white">
+          <Label htmlFor="subject" className="text-gray-900 dark:text-white">
             Assunto *
           </Label>
           <Input
@@ -155,14 +156,14 @@ export default function ContactFormFields() {
             required
             value={formData.subject}
             onChange={(e) => handleChange("subject", e.target.value)}
-            className="bg-gray-900/50 border-gray-700 text-white placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
+            className="bg-white dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-green-500 focus:ring-green-500"
             placeholder="Resumo da sua mensagem"
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="message" className="text-white">
+        <Label htmlFor="message" className="text-gray-900 dark:text-white">
           Mensagem *
         </Label>
         <Textarea
@@ -171,7 +172,7 @@ export default function ContactFormFields() {
           rows={6}
           value={formData.message}
           onChange={(e) => handleChange("message", e.target.value)}
-          className="bg-gray-900/50 border-gray-700 text-white placeholder-gray-400 focus:border-green-500 focus:ring-green-500 resize-none"
+          className="bg-white dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-green-500 focus:ring-green-500 resize-none"
           placeholder="Conte mais detalhes sobre sua dúvida ou sugestão..."
         />
       </div>
@@ -179,7 +180,7 @@ export default function ContactFormFields() {
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-green-500 hover:bg-green-400 text-black font-semibold py-3 transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full !bg-green-500 hover:!bg-green-400 text-black font-semibold py-3 transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? (
           <>
@@ -194,7 +195,7 @@ export default function ContactFormFields() {
         )}
       </Button>
 
-      <p className="text-xs text-gray-500 text-center">
+      <p className="text-xs text-gray-500 dark:text-gray-500 text-center">
         Ao enviar este formulário, você concorda com nossa política de privacidade e termos de uso.
       </p>
     </form>

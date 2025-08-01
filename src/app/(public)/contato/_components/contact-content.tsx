@@ -28,7 +28,7 @@ export default function ContactContent() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white overflow-x-hidden">
       <style jsx global>{`
         @keyframes fadeInUp {
           from {
@@ -75,6 +75,12 @@ export default function ContactContent() {
         }
         
         .glass-effect {
+          background: rgba(255, 255, 255, 0.4);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark .glass-effect {
           background: rgba(0, 0, 0, 0.4);
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.1);
