@@ -1,17 +1,26 @@
-export interface PostsProps {
-    title: string,
-    content: string,
-    createdAt: string,
-    codeLenguage?: string | null,
-    codeContent?: string | null,
-    userId: string,
-    id: string,
-    email: string,
-    images?: string[] | null,
-    type: string,
-    author: string,
-    authorImage?: string | null
-    likes: number,
-    postId?: string,
-    comments: any
+export type postType = "article" | "question" | "project" | "tutorial" | "discussion";
+type postStatus = "published" | "archived" | "deleted";
+
+export interface PostProps {
+    id?: string;
+    title: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    type: postType;
+    programmingLanguage: string;
+    codeSnippet: string;
+    imagesUrls: string[];
+    likes: number;
+    userId: string;
+    status: postStatus;
 }
+
+export interface NewPost {
+    title: string
+    content: string
+    type: postType
+    language: string
+    code: string
+    images: string[]
+  }

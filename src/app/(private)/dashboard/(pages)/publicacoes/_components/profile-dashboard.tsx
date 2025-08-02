@@ -1,102 +1,83 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Plus, Search, Edit, Trash2, Eye, EyeOff } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import type React from "react"
 
-export function PostsDashboardContent() {
-  const publicacoes = [
-    {
-      id: 1,
-      titulo: "Como criar uma dashboard moderna",
-      status: "Publicado",
-      data: "2024-01-15",
-      visualizacoes: 1234,
-    },
-    {
-      id: 2,
-      titulo: "Guia completo de React",
-      status: "Rascunho",
-      data: "2024-01-14",
-      visualizacoes: 0,
-    },
-    {
-      id: 3,
-      titulo: "Melhores práticas de UX/UI",
-      status: "Publicado",
-      data: "2024-01-13",
-      visualizacoes: 856,
-    },
-  ]
+import { useState } from "react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PostStats } from "./post-stats"
+import { PostsList } from "./posts-list"
+import { PostForm } from "./post-form"
+import type { PostProps, NewPost } from "@/types/posts"
+
+export function PostsDashboardContent({ userId }: { userId: string }) {
+  const [posts, setPosts] = useState<PostProps[]>([])
+  const [newPost, setNewPost] = useState<NewPost>({
+    title: "",
+    content: "",
+    type: "article",
+    language: "",
+    code: "",
+    images: [],
+  })
+
+  const handleSubmit = (data: {
+    title: string
+    content: string
+    type: "article" | "question" | "project" | "tutorial" | "discussion"
+    programmingLanguage: string
+    imagesUrls: string[]
+    codeSnippet?: string
+  }) => {
+    const post: PostProps = {
+      title: data.title,
+      content: data.content,
+      type: data.type,
+      likes: 0,
+      createdAt: new Date().toISOString().split("T")[0],
+      updatedAt: new Date().toISOString().split("T")[0],
+      programmingLanguage: data.programmingLanguage || "unknown",
+      codeSnippet: data.codeSnippet || "",
+      imagesUrls: data.imagesUrls || [],
+      userId: userId,
+      status: "published",
+    }
+    console.log("Post criado:", post)
+    setPosts((prev) => [post, ...prev])
+    setNewPost({
+      title: "",
+      content: "",
+      type: "article",
+      language: "",
+      code: "",
+      images: [],
+    })
+  }
+
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar publicações..." className="pl-8 w-64" />
-          </div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Dashboard de Posts</h1>
+          <p className="text-muted-foreground">Gerencie suas publicações e crie novos conteúdos</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Nova Publicação
-        </Button>
-      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Suas Publicações</CardTitle>
-          <CardDescription>Gerencie todas as suas publicações</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Visualizações</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {publicacoes.map((publicacao) => (
-                <TableRow key={publicacao.id}>
-                  <TableCell className="font-medium">{publicacao.titulo}</TableCell>
-                  <TableCell>
-                    <Badge variant={publicacao.status === "Publicado" ? "default" : "secondary"}>
-                      {publicacao.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{publicacao.data}</TableCell>
-                  <TableCell>{publicacao.visualizacoes}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        {publicacao.status === "Publicado" ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+            <TabsTrigger value="create">Criar Post</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <PostStats posts={posts} />
+            <PostsList posts={posts} />
+          </TabsContent>
+
+          <TabsContent value="create" className="space-y-6">
+            <PostForm userId={userId} />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   )
 }
