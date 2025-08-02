@@ -11,6 +11,7 @@ import {
   FaRobot, 
   FaBars 
 } from "react-icons/fa";
+import { signOut } from "next-auth/react";
 
 // UI Components
 import { Button as ButtonHeroUi } from "@heroui/button";
@@ -125,7 +126,7 @@ const NavbarContent = ({
     signup: { text: "Cadastre-se", url: "/register" },
   },
   user = null,
-  onLogout,
+  onLogout = () => { signOut()},
 }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
 

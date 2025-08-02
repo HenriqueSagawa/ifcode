@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { NavbarComponent } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import favicon from "../../public/img/logo ifcode.webp";
 import { Providers } from "./provider";
@@ -40,7 +39,6 @@ export default function RootLayout({
 
 
         <Providers>
-          <NavbarComponent />
 
           <div className="grow">
             {children}
