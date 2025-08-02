@@ -45,6 +45,7 @@ interface MenuItem {
 }
 
 interface User {
+  id?: string;
   name?: string | null;
   email?: string | null;
   image?: string | null;
@@ -237,7 +238,7 @@ const NavbarContent = ({
                     <Link href="/dashboard" className="block">Dashboard</Link>
                   </DropdownItem>
                   <DropdownItem key="profile-page">
-                    <Link href="/perfil" className="block">Meu perfil</Link>
+                    <Link href={`/perfil/${user?.id}`} className="block">Meu perfil</Link>
                   </DropdownItem>
                   <DropdownItem key="logout" color="danger">
                     <button 

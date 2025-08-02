@@ -25,11 +25,14 @@ import {
   Loader2,
   Check,
   Upload,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Share2,
+  Eye
 } from "lucide-react"
 import { updateUserProfile } from "../_actions/update-user"
 import { updateProfileImage, updateBannerImage } from "../_actions/update-user"
 import { uploadImage } from "../_actions/upload-image"
+import { useRouter } from "next/navigation"
 
 interface UserData {
   id?: string
@@ -55,9 +58,11 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState<'profile' | 'banner' | null>(null)
+  const [copied, setCopied] = useState(false)
   
   const profileImageRef = useRef<HTMLInputElement>(null)
   const bannerImageRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
 
   const handleSave = async () => {
     try {
@@ -108,6 +113,34 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
     setIsEditing(false)
     setNewSkill("")
     setSaveSuccess(false)
+  }
+
+  const handleShareProfile = async () => {
+    const profileUrl = `https://ifcode.com.br/perfil/${editData.id}`
+    
+    try {
+      await navigator.clipboard.writeText(profileUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+      
+      addToast({
+        title: "Link copiado!",
+        description: "O link do seu perfil foi copiado para a área de transferência",
+        color: "success",
+      })
+    } catch (err) {
+      console.error('Erro ao copiar URL:', err)
+      addToast({
+        title: "Erro",
+        description: "Não foi possível copiar o link",
+        color: "danger",
+      })
+    }
+  }
+
+  const handleViewProfile = () => {
+    const profileUrl = `/perfil/${editData.id}`
+    router.push(profileUrl)
   }
 
   const addSkill = () => {
@@ -305,90 +338,127 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                   </div>
                 </div>
 
-                {/* Action Button */}
-                <div className="absolute top-4 right-4">
-                  {isEditing ? (
-                    <div className="space-x-2">
-                      <Button 
-                        onClick={handleSave} 
-                        size="sm" 
-                        disabled={isLoading || saveSuccess || isUploadingImage !== null}
-                        className={`transition-all duration-300 ${
-                          saveSuccess 
-                            ? 'bg-green-600 hover:bg-green-600' 
-                            : 'bg-green-600 hover:bg-green-700'
-                        } ${isLoading || isUploadingImage ? 'cursor-not-allowed opacity-75' : ''}`}
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Salvando...
-                          </>
-                        ) : saveSuccess ? (
-                          <>
-                            <Check className="h-4 w-4 mr-2" />
-                            Salvo!
-                          </>
-                        ) : (
-                          <>
-                            <Save className="h-4 w-4 mr-2" />
-                            Salvar
-                          </>
-                        )}
-                      </Button>
-                      <Button 
-                        onClick={handleCancel} 
-                        variant="outline" 
-                        size="sm" 
-                        disabled={isLoading || isUploadingImage !== null}
-                        className="border-gray-600 text-gray-300 hover:bg-gray-700 disabled:opacity-50"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancelar
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button 
-                      onClick={() => setIsEditing(true)} 
-                      variant="secondary" 
-                      size="sm" 
-                      disabled={isUploadingImage !== null}
-                      className="bg-gray-700 hover:bg-gray-600 text-white transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
-                    >
-                      <Pencil className="h-4 w-4 mr-2" />
-                      Editar Perfil
-                    </Button>
-                  )}
-                </div>
+
               </div>
 
               <CardContent className="pt-20 pb-8">
                 <div className="space-y-6">
-                  {/* Nome e Email */}
+                  {/* Nome e Action Buttons */}
                   <div className="space-y-4">
-                    <div>
-                      {isEditing ? (
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Nome Completo</Label>
-                          <Input
-                            id="name"
-                            value={editData.name || ""}
-                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                            placeholder="Digite seu nome completo"
-                            disabled={isLoading || isUploadingImage !== null}
-                            className="text-xl font-semibold bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
-                          />
-                        </div>
-                      ) : (
-                        <h1 className="text-3xl font-bold text-white">
-                          {editData.name || (
-                            <span className="text-gray-400 text-xl font-normal">
-                              <Plus className="h-5 w-5 inline mr-2" />
-                              Adicionar nome
-                            </span>
-                          )}
-                        </h1>
-                      )}
+                    <div className="flex items-start justify-between sm:flex-row flex-col sm:space-x-4">
+                      <div className="flex-1">
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Nome Completo</Label>
+                            <Input
+                              id="name"
+                              value={editData.name || ""}
+                              onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                              placeholder="Digite seu nome completo"
+                              disabled={isLoading || isUploadingImage !== null}
+                              className="text-xl font-semibold bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                            />
+                          </div>
+                        ) : (
+                          <h1 className="text-3xl font-bold text-white">
+                            {editData.name || (
+                              <span className="text-gray-400 text-xl font-normal">
+                                <Plus className="h-5 w-5 inline mr-2" />
+                                Adicionar nome
+                              </span>
+                            )}
+                          </h1>
+                        )}
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="ml-4">
+                        {isEditing ? (
+                          <div className="space-x-2 flex">
+                            <Button 
+                              onClick={handleSave} 
+                              size="sm" 
+                              disabled={isLoading || saveSuccess || isUploadingImage !== null}
+                              className={`transition-all duration-300 ${
+                                saveSuccess 
+                                  ? 'bg-green-600 hover:bg-green-600' 
+                                  : 'bg-green-600 hover:bg-green-700'
+                              } ${isLoading || isUploadingImage ? 'cursor-not-allowed opacity-75' : ''}`}
+                            >
+                              {isLoading ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Salvando...
+                                </>
+                              ) : saveSuccess ? (
+                                <>
+                                  <Check className="h-4 w-4 mr-2" />
+                                  Salvo!
+                                </>
+                              ) : (
+                                <>
+                                  <Save className="h-4 w-4 mr-2" />
+                                  Salvar
+                                </>
+                              )}
+                            </Button>
+                            <Button 
+                              onClick={handleCancel} 
+                              variant="outline" 
+                              size="sm" 
+                              disabled={isLoading || isUploadingImage !== null}
+                              className="border-gray-600 text-gray-300 hover:bg-gray-700 disabled:opacity-50"
+                            >
+                              <X className="h-4 w-4 mr-2" />
+                              Cancelar
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                            <Button 
+                              onClick={handleViewProfile}
+                              variant="outline" 
+                              size="sm" 
+                              disabled={!editData.id || isUploadingImage !== null}
+                              className="border-blue-600/30 text-blue-400 hover:bg-blue-600/20 hover:text-blue-300 transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Visualizar
+                            </Button>
+                            
+                            <Button 
+                              onClick={handleShareProfile}
+                              variant="outline" 
+                              size="sm" 
+                              disabled={!editData.id || isUploadingImage !== null}
+                              className="border-green-600/30 text-green-400 hover:bg-green-600/20 hover:text-green-300 transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
+                            >
+                              {copied ? (
+                                <>
+                                  <Check className="h-4 w-4 mr-2" />
+                                  Copiado!
+                                </>
+                              ) : (
+                                <>
+                                  <Share2 className="h-4 w-4 mr-2" />
+                                  Compartilhar
+                                </>
+                              )}
+                            </Button>
+
+                            <Button 
+                              onClick={() => setIsEditing(true)} 
+                              variant="secondary" 
+                              size="sm" 
+                              disabled={isUploadingImage !== null}
+                              className="bg-gray-700 hover:bg-gray-600 text-white transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
+                            >
+                              <Pencil className="h-4 w-4 mr-2" />
+                              Editar
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex items-center text-gray-300">
