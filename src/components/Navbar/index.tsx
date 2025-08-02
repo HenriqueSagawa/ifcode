@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NavbarContent } from "./navbarContent";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth";
 
 
 export async function NavbarComponent() {

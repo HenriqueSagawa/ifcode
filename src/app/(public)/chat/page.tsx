@@ -156,7 +156,7 @@ export default function ChatbotPage() {
                     {/* Messages */}
                     <div className="w-full space-y-4 mb-4">
                         {messages.map((message, index) => (
-                            <Message key={index} message={message} userProfile={user?.profileImage as string} />
+                            <Message key={index} message={message} userProfile={user?.image as string} />
                         ))}
                         {isLoading && <LoadingMessage />}
                         <div ref={messagesEndRef} />

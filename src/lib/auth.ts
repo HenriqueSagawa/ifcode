@@ -1,11 +1,74 @@
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { type NextAuthOptions } from "next-auth"
+import GoogleProvider from "next-auth/providers/google"
+import { FirestoreAdapter } from "@auth/firebase-adapter"
+import { cert } from "firebase-admin/app"
+import { db } from "@/lib/firebase"
+import { doc, getDoc } from "firebase/firestore"
 
-export async function getSession() {
-  return await getServerSession(authOptions)
-}
-
-export async function getCurrentUser() {
-  const session = await getSession()
-  return session?.user
+export const authOptions: NextAuthOptions = {
+  adapter: FirestoreAdapter({
+    credential: cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    }),
+  }),
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+  pages: {
+    signIn: "/auth/signin",
+    error: "/auth/error",
+  },
+  callbacks: {
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", token.sub))
+          const userData = userDoc.data()
+          
+          if (userData) {
+            session.user = {
+              ...session.user,
+              id: token.sub,
+              bio: userData.bio || null,
+              birthDate: userData.birthDate || null,
+              createdAt: userData.createdAt || null,
+              github: userData.github || null,
+              phone: userData.phone || null,
+              image: userData.image || session.user.image,
+              bannerImage: userData.bannerImage || null,
+              skills: userData.skills || [],
+            }
+          } else {
+            session.user = {
+              ...session.user,
+              id: token.sub,
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados do usuário:", error)
+          session.user = {
+            ...session.user,
+            id: token.sub,
+          }
+        }
+      }
+      
+      return session
+    },
+    
+    async jwt({ token, user, account }) {
+      if (user && account) {
+        token.sub = user.id
+      }
+      return token
+    },
+  },
+  session: {
+    strategy: "jwt",
+  },
 }
