@@ -1,7 +1,8 @@
-import { PostsDashboardContent } from "./_components/profile-dashboard";
+import { PostsDashboardContent } from "./_components/posts-dashboard";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getUserPosts } from "./_actions/get-posts"; // Ajuste o caminho conforme necessário
 
 export default async function PostsDashboardPage() {
     const session = await getServerSession(authOptions);
@@ -12,11 +13,11 @@ export default async function PostsDashboardPage() {
 
     const user = session.user;
 
-    console.log("usuário aqui ó: ", user.id);
+    const userPosts = await getUserPosts(user?.id || "");
 
     return (
         <div>
-            <PostsDashboardContent userId={user?.id || ""} />
+            <PostsDashboardContent userId={user?.id || ""} initialPosts={userPosts} />
         </div>
     )
 }

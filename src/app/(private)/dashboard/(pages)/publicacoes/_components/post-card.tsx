@@ -20,7 +20,7 @@ export function PostCard({ post }: PostCardProps) {
   const Icon = postTypeIcons[post.type]
 
   return (
-    <div className="flex items-start space-x-4 p-4 border rounded-lg">
+    <div className="flex items-start space-x-4 p-4 border rounded border-zinc-700">
       <div className="flex-shrink-0">
         <Icon className="h-5 w-5 text-muted-foreground" />
       </div>

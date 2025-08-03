@@ -164,15 +164,10 @@ export async function createPost(formData: FormData) {
         }
 
         const validatedData = validation.data
-
-        console.log("Criando post para o usuário:", userId)
-        console.log("Dados do post:", { title, type, programmingLanguage })
-        console.log("Imagens recebidas:", imageFiles.length)
         
         let imageUrls: string[] = []
         let uploadMessage = ''
 
-        // 1. Primeiro, fazer upload das imagens se existirem
         if (imageFiles.length > 0) {
             console.log(`Processando ${imageFiles.length} imagem(ns)...`)
             
@@ -190,7 +185,7 @@ export async function createPost(formData: FormData) {
             imageUrls = uploadResult.urls || []
             uploadMessage = uploadResult.message || ''
             
-            console.log(`Upload concluído. ${imageUrls.length} URL(s) obtida(s):`, imageUrls)
+
         }
 
         // 2. Criar documento no Firestore com as URLs das imagens
@@ -211,18 +206,15 @@ export async function createPost(formData: FormData) {
             status: "published"
         }
 
-        console.log('Salvando post no Firestore:', { id: docRef.id, imagesCount: imageUrls.length })
         await setDoc(docRef, postDataToSave)
 
-        revalidatePath("/dashboard/publicacoes")
 
-        // Mensagem de sucesso personalizada
         let successMessage = "Post criado com sucesso!"
         if (imageFiles.length > 0) {
             successMessage = `Post criado com sucesso! ${uploadMessage}`
         }
 
-        console.log('Post criado com sucesso:', docRef.id)
+        revalidatePath("/dashboard/publicacoes")
 
         return {
             success: true,

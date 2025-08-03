@@ -9,8 +9,13 @@ import { PostsList } from "./posts-list"
 import { PostForm } from "./post-form"
 import type { PostProps, NewPost } from "@/types/posts"
 
-export function PostsDashboardContent({ userId }: { userId: string }) {
-  const [posts, setPosts] = useState<PostProps[]>([])
+interface PostsDashboardContentProps {
+  userId: string
+  initialPosts?: PostProps[]
+}
+
+export function PostsDashboardContent({ userId, initialPosts = [] }: PostsDashboardContentProps) {
+  const [posts, setPosts] = useState<PostProps[]>(initialPosts)
   const [newPost, setNewPost] = useState<NewPost>({
     title: "",
     content: "",
@@ -52,7 +57,6 @@ export function PostsDashboardContent({ userId }: { userId: string }) {
       images: [],
     })
   }
-
 
   return (
     <div className="min-h-screen bg-background">
