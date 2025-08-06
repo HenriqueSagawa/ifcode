@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useTheme } from 'next-themes'; // Assumindo que você está usando next-themes
 
 const questions = [
   {
@@ -52,7 +51,6 @@ const questions = [
 ];
 
 export default function PopularQuestions() {
-  const { theme } = useTheme();
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const questionsRef = useRef<HTMLDivElement>(null);
@@ -94,53 +92,33 @@ export default function PopularQuestions() {
   return (
     <section 
       ref={sectionRef} 
-      className={`py-24 relative overflow-hidden transition-colors duration-300 ${
-        theme === 'dark' 
-          ? 'bg-black' 
-          : 'bg-gradient-to-br from-gray-50 to-white'
-      }`}
+      className="py-24 relative overflow-hidden transition-colors duration-300 bg-white dark:bg-black"
     >
       {/* Efeito de fundo */}
       <div className="absolute inset-0">
-        <div className={`absolute top-0 right-1/3 w-96 h-96 rounded-full blur-3xl ${
-          theme === 'dark' 
-            ? 'bg-green-500/5' 
-            : 'bg-green-500/10'
-        }`}></div>
+        <div className="absolute top-0 right-1/3 w-96 h-96 rounded-full blur-3xl bg-green-500/10 dark:bg-green-500/20"></div>
       </div>
 
       <div className="container mx-auto px-4 relative">
         <div ref={headerRef} className="text-center mb-16 opacity-0 translate-y-10 transition-all duration-700">
-          <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm mb-4 ${
-            theme === 'dark'
-              ? 'bg-green-500/10 border border-green-500/20 text-green-400'
-              : 'bg-green-100 border border-green-200 text-green-700'
-          }`}>
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm mb-4 bg-green-100 border border-green-200 text-green-700 dark:bg-green-500/10 dark:border-green-500/20 dark:text-green-400">
             <i className="ri-question-mark text-lg"></i>
             Perguntas em Destaque
           </div>
           
-          <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
             Discussões <span className="text-green-500">Populares</span>
           </h2>
           
-          <p className={`text-xl max-w-2xl mx-auto ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-          }`}>
+          <p className="text-xl max-w-2xl mx-auto text-gray-600 dark:text-gray-400">
             As perguntas mais votadas e discutidas pela nossa comunidade
           </p>
         </div>
 
-        <div ref={questionsRef} className="space-y-6 max-w-5xl mx-auto flex flex-col gap-2">
+        <div ref={questionsRef} className="space-y-6 max-w-5xl mx-auto">
           {questions.map((question) => (
             <Link key={question.id} href={`/pergunta/${question.id}`}>
-              <div className={`question-card opacity-0 translate-y-10 transition-all duration-700 group rounded-2xl p-6 cursor-pointer hover:scale-[1.02] ${
-                theme === 'dark'
-                  ? 'bg-gray-900/50 backdrop-blur-sm border border-gray-800 hover:border-green-500/50'
-                  : 'bg-white/70 backdrop-blur-sm border border-gray-200 hover:border-green-500/50 shadow-lg hover:shadow-xl'
-              }`}>
+              <div className="question-card opacity-0 translate-y-10 transition-all duration-700 group rounded-2xl p-6 cursor-pointer hover:scale-[1.02] bg-white border border-gray-200 hover:border-green-500/50 shadow-lg hover:shadow-xl dark:bg-gray-900 dark:border-gray-700 dark:hover:border-green-500/50 dark:shadow-none">
                 {/* Header da pergunta */}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex items-center gap-3">
@@ -149,18 +127,12 @@ export default function PopularQuestions() {
                     </div>
                     <div>
                       <p className="text-green-500 font-semibold">{question.author}</p>
-                      <p className={`text-sm ${
-                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                      }`}>{question.time}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{question.time}</p>
                     </div>
                   </div>
 
                   {question.solved && (
-                    <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${
-                      theme === 'dark'
-                        ? 'bg-green-500/20 text-green-400'
-                        : 'bg-green-100 text-green-700'
-                    }`}>
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400">
                       <i className="ri-check-double-line"></i>
                       Resolvida
                     </div>
@@ -168,9 +140,7 @@ export default function PopularQuestions() {
                 </div>
 
                 {/* Título da pergunta */}
-                <h3 className={`text-xl font-bold mb-4 group-hover:text-green-500 transition-colors duration-300 leading-relaxed ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
+                <h3 className="text-xl font-bold mb-4 group-hover:text-green-500 transition-colors duration-300 leading-relaxed text-gray-900 dark:text-gray-100">
                   {question.title}
                 </h3>
 
@@ -179,11 +149,7 @@ export default function PopularQuestions() {
                   {question.tags.map((tag, tagIndex) => (
                     <span 
                       key={tagIndex} 
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-300 ${
-                        theme === 'dark'
-                          ? 'bg-gray-800 text-gray-300 hover:bg-green-500/20 hover:text-green-400'
-                          : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700'
-                      }`}
+                      className="px-3 py-1 rounded-full text-xs font-medium transition-colors duration-300 bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-500/20 dark:hover:text-green-400"
                     >
                       {tag}
                     </span>
@@ -196,17 +162,13 @@ export default function PopularQuestions() {
                     <div className="flex items-center gap-2 text-green-500">
                       <i className="ri-arrow-up-line"></i>
                       <span className="font-semibold">{question.votes}</span>
-                      <span className={`text-sm ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                      }`}>votos</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">votos</span>
                     </div>
                     
                     <div className="flex items-center gap-2 text-blue-500">
                       <i className="ri-chat-3-line"></i>
                       <span className="font-semibold">{question.answers}</span>
-                      <span className={`text-sm ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                      }`}>respostas</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">respostas</span>
                     </div>
                   </div>
 
@@ -219,11 +181,7 @@ export default function PopularQuestions() {
 
         <div ref={ctaRef} className="text-center mt-12 opacity-0 transition-all duration-700">
           <Link href="/perguntas">
-            <button className={`px-8 py-4 rounded-xl font-bold transition-all duration-300 whitespace-nowrap cursor-pointer shadow-lg hover:scale-105 ${
-              theme === 'dark'
-                ? 'bg-gradient-to-r from-green-500 to-green-600 text-black hover:from-green-400 hover:to-green-500 shadow-green-500/25 hover:shadow-green-500/40'
-                : 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-400 hover:to-green-500 shadow-green-500/30 hover:shadow-green-500/50'
-            }`}>
+            <button className="px-8 py-4 rounded-xl font-bold transition-all duration-300 whitespace-nowrap cursor-pointer shadow-lg hover:scale-105 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-400 hover:to-green-500 shadow-green-500/30 hover:shadow-green-500/50 dark:shadow-green-500/25 dark:hover:shadow-green-500/40">
               Ver Todas as Perguntas
             </button>
           </Link>

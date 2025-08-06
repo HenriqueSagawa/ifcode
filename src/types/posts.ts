@@ -16,6 +16,15 @@ export interface PostProps {
     status: postStatus;
 }
 
+export interface Comment {
+    id: string;
+    content: string;
+    createdAt: string;
+    likes: number;
+    isLiked: boolean;
+    userId: string;
+  }
+
 export interface NewPost {
     title: string
     content: string

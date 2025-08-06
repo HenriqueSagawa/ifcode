@@ -140,15 +140,15 @@ const NavbarContent = ({
   const renderDesktopMenuItem = (item: MenuItem) => {
     if (item.items) {
       return (
-        <NavigationMenuItem key={item.title} className="text-muted-foreground">
+        <NavigationMenuItem key={item.title} className="text-muted-foreground" style={{ zIndex: 100 }}>
           <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="w-80 p-3">
-              <NavigationMenuLink>
+            <ul className="w-80 p-3]" style={{ zIndex: 100 }}>
+              <NavigationMenuLink className="z-50">
                 {item.items.map((subItem) => (
-                  <li key={subItem.title}>
+                  <li key={subItem.title} style={{ zIndex: 100 }}>
                     <Link
-                      className="flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                      className="flex z-40 select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
                       href={subItem.url}
                     >
                       {subItem.icon}
@@ -184,7 +184,7 @@ const NavbarContent = ({
   };
 
   return (
-    <section className="h-16 z-50">
+    <section className="h-16 !z-[999]">
       <div className="container mx-auto">
         {/* Desktop Navigation */}
         <nav className="hidden justify-between lg:flex">
@@ -213,7 +213,7 @@ const NavbarContent = ({
           </div>
 
           {/* Right side - Auth/User */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <ModeToggle />
             
             {hasSession ? (
