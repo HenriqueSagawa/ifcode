@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/services/firebaseConnection";
 import { collection, addDoc, getDocs, query, where, doc, getDoc } from "firebase/firestore";
-import { PostsProps } from "@/types/posts";
+import { PostProps } from "@/types/posts";
 
 export async function POST(request: Request) {
     try {
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
 
         const querySnapshot = await getDocs(q);
 
-        const posts: PostsProps[] = [];
+        const posts: PostProps[] = [];
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
@@ -55,15 +55,13 @@ export async function GET(request: Request) {
                 title: data.title || "",
                 content: data.content || "",
                 createdAt: createdAt,
-                codeContent: data.codeContent || "",
-                codeLenguage: data.codeLenguage || "",
+                codeSnippet: data.codeContent || "",
+                programmingLanguage: data.codeLenguage || "",
                 type: data.type || "",
-                images: data.images || [],
-                email: data.email || "",
-                author: data.author || "",
-                authorImage: data.authorImage || data.userImage || "",
+                imagesUrls: data.images || [],
                 likes: data.likes || 0,
-                comments: []
+                status: "published",
+                updatedAt: createdAt
             });
         });
 
