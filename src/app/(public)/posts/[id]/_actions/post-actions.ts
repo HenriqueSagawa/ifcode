@@ -2,7 +2,7 @@
 
 import { doc, getDoc, collection, query, where, getDocs, orderBy, addDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import type { PostProps, Comment } from '@/types/posts'
+import type { PostProps, Comment, commentStatus } from '@/types/posts'
 import type { User } from '@/../types/next-auth'
 import { revalidatePath } from 'next/cache'
 
@@ -16,12 +16,9 @@ export interface PostPageData {
   error?: string;
 }
 
-// Cache simples para usuários para evitar buscas desnecessárias
 const userCache = new Map<string, User | null>();
 
-// Buscar usuário por ID com cache
 async function getUserById(userId: string): Promise<User | null> {
-  // Verificar cache primeiro
   if (userCache.has(userId)) {
     return userCache.get(userId) || null;
   }
@@ -61,7 +58,6 @@ async function getUserById(userId: string): Promise<User | null> {
   }
 }
 
-// Criar usuário padrão
 function createDefaultUser(userId: string): User {
   return {
     id: userId,
@@ -105,6 +101,8 @@ interface CommentData {
   likes: number;
   userId: string;
   postId: string;
+  status: commentStatus
+  receivedUserId?: string;
 }
 
 // Buscar comentários do post com autores (OTIMIZADO)
@@ -159,7 +157,9 @@ export async function getPostComments(postId: string): Promise<(Comment & { auth
       likes: commentData.likes || 0,
       isLiked: false, // Será definido pela lógica do cliente
       userId: commentData.userId,
-      author: usersMap.get(commentData.userId) || createDefaultUser(commentData.userId)
+      author: usersMap.get(commentData.userId) || createDefaultUser(commentData.userId),
+      status: commentData.status,
+      receivedUserId: commentData.receivedUserId
     }))
     
     return comments
@@ -200,12 +200,19 @@ export async function getPostPageData(postId: string): Promise<PostPageData> {
 
 export async function addComment(postId: string, content: string, userId: string): Promise<(Comment & { author: User }) | null> {
   try {
+    const post = await getPostById(postId);
+    if (!post) {
+      throw new Error('Post não encontrado');
+    }
+
     const newComment = {
       content: content.trim(),
       postId,
       userId,
+      receivedUserId: post.userId, 
       createdAt: new Date().toISOString(),
-      likes: 0
+      likes: 0,
+      status: "pending" as commentStatus
     }
 
     const docRef = await addDoc(collection(db, 'comments'), newComment)
@@ -221,7 +228,8 @@ export async function addComment(postId: string, content: string, userId: string
       likes: newComment.likes,
       isLiked: false,
       userId: newComment.userId,
-      author
+      author,
+      status: newComment.status // ✅ Usar o status do objeto salvo
     }
   } catch (error) {
     console.error('Erro ao adicionar comentário:', error)

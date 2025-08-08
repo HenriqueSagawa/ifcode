@@ -63,6 +63,7 @@ export default function PostPageContent({
         likes: 0,
         isLiked: false,
         userId: userId,
+        status: "pending" // Comentários novos começam como pendentes
       }
       
       addOptimisticComment(optimisticCommentData)
@@ -80,6 +81,9 @@ export default function PostPageContent({
     }
   }
 
+  // Verificar se o usuário atual é o autor do post
+  const isAuthor = userId === post.author.id
+
   return (
     <div className="min-h-screen bg-black text-white">
       <PostHeader
@@ -96,11 +100,25 @@ export default function PostPageContent({
         
         <Separator className="bg-gray-800 mb-8" />
         
+        {/* Mensagem para autor do post */}
+        {isAuthor && (
+          <div className="mb-6 p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+            <div className="flex items-center gap-2 text-yellow-400">
+              <span className="text-lg">⚠️</span>
+              <span className="font-medium">Você é o autor deste post</span>
+            </div>
+            <p className="text-yellow-300/80 text-sm mt-1">
+              Como autor, você não pode comentar no seu próprio post, mas pode visualizar e moderar os comentários dos outros usuários.
+            </p>
+          </div>
+        )}
+        
         <CommentsSection
-        userImage={userImage}
+          userImage={userImage}
           comments={optimisticComments}
-          onAddComment={handleAddComment}
+          onAddComment={isAuthor ? undefined : handleAddComment}
           onCommentLike={handleCommentLike}
+          isAuthor={isAuthor}
         />
       </div>
     </div>

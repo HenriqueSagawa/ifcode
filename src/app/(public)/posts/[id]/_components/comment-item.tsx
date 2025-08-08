@@ -11,6 +11,7 @@ interface CommentWithAuthor {
   likes: number;
   isLiked: boolean;
   userId: string;
+  status?: string; // Adicionando a propriedade status
   author?: {
     id?: string;
     name: string;
@@ -44,6 +45,52 @@ export const CommentItem = ({ comment, onLike }: CommentItemProps) => {
     return `${Math.floor(diffInHours / 24)} dias atrás`
   }
 
+  // Função para obter a mensagem de status do comentário
+  const getCommentStatusMessage = (status?: string) => {
+    switch (status) {
+      case 'accepted':
+        return 'Aprovado pelo usuário'
+      case 'rejected':
+        return 'Rejeitado pelo autor'
+      case 'pending':
+        return 'Aguardando aprovação'
+      default:
+        return null
+    }
+  }
+
+  // Função para obter a cor da mensagem de status
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'accepted':
+        return 'text-green-400 bg-green-400/10 border-green-400/20'
+      case 'rejected':
+        return 'text-red-400 bg-red-400/10 border-red-400/20'
+      case 'pending':
+        return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
+      default:
+        return 'text-gray-400 bg-gray-400/10 border-gray-400/20'
+    }
+  }
+
+  // Função para obter o ícone do status
+  const getStatusIndicator = (status?: string) => {
+    switch (status) {
+      case 'accepted':
+        return '✓'
+      case 'rejected':
+        return '✗'
+      case 'pending':
+        return '⏳'
+      default:
+        return null
+    }
+  }
+
+  const statusMessage = getCommentStatusMessage(comment.status)
+  const statusColor = getStatusColor(comment.status)
+  const statusIndicator = getStatusIndicator(comment.status)
+
   return (
     <div className="bg-gray-900/30 rounded-lg border border-gray-800/50 p-6 hover:bg-gray-900/50 transition-colors">
       <div className="flex gap-4">
@@ -60,8 +107,25 @@ export const CommentItem = ({ comment, onLike }: CommentItemProps) => {
           <div className="flex items-center gap-3 mb-2">
             <span className="font-semibold text-white">{comment.author?.name}</span>
             <span className="text-sm text-gray-400">{formatRelativeTime(comment.createdAt)}</span>
+            
+            {/* Status do comentário */}
+            {statusMessage && (
+              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColor}`}>
+                {statusIndicator && <span className="text-xs">{statusIndicator}</span>}
+                <span>{statusMessage}</span>
+              </div>
+            )}
           </div>
+          
           <p className="text-gray-300 leading-relaxed mb-4">{comment.content}</p>
+          
+          {/* Barra de status visual (opcional - para destacar ainda mais) */}
+          {comment.status && comment.status !== 'pending' && (
+            <div className={`w-full h-0.5 mb-3 rounded-full ${
+              comment.status === 'accepted' ? 'bg-green-400/30' : 'bg-red-400/30'
+            }`} />
+          )}
+          
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"

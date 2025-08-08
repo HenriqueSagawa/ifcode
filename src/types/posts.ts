@@ -16,6 +16,8 @@ export interface PostProps {
     status: postStatus;
 }
 
+export type commentStatus  = "accepted" | "rejected" | "pending";
+
 export interface Comment {
     id: string;
     content: string;
@@ -23,6 +25,8 @@ export interface Comment {
     likes: number;
     isLiked: boolean;
     userId: string;
+    receivedUserId?: string;
+    status: commentStatus;
   }
 
 export interface NewPost {

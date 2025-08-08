@@ -243,13 +243,13 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Overlay para indicar salvamento */}
       {(isLoading || isUploadingImage) && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700 flex items-center space-x-3">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-3">
             <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-            <span className="text-white font-medium">
+            <span className="text-gray-900 dark:text-white font-medium">
               {isUploadingImage 
                 ? `Fazendo upload da ${isUploadingImage === 'profile' ? 'foto de perfil' : 'imagem de banner'}...`
                 : 'Salvando perfil...'
@@ -281,7 +281,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
 
           {/* Coluna Esquerda - Perfil Principal */}
           <div className="lg:col-span-2">
-            <Card className={`overflow-hidden border-0 shadow-xl bg-gray-800 text-white h-fit transition-all duration-300 ${
+            <Card className={`overflow-hidden border-0 shadow-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white h-fit transition-all duration-300 ${
               saveSuccess ? 'ring-2 ring-green-500 shadow-green-500/20' : ''
             }`}>
               <div className="relative">
@@ -314,7 +314,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                 {/* Avatar */}
                 <div className="absolute -bottom-16 left-8">
                   <div className="relative group cursor-pointer" onClick={() => handleImageUpload('profile')}>
-                    <Avatar className="h-32 w-32 border-4 border-gray-700 shadow-xl">
+                    <Avatar className="h-32 w-32 border-4 border-white dark:border-gray-700 shadow-xl">
                       <AvatarImage src={editData.image} />
                       <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                         {editData.name
@@ -337,8 +337,6 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                     </div>
                   </div>
                 </div>
-
-
               </div>
 
               <CardContent className="pt-20 pb-8">
@@ -349,20 +347,20 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                       <div className="flex-1">
                         {isEditing ? (
                           <div className="space-y-2">
-                            <Label htmlFor="name">Nome Completo</Label>
+                            <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Nome Completo</Label>
                             <Input
                               id="name"
                               value={editData.name || ""}
                               onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                               placeholder="Digite seu nome completo"
                               disabled={isLoading || isUploadingImage !== null}
-                              className="text-xl font-semibold bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                              className="text-xl font-semibold bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                             />
                           </div>
                         ) : (
-                          <h1 className="text-3xl font-bold text-white">
+                          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                             {editData.name || (
-                              <span className="text-gray-400 text-xl font-normal">
+                              <span className="text-gray-500 dark:text-gray-400 text-xl font-normal">
                                 <Plus className="h-5 w-5 inline mr-2" />
                                 Adicionar nome
                               </span>
@@ -407,7 +405,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                               variant="outline" 
                               size="sm" 
                               disabled={isLoading || isUploadingImage !== null}
-                              className="border-gray-600 text-gray-300 hover:bg-gray-700 disabled:opacity-50"
+                              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
                             >
                               <X className="h-4 w-4 mr-2" />
                               Cancelar
@@ -420,7 +418,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                               variant="outline" 
                               size="sm" 
                               disabled={!editData.id || isUploadingImage !== null}
-                              className="border-blue-600/30 text-blue-400 hover:bg-blue-600/20 hover:text-blue-300 transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
+                              className="border-blue-300 dark:border-blue-600/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-600/20 hover:text-blue-700 dark:hover:text-blue-300 transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
                             >
                               <Eye className="h-4 w-4 mr-2" />
                               Visualizar
@@ -431,7 +429,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                               variant="outline" 
                               size="sm" 
                               disabled={!editData.id || isUploadingImage !== null}
-                              className="border-green-600/30 text-green-400 hover:bg-green-600/20 hover:text-green-300 transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
+                              className="border-green-300 dark:border-green-600/30 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-600/20 hover:text-green-700 dark:hover:text-green-300 transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
                             >
                               {copied ? (
                                 <>
@@ -451,7 +449,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                               variant="secondary" 
                               size="sm" 
                               disabled={isUploadingImage !== null}
-                              className="bg-gray-700 hover:bg-gray-600 text-white transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
+                              className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
                             >
                               <Pencil className="h-4 w-4 mr-2" />
                               Editar
@@ -461,7 +459,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                       </div>
                     </div>
 
-                    <div className="flex items-center text-gray-300">
+                    <div className="flex items-center text-gray-600 dark:text-gray-300">
                       <Mail className="h-4 w-4 mr-2" />
                       {isEditing ? (
                         <Input
@@ -470,12 +468,12 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                           placeholder="Digite seu email"
                           type="email"
                           disabled={isLoading || isUploadingImage !== null}
-                          className="bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                          className="bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                         />
                       ) : (
                         <span>
                           {editData.email || (
-                            <span className="text-gray-400">
+                            <span className="text-gray-500 dark:text-gray-400">
                               <Plus className="h-4 w-4 inline mr-1" />
                               Adicionar email
                             </span>
@@ -485,30 +483,30 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                     </div>
 
                     {editData.id && (
-                      <div className="flex items-center text-gray-400 text-sm">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                         <Hash className="h-4 w-4 mr-2" />
                         ID: {editData.id}
                       </div>
                     )}
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-gray-200 dark:bg-gray-700" />
 
                   {/* Biografia */}
                   <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-white">Biografia</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Biografia</h3>
                     {isEditing ? (
                       <Textarea
                         value={editData.bio || ""}
                         onChange={(e) => setEditData({ ...editData, bio: e.target.value })}
                         placeholder="Conte um pouco sobre você..."
                         disabled={isLoading || isUploadingImage !== null}
-                        className="min-h-[150px] bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                        className="min-h-[150px] bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                       />
                     ) : (
-                      <p className="text-gray-300 leading-relaxed min-h-[100px]">
+                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed min-h-[100px]">
                         {editData.bio || (
-                          <span className="text-gray-400 italic">
+                          <span className="text-gray-500 dark:text-gray-400 italic">
                             <Plus className="h-4 w-4 inline mr-2" />
                             Adicionar biografia
                           </span>
@@ -525,19 +523,19 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
           <div className="space-y-6">
 
             {/* Informações Pessoais */}
-            <Card className={`border-0 shadow-lg bg-gray-800 text-white transition-all duration-300 ${
+            <Card className={`border-0 shadow-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-300 ${
               saveSuccess ? 'ring-2 ring-green-500 shadow-green-500/20' : ''
             }`}>
               <CardHeader>
-                <CardTitle className="text-xl text-white">Informações Pessoais</CardTitle>
-                <CardDescription className="text-gray-400">Detalhes do seu perfil</CardDescription>
+                <CardTitle className="text-xl text-gray-900 dark:text-white">Informações Pessoais</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">Detalhes do seu perfil</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
 
                   {/* Data de Nascimento */}
                   <div className="space-y-2">
-                    <Label className="flex items-center text-gray-300">
+                    <Label className="flex items-center text-gray-700 dark:text-gray-300">
                       <Calendar className="h-4 w-4 mr-2" />
                       Data de Nascimento
                     </Label>
@@ -547,14 +545,16 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                         value={editData.birthDate || ""}
                         onChange={(e) => setEditData({ ...editData, birthDate: e.target.value })}
                         disabled={isLoading || isUploadingImage !== null}
-                        className="bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                        className="bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                       />
                     ) : (
-                      <div className="p-3 bg-gray-700 rounded-md">
+                      <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
                         {editData.birthDate ? (
-                          new Date(editData.birthDate).toLocaleDateString('pt-BR')
+                          <span className="text-gray-900 dark:text-white">
+                            {new Date(editData.birthDate).toLocaleDateString('pt-BR')}
+                          </span>
                         ) : (
-                          <span className="text-gray-400">
+                          <span className="text-gray-500 dark:text-gray-400">
                             <Plus className="h-4 w-4 inline mr-2" />
                             Adicionar data de nascimento
                           </span>
@@ -565,7 +565,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
 
                   {/* Telefone */}
                   <div className="space-y-2">
-                    <Label className="flex items-center text-gray-300">
+                    <Label className="flex items-center text-gray-700 dark:text-gray-300">
                       <Phone className="h-4 w-4 mr-2" />
                       Telefone
                     </Label>
@@ -575,23 +575,25 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                         onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
                         placeholder="(00) 00000-0000"
                         disabled={isLoading || isUploadingImage !== null}
-                        className="bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                        className="bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                       />
                     ) : (
-                      <div className="p-3 bg-gray-700 rounded-md">
-                        {editData.phone || (
-                          <span className="text-gray-400">
-                            <Plus className="h-4 w-4 inline mr-2" />
-                            Adicionar telefone
-                          </span>
-                        )}
+                      <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+                        <span className="text-gray-900 dark:text-white">
+                          {editData.phone || (
+                            <span className="text-gray-500 dark:text-gray-400">
+                              <Plus className="h-4 w-4 inline mr-2" />
+                              Adicionar telefone
+                            </span>
+                          )}
+                        </span>
                       </div>
                     )}
                   </div>
 
                   {/* GitHub */}
                   <div className="space-y-2">
-                    <Label className="flex items-center text-gray-300">
+                    <Label className="flex items-center text-gray-700 dark:text-gray-300">
                       <Github className="h-4 w-4 mr-2" />
                       GitHub
                     </Label>
@@ -601,16 +603,16 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                         onChange={(e) => setEditData({ ...editData, github: e.target.value })}
                         placeholder="https://github.com/seuusuario"
                         disabled={isLoading || isUploadingImage !== null}
-                        className="bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                        className="bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                       />
                     ) : (
-                      <div className="p-3 bg-gray-700 rounded-md">
+                      <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
                         {editData.github ? (
-                          <a href={editData.github} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline break-all">
+                          <a href={editData.github} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline break-all">
                             {editData.github}
                           </a>
                         ) : (
-                          <span className="text-gray-400">
+                          <span className="text-gray-500 dark:text-gray-400">
                             <Plus className="h-4 w-4 inline mr-2" />
                             Adicionar GitHub
                           </span>
@@ -623,12 +625,12 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
             </Card>
 
             {/* Habilidades */}
-            <Card className={`border-0 shadow-lg bg-gray-800 text-white transition-all duration-300 ${
+            <Card className={`border-0 shadow-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-300 ${
               saveSuccess ? 'ring-2 ring-green-500 shadow-green-500/20' : ''
             }`}>
               <CardHeader>
-                <CardTitle className="text-xl text-white">Habilidades</CardTitle>
-                <CardDescription className="text-gray-400">Suas principais competências</CardDescription>
+                <CardTitle className="text-xl text-gray-900 dark:text-white">Habilidades</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-400">Suas principais competências</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {isEditing && (
@@ -639,7 +641,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                       placeholder="Digite uma habilidade"
                       onKeyPress={(e) => e.key === 'Enter' && addSkill()}
                       disabled={isLoading || isUploadingImage !== null}
-                      className="bg-gray-700 border-gray-600 text-white disabled:opacity-50 transition-all"
+                      className="bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                     />
                     <Button 
                       onClick={addSkill} 
@@ -658,14 +660,14 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                       <Badge
                         key={index}
                         variant="secondary"
-                        className="px-3 py-1 bg-blue-900 text-blue-200 hover:bg-blue-800 transition-colors border-blue-700"
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors border border-blue-200 dark:border-blue-700"
                       >
                         {skill}
                         {isEditing && (
                           <button
                             onClick={() => removeSkill(skill)}
                             disabled={isLoading || isUploadingImage !== null}
-                            className="ml-2 text-blue-300 hover:text-blue-100 disabled:opacity-50"
+                            className="ml-2 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 disabled:opacity-50"
                           >
                             <X className="h-3 w-3" />
                           </button>
@@ -673,7 +675,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                       </Badge>
                     ))
                   ) : (
-                    <div className="text-gray-400 italic p-4 border-2 border-dashed border-gray-600 rounded-lg w-full text-center">
+                    <div className="text-gray-500 dark:text-gray-400 italic p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg w-full text-center">
                       <Plus className="h-6 w-6 inline mr-2" />
                       {isEditing ? "Use o campo acima para adicionar suas habilidades" : "Nenhuma habilidade adicionada ainda"}
                     </div>
