@@ -32,12 +32,12 @@ interface RankingLevel {
 
 const rankingLevels: RankingLevel[] = [
   { name: "Aprendiz", minPoints: 0, maxPoints: 99, icon: "/img/aprendiz-icon.png" },
-  { name: "Estudante", minPoints: 100, maxPoints: 249, icon: "/estudante-icon.png" },
-  { name: "Programador Júnior", minPoints: 250, maxPoints: 499, icon: "/programador-junior-icon.png" },
-  { name: "Programador Pleno", minPoints: 500, maxPoints: 999, icon: "/programador-pleno-icon.png" },
-  { name: "Programador Sênior", minPoints: 1000, maxPoints: 1999, icon: "/programador-senior-icon.png" },
-  { name: "Arquiteto de Software", minPoints: 2000, maxPoints: 3999, icon: "/arquiteto-software-icon.png" },
-  { name: "Mestre dos Códigos", minPoints: 4000, maxPoints: Infinity, icon: "/mestre-dos-codigos-icon.png" }
+  { name: "Estudante", minPoints: 100, maxPoints: 249, icon: "/img/estudante-icon.png" },
+  { name: "Programador Júnior", minPoints: 250, maxPoints: 499, icon: "/img/programador-junior-icon.png" },
+  { name: "Programador Pleno", minPoints: 500, maxPoints: 999, icon: "/img/programador-pleno-icon.png" },
+  { name: "Programador Sênior", minPoints: 1000, maxPoints: 1999, icon: "/img/programador-senior-icon.png" },
+  { name: "Arquiteto de Software", minPoints: 2000, maxPoints: 3999, icon: "/img/arquiteto-software-icon.png" },
+  { name: "Mestre dos Códigos", minPoints: 4000, maxPoints: Infinity, icon: "/img/mestre-dos-codigos-icon.png" }
 ]
 
 export function DashboardContent({ user, recentPosts, rankingStats, recentActivity }: DashboardContentProps) {

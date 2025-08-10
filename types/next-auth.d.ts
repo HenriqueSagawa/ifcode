@@ -20,4 +20,5 @@ interface User {
     fullData?: any;
     skills?: string[];
     totalPoints?: number;
+    level?: number;
 }
