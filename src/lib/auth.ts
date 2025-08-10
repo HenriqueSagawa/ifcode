@@ -101,6 +101,7 @@ export const authOptions: NextAuthOptions = {
               image: userData.image || session.user.image,
               bannerImage: userData.bannerImage || null,
               skills: userData.skills || [],
+              totalPoints: userData.totalPoints || 0
             }
           } else {
             session.user = {

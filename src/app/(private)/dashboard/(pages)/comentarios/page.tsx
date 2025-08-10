@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 export default async function CommentsDashboardPage() {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
         redirect("/login");
     }
@@ -24,16 +24,17 @@ export default async function CommentsDashboardPage() {
                         Gerencie todos os comentários recebidos em suas publicações
                     </p>
                 </div>
-                
-                <CommentsDashboardContent 
-                    comentarios={comentarios} 
-                    stats={stats} 
+
+                <CommentsDashboardContent
+                    currentUserId={userId as string}
+                    comentarios={comentarios}
+                    stats={stats}
                 />
             </div>
         );
     } catch (error) {
         console.error("Erro ao carregar comentários:", error);
-        
+
         return (
             <div className="container mx-auto py-6">
                 <div className="text-center">

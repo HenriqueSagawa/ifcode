@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Check, X, Reply, MessageSquare, User } from "lucide-react"
+import { Check, X, Reply, MessageSquare, User, Star } from "lucide-react"
 import { useState, useTransition } from "react"
 import { aprovarComentario, rejeitarComentario, type CommentWithUser, type DashboardStats } from "../_actions/comments-actions"
 import { addToast } from "@heroui/toast"
@@ -13,9 +13,14 @@ import { addToast } from "@heroui/toast"
 interface CommentsDashboardContentProps {
   comentarios: CommentWithUser[]
   stats: DashboardStats
+  currentUserId: string // Novo prop necessário para identificar quem está aprovando
 }
 
-export function CommentsDashboardContent({ comentarios: initialComentarios, stats: initialStats }: CommentsDashboardContentProps) {
+export function CommentsDashboardContent({ 
+  comentarios: initialComentarios, 
+  stats: initialStats,
+  currentUserId 
+}: CommentsDashboardContentProps) {
   const [comentarios, setComentarios] = useState(initialComentarios)
   const [stats, setStats] = useState(initialStats)
   const [isPending, startTransition] = useTransition()
@@ -26,7 +31,8 @@ export function CommentsDashboardContent({ comentarios: initialComentarios, stat
   const handleAprovar = async (comentarioId: string) => {
     startTransition(async () => {
       try {
-        await aprovarComentario(comentarioId)
+        // Passar o ID do usuário atual que está aprovando
+        await aprovarComentario(comentarioId, currentUserId)
         
         // Atualizar estado local
         setComentarios(prev => prev.map(c => 
@@ -40,9 +46,13 @@ export function CommentsDashboardContent({ comentarios: initialComentarios, stat
           aprovados: prev.aprovados + 1
         }))
         
+        // Buscar informações do comentário para mostrar toast personalizado
+        const comentarioAprovado = comentarios.find(c => c.id === comentarioId)
+        const autorComentario = comentarioAprovado?.user?.name || "Usuário"
+        
         addToast({
-          title: "Comentário aprovado",
-          description: "O comentário foi aprovado com sucesso",
+          title: "Comentário aprovado!",
+          description: `${autorComentario} ganhou +25 pontos! 🎉`,
           color: "success"
         })
       } catch (error) {
@@ -137,6 +147,20 @@ export function CommentsDashboardContent({ comentarios: initialComentarios, stat
     return 'border'
   }
 
+  // Função para mostrar informações de pontos do usuário
+  const renderUserPoints = (user: CommentWithUser['user']) => {
+    if (user.totalPoints && user.totalPoints > 0) {
+      return (
+        <div className="flex items-center gap-1 text-xs text-amber-600">
+          <Star className="h-3 w-3 fill-current" />
+          <span>{user.totalPoints} pts</span>
+          {user.level && <span className="text-xs">• Nv{user.level}</span>}
+        </div>
+      )
+    }
+    return null
+  }
+
   const renderComentario = (comentario: CommentWithUser) => (
     <div key={comentario.id} className={`${getBorderClass(comentario)} border rounded-lg p-4 space-y-3`}>
       <div className="flex items-start justify-between">
@@ -148,7 +172,10 @@ export function CommentsDashboardContent({ comentarios: initialComentarios, stat
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-sm font-medium">{comentario.user?.name}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium">{comentario.user?.name}</p>
+              {renderUserPoints(comentario.user)}
+            </div>
             <p className="text-xs text-muted-foreground">{comentario.user?.email}</p>
           </div>
         </div>
@@ -180,7 +207,7 @@ export function CommentsDashboardContent({ comentarios: initialComentarios, stat
             className="text-green-600 hover:text-green-700"
           >
             <Check className="mr-1 h-3 w-3" />
-            Aprovar
+            Aprovar (+25 pts)
           </Button>
           <Button 
             size="sm" 
@@ -206,6 +233,12 @@ export function CommentsDashboardContent({ comentarios: initialComentarios, stat
             <Reply className="mr-1 h-3 w-3" />
             Responder
           </Button>
+          {comentario.type === 'received' && comentario.status === 'accepted' && (
+            <Badge variant="outline" className="text-green-600">
+              <Star className="mr-1 h-3 w-3" />
+              +25 pontos concedidos
+            </Badge>
+          )}
         </div>
       ) : null}
     </div>
@@ -312,7 +345,14 @@ export function CommentsDashboardContent({ comentarios: initialComentarios, stat
           <Card>
             <CardHeader>
               <CardTitle>Comentários Recebidos</CardTitle>
-              <CardDescription>Comentários feitos em suas publicações</CardDescription>
+              <CardDescription>
+                Comentários feitos em suas publicações
+                {stats.pendentes > 0 && (
+                  <Badge variant="secondary" className="ml-2">
+                    {stats.pendentes} pendentes para moderar
+                  </Badge>
+                )}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {comentariosRecebidos.length === 0 ? (

@@ -19,4 +19,5 @@ interface User {
     bannerImage?: string;
     fullData?: any;
     skills?: string[];
+    totalPoints?: number;
 }

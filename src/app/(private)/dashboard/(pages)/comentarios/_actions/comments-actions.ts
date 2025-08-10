@@ -3,6 +3,7 @@
 import { db } from "@/lib/firebase"
 import { commentStatus } from "@/types/posts";
 import { collection, query, where, getDocs, doc, getDoc, updateDoc } from "firebase/firestore"
+import { adicionarPontosComentarioAprovado } from "./ranking-actions" // Import da nova action
 
 export interface Comment {
   id: string;
@@ -13,6 +14,7 @@ export interface Comment {
   userId: string;
   user?: User;
   status?: commentStatus;
+  receivedUserId?: string; // ID do usuário que recebeu o comentário
 }
 
 export interface User {
@@ -28,13 +30,16 @@ export interface User {
   bannerImage?: string;
   fullData?: any;
   skills?: string[];
+  totalPoints?: number; // Adicionado para o sistema de pontos
+  level?: number; // Adicionado para o sistema de levels
 }
 
 export interface CommentWithUser extends Comment {
   user: User;
   postId: string;
   status: commentStatus;
-  type: 'received' | 'made'; // Novo campo para distinguir o tipo
+  type: 'received' | 'made';
+  receivedUserId?: string;
 }
 
 export interface DashboardStats {
@@ -60,7 +65,7 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
     const comentariosRecebidos = comentariosRecebidosSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    } as Comment & { postId: string, status?: string }))
+    } as Comment & { postId: string, status?: string, receivedUserId?: string }))
 
     // 2. Buscar comentários FEITOS pelo usuário (em qualquer post)
     const comentariosFeitosQuery = query(
@@ -71,7 +76,7 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
     const comentariosFeitos = comentariosFeitosSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    } as Comment & { postId: string, status?: string }))
+    } as Comment & { postId: string, status?: string, receivedUserId?: string }))
 
     // 3. Combinar todos os comentários
     const todosComentarios = [
@@ -84,20 +89,7 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
       self.findIndex(c => c.id === comentario.id) === index
     )
 
-    // 5. Buscar informações dos posts
-    const postIds = Array.from(new Set(comentariosUnicos.map(c => c.userId)))
-    const postsPromises = postIds.map(async (postId) => {
-      const postDoc = await getDoc(doc(db, "posts", postId))
-      if (!postDoc.exists()) {
-        return { id: postId, title: "Post não encontrado" }
-      }
-      return { id: postId, ...postDoc.data() }
-    })
-
-    const posts = await Promise.all(postsPromises)
-    const postsMap = new Map(posts.map(p => [p.id, p]))
-
-    // 6. Buscar informações dos usuários
+    // 5. Buscar informações dos usuários
     const userIds = Array.from(new Set(comentariosUnicos.map(c => c.userId)))
     
     const usuariosPromises = userIds.map(async (userId) => {
@@ -118,7 +110,7 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
     const usuarios = await Promise.all(usuariosPromises)
     const usuariosMap = new Map(usuarios.map(u => [u.id, u]))
 
-    // 7. Combinar dados dos comentários com usuários e posts
+    // 6. Combinar dados dos comentários com usuários
     const comentariosCompletos: CommentWithUser[] = comentariosUnicos.map(comentario => ({
       id: comentario.id,
       content: comentario.content,
@@ -127,6 +119,7 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
       isLiked: comentario.isLiked,
       userId: comentario.userId,
       postId: comentario.postId,
+      receivedUserId: comentario.receivedUserId,
       status: (comentario.status as "pending" | "accepted" | "rejected") || "pending",
       type: comentario.type,
       user: usuariosMap.get(comentario.userId) || {
@@ -136,7 +129,7 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
       }
     }))
 
-    // 8. Calcular estatísticas
+    // 7. Calcular estatísticas
     const stats: DashboardStats = {
       total: comentariosCompletos.length,
       pendentes: comentariosCompletos.filter(c => c.status === "pending").length,
@@ -146,7 +139,7 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
       feitos: comentariosCompletos.filter(c => c.type === "made").length
     }
 
-    // 9. Ordenar por data (mais recentes primeiro)
+    // 8. Ordenar por data (mais recentes primeiro)
     comentariosCompletos.sort((a, b) => {
       const dateA = new Date(a.createdAt)
       const dateB = new Date(b.createdAt)
@@ -164,30 +157,91 @@ export async function getComentariosDoUsuario(authorUserId: string): Promise<{
   }
 }
 
-// Action para aprovar comentário
-export async function aprovarComentario(comentarioId: string): Promise<void> {
+// Action para aprovar comentário - ATUALIZADA COM SISTEMA DE PONTOS
+export async function aprovarComentario(comentarioId: string, autorPostId?: string): Promise<void> {
   try {
+    // 1. Buscar dados do comentário para obter o autor
     const comentarioRef = doc(db, "comments", comentarioId)
+    const comentarioDoc = await getDoc(comentarioRef)
+    
+    if (!comentarioDoc.exists()) {
+      throw new Error("Comentário não encontrado")
+    }
+
+    const comentarioData = comentarioDoc.data()
+    const autorComentarioId = comentarioData.userId
+    const receivedUserId = comentarioData.receivedUserId || autorPostId
+
+    // 2. Atualizar status do comentário
     await updateDoc(comentarioRef, {
-      status: "accepted", // Mudei para "accepted" para manter consistência
+      status: "accepted",
       updatedAt: new Date().toISOString()
     })
+
+    // 3. Adicionar pontos ao autor do comentário (se não for ele mesmo aprovando)
+    if (autorComentarioId !== receivedUserId && receivedUserId) {
+      await adicionarPontosComentarioAprovado(
+        comentarioId, 
+        autorComentarioId, // Quem recebe os pontos (autor do comentário)
+        receivedUserId     // Quem concede os pontos (dono do post)
+      )
+    }
+
+    console.log(`✅ Comentário ${comentarioId} aprovado com sucesso`)
+    
   } catch (error) {
     console.error("Erro ao aprovar comentário:", error)
     throw new Error("Falha ao aprovar comentário")
   }
 }
 
-// Action para rejeitar comentário
+// Action para rejeitar comentário - SEM PONTOS
 export async function rejeitarComentario(comentarioId: string): Promise<void> {
   try {
     const comentarioRef = doc(db, "comments", comentarioId)
     await updateDoc(comentarioRef, {
-      status: "rejected", // Mudei para "rejected" para manter consistência
+      status: "rejected",
       updatedAt: new Date().toISOString()
     })
   } catch (error) {
     console.error("Erro ao rejeitar comentário:", error)
     throw new Error("Falha ao rejeitar comentário")
+  }
+}
+
+// Nova function para buscar comentário com mais detalhes (se necessário)
+export async function buscarComentarioPorId(comentarioId: string): Promise<CommentWithUser | null> {
+  try {
+    const comentarioRef = doc(db, "comments", comentarioId)
+    const comentarioDoc = await getDoc(comentarioRef)
+    
+    if (!comentarioDoc.exists()) {
+      return null
+    }
+
+    const comentarioData = comentarioDoc.data() as Comment & { postId: string, receivedUserId?: string }
+    
+    // Buscar dados do usuário
+    const userRef = doc(db, "users", comentarioData.userId)
+    const userDoc = await getDoc(userRef)
+    
+    const user: User = userDoc.exists() 
+      ? { id: comentarioData.userId, ...userDoc.data() } as User
+      : { 
+          id: comentarioData.userId, 
+          name: "Usuário não encontrado", 
+          email: "email@exemplo.com" 
+        }
+
+    return {
+      ...comentarioData,
+      user,
+      status: (comentarioData.status as commentStatus) || "pending",
+      type: 'received'
+    }
+    
+  } catch (error) {
+    console.error("Erro ao buscar comentário:", error)
+    return null
   }
 }
