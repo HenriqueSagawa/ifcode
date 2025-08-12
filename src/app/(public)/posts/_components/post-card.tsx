@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, startTransition } from "react";
-import { toggleLike, checkIfLiked } from "../_actions/likes.ts";
+import { toggleLike, checkIfLiked } from "../_actions/likes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

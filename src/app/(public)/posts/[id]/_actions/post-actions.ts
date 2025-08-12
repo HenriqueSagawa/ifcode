@@ -5,6 +5,7 @@ import { db } from '@/lib/firebase'
 import type { PostProps, Comment, commentStatus } from '@/types/posts'
 import type { User } from '@/../types/next-auth'
 import { revalidatePath } from 'next/cache'
+import { createCommentNotification } from '@/actions/notifications'
 
 export interface PostWithAuthor extends PostProps {
   author: User;
@@ -205,6 +206,12 @@ export async function addComment(postId: string, content: string, userId: string
       throw new Error('Post não encontrado');
     }
 
+    // Buscar dados do usuário que está comentando
+    const commenterUser = await getUserById(userId);
+    if (!commenterUser) {
+      throw new Error('Usuário que está comentando não encontrado');
+    }
+
     const newComment = {
       content: content.trim(),
       postId,
@@ -217,7 +224,30 @@ export async function addComment(postId: string, content: string, userId: string
 
     const docRef = await addDoc(collection(db, 'comments'), newComment)
     
-    const author = await getUserById(userId) || createDefaultUser(userId)
+    const author = commenterUser || createDefaultUser(userId)
+
+    // 🚀 ENVIAR NOTIFICAÇÃO PARA O AUTOR DO POST
+    // Só envia notificação se o comentarista não for o autor do post
+    if (userId !== post.userId) {
+      try {
+        await createCommentNotification({
+          postId: postId,
+          postOwnerId: post.userId,
+          postTitle: post.title || post.content?.substring(0, 50) || 'Publicação',
+          actionUserId: userId,
+          actionUserName: commenterUser.name,
+          actionUserAvatar: commenterUser.image,
+          commentText: content.trim()
+        })
+        
+        console.log(`✅ Notificação de comentário enviada para o usuário ${post.userId}`)
+      } catch (notificationError) {
+        console.error('❌ Erro ao enviar notificação de comentário:', notificationError)
+        // Não falha a criação do comentário mesmo se a notificação falhar
+      }
+    } else {
+      console.log('⏭️ Notificação não enviada: usuário comentou no próprio post')
+    }
 
     revalidatePath("/posts/[id]");
     
@@ -229,7 +259,7 @@ export async function addComment(postId: string, content: string, userId: string
       isLiked: false,
       userId: newComment.userId,
       author,
-      status: newComment.status // ✅ Usar o status do objeto salvo
+      status: newComment.status
     }
   } catch (error) {
     console.error('Erro ao adicionar comentário:', error)

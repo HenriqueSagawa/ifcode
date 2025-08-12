@@ -12,7 +12,9 @@ import {
   increment,
   updateDoc,
   runTransaction,
+  getDoc,
 } from "firebase/firestore";
+import { createLikeNotification, getUserDetails, getPostDetails } from "@/actions/notifications";
 
 export async function toggleLike(postId: string, userId: string) {
   if (!postId || !userId) {
@@ -22,7 +24,6 @@ export async function toggleLike(postId: string, userId: string) {
   console.log("Toggling like for post:", postId, "by user:", userId);
 
   try {
-    // Usar transação para garantir consistência
     const result = await runTransaction(db, async (transaction) => {
       const likesRef = collection(db, "likes");
       const q = query(likesRef, where("postId", "==", postId), where("userId", "==", userId));
@@ -39,26 +40,48 @@ export async function toggleLike(postId: string, userId: string) {
           createdAt: new Date(),
         });
 
-        // Incrementar contador de likes no post
         transaction.update(postRef, {
           likes: increment(1),
         });
 
-        return { liked: true };
+        return { liked: true, shouldCreateNotification: true };
       } else {
-        // Descurtir - remover documento de like
         transaction.delete(snapshot.docs[0].ref);
 
-        // Decrementar contador de likes no post
         transaction.update(postRef, {
           likes: increment(-1),
         });
 
-        return { liked: false };
+        return { liked: false, shouldCreateNotification: false };
       }
     });
 
-    return result;
+    if (result.shouldCreateNotification) {
+      try {
+        const [userDetails, postDetails] = await Promise.all([
+          getUserDetails(userId),
+          getPostDetails(postId)
+        ]);
+
+        if (userDetails && postDetails && postDetails.ownerId !== userId) {
+          await createLikeNotification({
+            postId,
+            postOwnerId: postDetails.ownerId,
+            postTitle: postDetails.title,
+            postImage: postDetails.image,
+            actionUserId: userId,
+            actionUserName: userDetails.name,
+            actionUserAvatar: userDetails.avatar
+          });
+          
+          console.log("Notificação de curtida criada com sucesso");
+        }
+      } catch (notificationError) {
+        console.error("Erro ao criar notificação de curtida:", notificationError);
+      }
+    }
+
+    return { liked: result.liked };
   } catch (error) {
     console.error("Erro ao alternar curtida:", error);
     throw new Error("Falha ao processar curtida");
@@ -84,7 +107,6 @@ export async function checkIfLiked(postId: string, userId: string) {
   }
 }
 
-// Função auxiliar para obter estatísticas do post
 export async function getPostStats(postId: string) {
   if (!postId) {
     return { likes: 0, isLiked: false };
@@ -104,7 +126,7 @@ export async function getPostStats(postId: string) {
 
     return {
       likes,
-      likesCount: likesSnapshot.size // Backup count baseado nos documentos
+      likesCount: likesSnapshot.size
     };
   } catch (error) {
     console.error("Erro ao obter estatísticas do post:", error);

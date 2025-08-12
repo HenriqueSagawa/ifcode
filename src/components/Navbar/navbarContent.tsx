@@ -388,17 +388,18 @@ const NavbarContent = ({
                       ) : (
                         <div className="flex flex-col gap-2">
                           <Link href={auth.login.url}>
-                            <ButtonHeroUi color="default" size="sm" variant="ghost" className="w-full">
+                            <Button onClick={() => setIsOpen(false)} color="default" size="sm" variant="ghost" className="w-full rounded border border-zinc-600">
                               {auth.login.text}
-                            </ButtonHeroUi>
+                            </Button>
                           </Link>
                           <Link href={auth.signup.url}>
-                            <ButtonHeroUi 
-                              className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 w-full" 
+                            <Button
+                              className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 w-full rounded" 
                               size="sm"
+                              onClick={() => setIsOpen(false)}
                             >
                               {auth.signup.text}
-                            </ButtonHeroUi>
+                            </Button>
                           </Link>
                         </div>
                       )}

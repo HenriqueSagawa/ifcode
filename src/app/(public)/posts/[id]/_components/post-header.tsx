@@ -16,7 +16,7 @@ import {
   AiFillHeart,
 } from "react-icons/ai"
 import { LanguageIcon } from "../../_components/language-icons"
-import { checkIfLiked, toggleLike } from "../../_actions/likes.ts"
+import { checkIfLiked, toggleLike } from "../../_actions/likes"
 import { addToast } from "@heroui/toast"
 
 interface PostWithAuthor {
