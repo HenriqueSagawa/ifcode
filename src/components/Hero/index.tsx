@@ -8,14 +8,15 @@ import Link from "next/link";
 
 export const Hero = () => {
   return (
-    <section className="relative container px-2 mx-auto grid grid-cols-1 xl:grid-cols-2 place-items-center py-20 md:py-32 gap-10 overflow-x-hidden">
+    <section className="relative container px-2 mx-auto grid grid-cols-1 xl:grid-cols-2 place-items-center py-20 md:py-32 gap-10 overflow-x-clip">
+
       {/* Background effects */}
       <div className="absolute inset-0">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-green-400/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/5 rounded-full blur-3xl"></div>
       </div>
-      
+
       <div className="text-center xl:text-start space-y-6">
         <main className="relative text-4xl md:text-6xl font-bold">
 
