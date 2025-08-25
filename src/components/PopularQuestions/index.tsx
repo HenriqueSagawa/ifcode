@@ -115,7 +115,7 @@ export default function PopularQuestions() {
           </p>
         </div>
 
-        <div ref={questionsRef} className="space-y-6 max-w-5xl mx-auto">
+        <div ref={questionsRef} className="flex flex-col gap-2 max-w-5xl mx-auto">
           {questions.map((question) => (
             <Link key={question.id} href={`/pergunta/${question.id}`}>
               <div className="question-card opacity-0 translate-y-10 transition-all duration-700 group rounded-2xl p-6 cursor-pointer hover:scale-[1.02] bg-white border border-gray-200 hover:border-green-500/50 shadow-lg hover:shadow-xl dark:bg-gray-900 dark:border-gray-700 dark:hover:border-green-500/50 dark:shadow-none">

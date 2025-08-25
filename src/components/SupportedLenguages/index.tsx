@@ -1,3 +1,5 @@
+'use client'
+
 import LanguageCard from '@/components/Cards/language-card'
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 

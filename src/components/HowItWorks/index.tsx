@@ -1,3 +1,5 @@
+'use client'
+
 import { StepCard } from "@/components/Cards/step-card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 

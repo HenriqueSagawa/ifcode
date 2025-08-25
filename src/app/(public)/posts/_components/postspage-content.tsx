@@ -26,6 +26,8 @@ export function PostsPageContent({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
   const [filters, setFilters] = useState<Filters>({
     type: [],
     language: [],
@@ -90,6 +92,24 @@ export function PostsPageContent({ userId }: { userId: string }) {
     return filtered
   }, [searchTerm, filters, posts])
 
+  useEffect(() => {
+    // Sempre voltar para a página 1 quando filtros/termo mudarem
+    setCurrentPage(1)
+  }, [searchTerm, filters])
+
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(filteredPosts.length / pageSize))
+  }, [filteredPosts.length])
+
+  const paginatedPosts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    const end = start + pageSize
+    return filteredPosts.slice(start, end)
+  }, [filteredPosts, currentPage])
+
+  const startIndex = (currentPage - 1) * pageSize + 1
+  const endIndex = Math.min(currentPage * pageSize, filteredPosts.length)
+
   const getActiveFiltersCount = () => {
     return filters.type.length + filters.language.length + (filters.dateRange ? 1 : 0) + (searchTerm ? 1 : 0)
   }
@@ -128,13 +148,13 @@ export function PostsPageContent({ userId }: { userId: string }) {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-black text-white" style={{ zIndex: 10 }}>
-        <header className="border-b border-green-900/20 bg-black/50 backdrop-blur-sm sticky top-0 -z-10">
+      <div className="min-h-screen bg-background text-foreground" style={{ zIndex: 10 }}>
+        <header className="border-b border-gray-700 bg-background/50 backdrop-blur-sm sticky top-0 -z-10">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-green-400">DevForum</h1>
-                <p className="text-gray-400 text-xs sm:text-sm">Comunidade de desenvolvedores</p>
+                <p className="text-muted-foreground text-xs sm:text-sm">Comunidade de desenvolvedores</p>
               </div>
             </div>
           </div>
@@ -142,7 +162,7 @@ export function PostsPageContent({ userId }: { userId: string }) {
         
         <div className="container mx-auto px-4 py-12">
           <div className="text-center">
-            <p className="text-red-400 mb-4 text-sm sm:text-base">{error}</p>
+            <p className="text-red-500 mb-4 text-sm sm:text-base">{error}</p>
             <Button
               onClick={() => window.location.reload()}
               className="bg-green-600 hover:bg-green-700 text-black text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3"
@@ -156,15 +176,15 @@ export function PostsPageContent({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-muted dark:bg-zinc-950 text-foreground">
       {/* Header */}
-      <header className="border-b border-green-900/20 bg-black/50 backdrop-blur-sm z-10">
+      <header className="border-b border-gray-700 bg-background/50 backdrop-blur-sm z-10">
         <div className="container mx-auto px-4 py-4">
           {/* Top Row - Title and Mobile Filter Button */}
           <div className="flex items-center justify-between mb-4 sm:mb-0">
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-green-400">IFCode</h1>
-              <p className="text-gray-400 text-xs sm:text-sm">Comunidade de desenvolvedores</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">Comunidade de desenvolvedores</p>
             </div>
 
             {/* Mobile Filter Toggle */}
@@ -188,11 +208,11 @@ export function PostsPageContent({ userId }: { userId: string }) {
           <div className="sm:flex sm:items-center sm:justify-between">
             <div className="flex-1 sm:max-w-md sm:mx-8">
               <div className="relative">
-                <AiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <AiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   type="text"
                   placeholder="Buscar publicações, autores..."
-                  className="pl-10 bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-green-500 w-full text-sm sm:text-base"
+                  className="pl-10 w-full text-sm sm:text-base mt-2"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -204,11 +224,11 @@ export function PostsPageContent({ userId }: { userId: string }) {
           {getActiveFiltersCount() > 0 && (
             <div className="mt-4">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs sm:text-sm text-gray-400 whitespace-nowrap">Filtros ativos:</span>
+                <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Filtros ativos:</span>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-gray-400 hover:text-green-400 text-xs sm:text-sm ml-auto sm:ml-0" 
+                  className="text-muted-foreground hover:text-green-400 text-xs sm:text-sm ml-auto sm:ml-0" 
                   onClick={clearFilters}
                 >
                   Limpar todos
@@ -256,7 +276,7 @@ export function PostsPageContent({ userId }: { userId: string }) {
             sm:${showFilters ? 'block' : 'hidden'}
             lg:block lg:w-80 lg:flex-shrink-0
             fixed lg:static top-0 left-0 right-0 bottom-0 
-            bg-black/95 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none
+            bg-background/95 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none
             z-50 lg:z-auto overflow-y-auto lg:overflow-visible
             p-4 lg:p-0
           `}>
@@ -267,7 +287,7 @@ export function PostsPageContent({ userId }: { userId: string }) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowFilters(false)}
-                className="text-gray-400 hover:text-green-400"
+                className="text-muted-foreground hover:text-green-400"
               >
                 <IoClose className="w-5 h-5" />
               </Button>
@@ -279,9 +299,12 @@ export function PostsPageContent({ userId }: { userId: string }) {
           {/* Main Content */}
           <div className="flex-1 min-w-0">
             {/* Results Info */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
-              <div className="text-gray-400 text-sm sm:text-base">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
+              <div className="text-muted-foreground text-sm sm:text-base">
                 {filteredPosts.length} {filteredPosts.length === 1 ? "publicação encontrada" : "publicações encontradas"}
+                {filteredPosts.length > 0 && (
+                  <span className="ml-2 text-xs">(mostrando {startIndex}–{endIndex})</span>
+                )}
               </div>
               
               {/* Desktop Filter Button */}
@@ -304,13 +327,13 @@ export function PostsPageContent({ userId }: { userId: string }) {
             {/* Posts Grid */}
             {filteredPosts.length > 0 ? (
               <div className="space-y-4 sm:space-y-6">
-                {filteredPosts.map((post) => (
+                {paginatedPosts.map((post) => (
                   <PostCard key={post.id} post={post} userId={userId} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-12 px-4">
-                <div className="text-gray-400 mb-4">
+                <div className="text-muted-foreground mb-4">
                   <AiOutlineSearch className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
                   <p className="text-base sm:text-lg">Nenhum post encontrado</p>
                   <p className="text-sm">Tente ajustar os filtros ou termos de busca</p>
@@ -324,6 +347,53 @@ export function PostsPageContent({ userId }: { userId: string }) {
                 </Button>
               </div>
             )}
+
+            {/* Pagination Controls */}
+            {filteredPosts.length > 0 && (
+              <div className="flex items-center justify-between mt-8">
+                <div className="text-xs text-muted-foreground">
+                  Página {currentPage} de {totalPages}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-700"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(1)}
+                  >
+                    Primeiro
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-700"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  >
+                    Anterior
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-700"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  >
+                    Próxima
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-700"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(totalPages)}
+                  >
+                    Última
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -331,7 +401,7 @@ export function PostsPageContent({ userId }: { userId: string }) {
       {/* Backdrop for mobile filters */}
       {showFilters && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-background/50 z-40 lg:hidden"
           onClick={() => setShowFilters(false)}
         />
       )}

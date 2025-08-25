@@ -104,8 +104,8 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
   }
 
   return (
-    <div className="bg-gray-900 border border-gray-700 !rounded sticky top-24 h-[calc(100vh-7rem)] flex flex-col">
-      <div className="p-4 border-b border-gray-700 flex-shrink-0">
+    <div className="bg-muted dark:bg-zinc-950 border border-gray-700 !rounded sticky top-24 h-[calc(100vh-7rem)] flex flex-col">
+      <div className="p-4 border-b border-border/40 flex-shrink-0">
         <h2 className="text-lg font-semibold text-green-400">Filtros</h2>
       </div>
 
@@ -113,14 +113,14 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
         <div className="space-y-6 p-4">
           {/* Sort */}
           <div>
-            <Label className="text-sm font-medium text-gray-300 mb-3 block">Ordenar por</Label>
+            <Label className="text-sm font-medium text-foreground mb-3 block">Ordenar por</Label>
             <Select value={filters.sortBy} onValueChange={handleSortChange}>
-              <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+              <SelectTrigger className="bg-background border-gray-700 text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-600">
+              <SelectContent className="bg-background border-border">
                 {sortOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value} className="text-white hover:bg-gray-700">
+                  <SelectItem key={option.value} value={option.value} className="hover:bg-muted">
                     {option.label}
                   </SelectItem>
                 ))}
@@ -128,11 +128,11 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
             </Select>
           </div>
 
-          <Separator className="bg-gray-700" />
+          <Separator className="bg-border" />
 
           {/* Post Types */}
           <div>
-            <Label className="text-sm font-medium text-gray-300 mb-3 block">Tipo de Post</Label>
+            <Label className="text-sm font-medium text-foreground mb-3 block">Tipo de Post</Label>
             <div className="space-y-3">
               {postTypes.map((type) => (
                 <div key={type.value} className="flex items-center space-x-2">
@@ -140,9 +140,9 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
                     id={`type-${type.value}`}
                     checked={filters.type.includes(type.value)}
                     onCheckedChange={(checked) => handleTypeChange(type.value, checked as boolean)}
-                    className="border-gray-600 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                    className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
                   />
-                  <Label htmlFor={`type-${type.value}`} className="text-sm text-gray-300 cursor-pointer">
+                  <Label htmlFor={`type-${type.value}`} className="text-sm text-foreground cursor-pointer">
                     {type.label}
                   </Label>
                 </div>
@@ -150,11 +150,11 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
             </div>
           </div>
 
-          <Separator className="bg-gray-700" />
+          <Separator className="bg-border" />
 
           {/* Languages */}
           <div>
-            <Label className="text-sm font-medium text-gray-300 mb-3 block">Tecnologias</Label>
+            <Label className="text-sm font-medium text-foreground mb-3 block">Tecnologias</Label>
             <div className="space-y-3">
               {languages.map((language) => (
                 <div key={language} className="flex items-center space-x-2">
@@ -162,11 +162,11 @@ export default function FilterSidebar({ filters, onFiltersChange }: FilterSideba
                     id={`lang-${language}`}
                     checked={filters.language.includes(language)}
                     onCheckedChange={(checked) => handleLanguageChange(language, checked as boolean)}
-                    className="border-gray-600 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                    className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
                   />
                   <Label
                     htmlFor={`lang-${language}`}
-                    className="text-sm text-gray-300 cursor-pointer flex items-center gap-2"
+                    className="text-sm text-foreground cursor-pointer flex items-center gap-2"
                   >
                     <LanguageIcon language={language} />
                     <span className="capitalize">{language}</span>

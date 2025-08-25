@@ -94,7 +94,7 @@ export default function PostCard({ post, userId }: PostCardProps) {
   };
 
   return (
-    <Card className="bg-black border border-gray-800/50 hover:border-green-500/30 transition-all duration-300 group overflow-hidden">
+    <Card className="bg-muted dark:bg-zinc-950 border-gray-700 hover:border-green-500/30 transition-all duration-300 group overflow-hidden">
       <CardContent className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
@@ -102,17 +102,17 @@ export default function PostCard({ post, userId }: PostCardProps) {
             href={`/perfil/${post.author.id}`}
             className="flex items-center gap-3 hover:opacity-80 transition-opacity group/author"
           >
-            <Avatar className="w-11 h-11 ring-2 ring-gray-800 group-hover/author:ring-green-500/50 transition-all">
+            <Avatar className="w-11 h-11 ring-2 ring-border group-hover/author:ring-green-500/50 transition-all">
               <AvatarImage src={post.author?.image || "/placeholder.svg"} alt={post.author?.name || "Usuário"} />
-              <AvatarFallback className="bg-gray-900 text-green-400 font-semibold text-sm">
+              <AvatarFallback className="bg-muted text-green-600 font-semibold text-sm">
                 {getAuthorInitials(post.author?.name)}
               </AvatarFallback>
             </Avatar>
             <div className="text-left">
-              <p className="font-medium text-white group-hover/author:text-green-400 transition-colors text-sm">
+              <p className="font-medium group-hover/author:text-green-600 transition-colors text-sm">
                 {post.author?.name || "Usuário desconhecido"}
               </p>
-              <div className="flex items-center gap-1.5 text-xs text-gray-500">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <AiOutlineLock className="w-3 h-3" />
                 {getRelativeTime(post.createdAt)}
               </div>
@@ -135,8 +135,8 @@ export default function PostCard({ post, userId }: PostCardProps) {
         {/* Code Snippet Preview */}
         {post.codeSnippet && (
           <div className="mb-4">
-            <div className="bg-gray-950 rounded-lg p-3 border border-gray-800">
-              <code className="text-green-400 text-xs font-mono">{post.codeSnippet}</code>
+            <div className="bg-muted rounded-lg p-3 border border-gray-700">
+              <code className="text-xs font-mono">{post.codeSnippet}</code>
             </div>
           </div>
         )}
@@ -171,22 +171,22 @@ export default function PostCard({ post, userId }: PostCardProps) {
             <div className="flex items-center gap-2 bg-gray-900/50 rounded-full px-3 py-1.5 border border-gray-800">
               <AiOutlineCode className="w-3.5 h-3.5 text-green-400" />
               <LanguageIcon language={post.programmingLanguage} className="w-4 h-4" />
-              <span className="text-xs text-gray-300 capitalize font-medium">{post.programmingLanguage}</span>
+              <span className="text-xs capitalize font-medium">{post.programmingLanguage}</span>
             </div>
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-800/50">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-700">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center gap-1 text-gray-500 hover:text-red-400 hover:bg-red-400/5 px-3 py-1.5 h-auto rounded-full transition-all"
+              className="flex items-center gap-1 text-muted-foreground hover:text-red-500 hover:bg-red-500/5 px-3 py-1.5 h-auto rounded-full transition-all"
               onClick={handleToggleLike}
             >
               {liked ? (
-                <AiFillHeart className="w-4 h-4 text-red-400" />
+                <AiFillHeart className="w-4 h-4 text-red-500" />
               ) : (
                 <AiOutlineHeart className="w-4 h-4" />
               )}
@@ -196,7 +196,7 @@ export default function PostCard({ post, userId }: PostCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-500 hover:text-blue-400 hover:bg-blue-400/5 px-3 py-1.5 h-auto rounded-full transition-all"
+              className="text-muted-foreground hover:text-blue-500 hover:bg-blue-500/5 px-3 py-1.5 h-auto rounded-full transition-all"
             >
               <AiOutlineMessage className="w-4 h-4 mr-1.5" />
               <span className="text-xs font-medium">Comentar</span>
@@ -206,7 +206,7 @@ export default function PostCard({ post, userId }: PostCardProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-green-400 hover:bg-green-400/5 p-2 h-auto rounded-full transition-all"
+            className="text-muted-foreground hover:text-green-600 hover:bg-green-600/5 p-2 h-auto rounded-full transition-all"
           >
             <AiOutlineShareAlt className="w-4 h-4" />
           </Button>

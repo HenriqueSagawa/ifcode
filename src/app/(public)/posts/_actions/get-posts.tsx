@@ -9,6 +9,34 @@ export interface PostWithAuthor extends PostProps {
   author: User
 }
 
+function isTimestampLike(value: unknown): value is { seconds: number; nanoseconds?: number } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as any).seconds === "number"
+  )
+}
+
+function toISOStringSafe(value: unknown): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  // Firestore Timestamp-like object
+  // Prefer toDate() if available
+  // Fallback to seconds/nanoseconds shape
+  try {
+    if (value instanceof Date) return (value as Date).toISOString();
+    if (typeof (value as any)?.toDate === "function") return (value as any).toDate().toISOString();
+    if (isTimestampLike(value)) {
+      const nanos = typeof value.nanoseconds === "number" ? value.nanoseconds : 0;
+      const ms = value.seconds * 1000 + Math.floor(nanos / 1_000_000);
+      return new Date(ms).toISOString();
+    }
+  } catch (_) {
+    // noop – fall through to String()
+  }
+  return String(value);
+}
+
 export async function getAllPostsWithAuthors(): Promise<PostWithAuthor[]> {
   try {
     // Buscar todos os posts ordenados por data de criação (mais recentes primeiro)
@@ -30,8 +58,8 @@ export async function getAllPostsWithAuthors(): Promise<PostWithAuthor[]> {
         id: doc.id,
         title: data.title || "",
         content: data.content || "",
-        createdAt: data.createdAt || "",
-        updatedAt: data.updatedAt || "",
+        createdAt: toISOStringSafe(data.createdAt),
+        updatedAt: toISOStringSafe(data.updatedAt),
         type: data.type || "artigo",
         programmingLanguage: data.programmingLanguage || "",
         codeSnippet: data.codeSnippet || "",
@@ -59,8 +87,8 @@ export async function getAllPostsWithAuthors(): Promise<PostWithAuthor[]> {
               name: userData.name || "Usuário sem nome",
               email: userData.email || "",
               bio: userData.bio || undefined,
-              birthDate: userData.birthDate || undefined,
-              createdAt: userData.createdAt || undefined,
+              birthDate: toISOStringSafe(userData.birthDate) || undefined,
+              createdAt: toISOStringSafe(userData.createdAt) || undefined,
               github: userData.github || undefined,
               phone: userData.phone || undefined,
               image: userData.image || undefined,
@@ -126,8 +154,8 @@ export async function getPostsByUserWithAuthor(userId: string): Promise<PostWith
           id: doc.id,
           title: data.title || "",
           content: data.content || "",
-          createdAt: data.createdAt || "",
-          updatedAt: data.updatedAt || "",
+          createdAt: toISOStringSafe(data.createdAt),
+          updatedAt: toISOStringSafe(data.updatedAt),
           type: data.type || "artigo",
           programmingLanguage: data.programmingLanguage || "",
           codeSnippet: data.codeSnippet || "",
@@ -152,8 +180,8 @@ export async function getPostsByUserWithAuthor(userId: string): Promise<PostWith
         name: userData.name || "Usuário sem nome",
         email: userData.email || "",
         bio: userData.bio || undefined,
-        birthDate: userData.birthDate || undefined,
-        createdAt: userData.createdAt || undefined,
+        birthDate: toISOStringSafe(userData.birthDate) || undefined,
+        createdAt: toISOStringSafe(userData.createdAt) || undefined,
         github: userData.github || undefined,
         phone: userData.phone || undefined,
         image: userData.image || undefined,

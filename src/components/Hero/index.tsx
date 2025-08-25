@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from "@heroui/button";
 import { HeroCards } from "../HeroCards";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
