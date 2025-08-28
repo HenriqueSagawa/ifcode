@@ -1,23 +1,36 @@
-"use client"
+import { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { SignUpForm } from './_components/register-form'
 
-import { SignInForm } from "@/components/SignInForm";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+export const metadata: Metadata = {
+  title: 'Criar Conta | Sua Plataforma',
+  description: 'Crie sua conta para começar a usar nossa plataforma. Registro rápido e seguro.',
+  keywords: ['cadastro', 'registro', 'criar conta', 'signup'],
+  openGraph: {
+    title: 'Criar Conta | Sua Plataforma',
+    description: 'Crie sua conta para começar a usar nossa plataforma',
+    type: 'website',
+    locale: 'pt_BR',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  }
+}
 
-export default function Register() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+export default async function SignUpPage() {
+  const session = await getServerSession(authOptions)
+  
+  // Se já estiver logado, redirecionar para a página principal
+  if (session) {
+    redirect('/dashboard')
+  }
 
-  useEffect(() => {
-    if (status === "authenticated") {
-        router.push('/');
-    }
-  }, [session, router, status]);
-
-    return (
-        <div className="z-20 ">
-            <SignInForm />
-        </div>
-    )
+  return (
+    <main className="w-full">
+      <SignUpForm />
+    </main>
+  )
 }

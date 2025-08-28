@@ -141,9 +141,9 @@ const NavbarContent = ({
       return (
         <NavigationMenuItem key={item.title} className="text-muted-foreground" style={{ zIndex: 100 }}>
           <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="w-80 p-3]" style={{ zIndex: 100 }}>
-              <NavigationMenuLink className="z-50">
+          <NavigationMenuContent className="!z-[999]">
+            <ul className="w-80 p-3 !z-[999]" style={{ zIndex: 100 }}>
+              <NavigationMenuLink className="!z-[999]">
                 {item.items.map((subItem) => (
                   <li key={subItem.title} style={{ zIndex: 100 }}>
                     <Link
@@ -183,8 +183,8 @@ const NavbarContent = ({
   };
 
   return (
-    <section className="h-16 !z-[999]">
-      <div className="container mx-auto">
+    <section className="h-16 z-50">
+      <div className="container mx-auto z-40">
         {/* Desktop Navigation */}
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
@@ -212,7 +212,7 @@ const NavbarContent = ({
           </div>
 
           {/* Right side - Auth/User */}
-          <div className="flex items-center gap-2 ">
+          <div className="flex items-center gap-2 z-40 ">
             <ModeToggle />
             
             {hasSession ? (

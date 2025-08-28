@@ -1,23 +1,25 @@
-'use client'
+import { Metadata } from "next"
+import { SignInForm } from "./_components/login-content"
 
-import { LogInForm } from "@/components/LogInForm";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { redirect } from "next/navigation"
 
-export default function Login() {
-    const { data: session, status } = useSession();
-    const router = useRouter();
+export const metadata: Metadata = {
+    title: "Login | Sua Plataforma",
+    description: "Faça login em sua conta para acessar a plataforma",
+}
 
-    useEffect(() => {
-        if (status === "authenticated") {
-            router.push("dashboard");
-        }
-    }, [session, router, status]);
+export default async function LoginPage() {
+    const session = await getServerSession(authOptions)
+
+    if (session) {
+        return redirect("/dashboard")   
+    }
 
     return (
-        <div className="">
-            <LogInForm />
-        </div>
+        <>
+            <SignInForm />
+        </>
     )
 }
