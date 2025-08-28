@@ -7,6 +7,10 @@ html body[data-scroll-locked] {
   margin-right: 0 !important;
 } 
 
+html {
+  padding-right: 0 !important;
+}
+
 svg.animate-draw circle,
 svg.animate-draw path {
   animation: draw 0.6s ease forwards;

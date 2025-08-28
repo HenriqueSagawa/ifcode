@@ -38,7 +38,7 @@ export const HeroCards = () => {
           <div className="flex flex-col">
             <CardTitle className="text-lg">IF Code</CardTitle>
             <CardDescription>
-              <LinkPreview url="https://www.instagram.com/ifcode.assis/" className="dark:!text-gray-300 text-gay-600">
+              <LinkPreview url="https://www.instagram.com/ifcode.assis/" isStatic imageSrc="/img/Captura de tela Instagram.png" className="dark:!text-gray-300 text-gay-600">
                 @ifcode.assis
               </LinkPreview>
             </CardDescription>

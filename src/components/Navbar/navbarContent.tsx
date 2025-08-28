@@ -135,7 +135,6 @@ const NavbarContent = ({
 
 
 
-  console.log("essa é minha foto", user?.image);
 
   const renderDesktopMenuItem = (item: MenuItem) => {
     if (item.items) {
