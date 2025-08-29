@@ -102,6 +102,7 @@ export default function ChatbotPage() {
                 title: "Erro",
                 description: "Não foi possível enviar a mensagem. Tente novamente.",
                 color: "foreground",
+                
             });
         } finally {
             setIsLoading(false);
@@ -133,7 +134,7 @@ export default function ChatbotPage() {
                         </ButtonHeroUi>
                     </div>
                 ),
-                color: "primary",
+                color: "danger",
             });
             return;
         } else {

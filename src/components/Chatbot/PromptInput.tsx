@@ -8,11 +8,13 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { AVAILABLE_MODELS } from "@/lib/gemini/config";
 import { useSession } from "next-auth/react";
 import { addToast } from "@heroui/toast";
+import { cn } from "@heroui/theme";
+import Link from "next/link";
 
 interface PromptInputProps {
-  onSendMessage: (message: string, model: string) => void;
-  isLoading?: boolean;
-  onLoadingMessage?: () => void;
+    onSendMessage: (message: string, model: string) => void;
+    isLoading?: boolean;
+    onLoadingMessage?: () => void;
 }
 
 export function PromptInput({ onSendMessage, isLoading = false, onLoadingMessage }: PromptInputProps) {
@@ -44,12 +46,34 @@ export function PromptInput({ onSendMessage, isLoading = false, onLoadingMessage
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!session) {
             addToast({
                 title: "Autenticação necessária",
                 description: "Você precisa estar logado para enviar mensagens no chat.",
-                color: 'danger'
+                color: 'danger',
+                endContent: (
+                    <div className="ms-11 my-2 flex flex-row gap-1">
+                        <Link href={"/login"}>
+                            <Button color={"primary"} size="sm" variant="outline" className="rounded">
+                                Entrar
+                            </Button>
+                        </Link>
+
+
+                        <Link href={"/register"}>
+                            <Button className="underline-offset-2 rounded" color={"primary"} size="sm" variant="default">
+                                Cadastrar
+                            </Button>
+                        </Link>
+
+                    </div>
+                ),
+                classNames: {
+                    base: cn([
+                        "flex flex-col items-start",
+                    ])
+                }
             });
             return;
         }
@@ -117,9 +141,9 @@ export function PromptInput({ onSendMessage, isLoading = false, onLoadingMessage
                     <Button variant="ghost" className="rounded-full h-7 w-7 sm:h-8 sm:w-8 p-0" disabled={isLoading}>
                         <IoSparklesOutline className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
-                    <Button 
-                        type="submit" 
-                        className="rounded-full h-7 w-7 sm:h-8 sm:w-8 p-0 ml-2" 
+                    <Button
+                        type="submit"
+                        className="rounded-full h-7 w-7 sm:h-8 sm:w-8 p-0 ml-2"
                         disabled={isLoading || !inputValue.trim()}
                     >
                         {isLoading ? (
