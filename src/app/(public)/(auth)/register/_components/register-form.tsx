@@ -176,14 +176,14 @@ export function SignUpForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-emerald-900/20 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 dark:from-black dark:via-gray-900 dark:to-emerald-900/20 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-lg"
       >
-        <Card className="border-2 border-emerald-500/20 bg-black/80 backdrop-blur-sm">
+        <Card className="border-2 border-emerald-200 dark:border-emerald-500/20 bg-white/95 dark:bg-black/80 backdrop-blur-sm shadow-xl dark:shadow-2xl">
           <CardHeader className="space-y-4 pb-6">
             <motion.div
               initial={{ scale: 0.8 }}
@@ -191,13 +191,13 @@ export function SignUpForm() {
               transition={{ delay: 0.2, duration: 0.3 }}
               className="flex flex-col items-center space-y-2"
             >
-              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-xl flex items-center justify-center">
-                <User className="w-6 h-6 text-black" />
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-xl flex items-center justify-center shadow-lg">
+                <User className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-emerald-50">
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-emerald-50">
                 Criar Conta
               </CardTitle>
-              <CardDescription className="text-gray-400 text-center">
+              <CardDescription className="text-gray-600 dark:text-gray-400 text-center">
                 Crie sua conta para começar a usar a plataforma
               </CardDescription>
             </motion.div>
@@ -210,7 +210,7 @@ export function SignUpForm() {
                 variant="outline"
                 onClick={() => handleSocialSignIn("google")}
                 disabled={socialLoading !== null || isSubmitting || isPending}
-                className="relative border-emerald-500/30 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-200"
+                className="relative border-emerald-300 dark:border-emerald-500/30 hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all duration-200 bg-white dark:bg-transparent"
               >
                 {socialLoading === "google" ? (
                   <motion.div
@@ -220,8 +220,8 @@ export function SignUpForm() {
                   />
                 ) : (
                   <>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Google
+                    <Mail className="w-4 h-4 mr-2 text-gray-700 dark:text-gray-300" />
+                    <span className="text-gray-700 dark:text-gray-300">Google</span>
                   </>
                 )}
               </Button>
@@ -230,7 +230,7 @@ export function SignUpForm() {
                 variant="outline"
                 onClick={() => handleSocialSignIn("github")}
                 disabled={socialLoading !== null || isSubmitting || isPending}
-                className="relative border-emerald-500/30 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-200"
+                className="relative border-emerald-300 dark:border-emerald-500/30 hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-all duration-200 bg-white dark:bg-transparent"
               >
                 {socialLoading === "github" ? (
                   <motion.div
@@ -240,16 +240,16 @@ export function SignUpForm() {
                   />
                 ) : (
                   <>
-                    <Github className="w-4 h-4 mr-2" />
-                    GitHub
+                    <Github className="w-4 h-4 mr-2 text-gray-700 dark:text-gray-300" />
+                    <span className="text-gray-700 dark:text-gray-300">GitHub</span>
                   </>
                 )}
               </Button>
             </div>
 
             <div className="relative">
-              <Separator className="bg-gray-700" />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-2 text-sm text-gray-500">
+              <Separator className="bg-gray-300 dark:bg-gray-700" />
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-black px-2 text-sm text-gray-500">
                 ou crie com email
               </span>
             </div>
@@ -262,7 +262,7 @@ export function SignUpForm() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-emerald-50">Nome Completo</FormLabel>
+                      <FormLabel className="text-gray-900 dark:text-emerald-50">Nome Completo</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <User className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
@@ -270,12 +270,12 @@ export function SignUpForm() {
                             {...field}
                             type="text"
                             placeholder="Seu nome completo"
-                            className="pl-10 border-emerald-500/30 focus:border-emerald-500 bg-gray-900/50 text-emerald-50 placeholder:text-gray-500"
+                            className="pl-10 border-emerald-300 dark:border-emerald-500/30 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-emerald-50 placeholder:text-gray-500"
                             disabled={isSubmitting || isPending}
                           />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-red-400" />
+                      <FormMessage className="text-red-600 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -285,7 +285,7 @@ export function SignUpForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-emerald-50">Email</FormLabel>
+                      <FormLabel className="text-gray-900 dark:text-emerald-50">Email</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
@@ -293,12 +293,12 @@ export function SignUpForm() {
                             {...field}
                             type="email"
                             placeholder="seu@email.com"
-                            className="pl-10 border-emerald-500/30 focus:border-emerald-500 bg-gray-900/50 text-emerald-50 placeholder:text-gray-500"
+                            className="pl-10 border-emerald-300 dark:border-emerald-500/30 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-emerald-50 placeholder:text-gray-500"
                             disabled={isSubmitting || isPending}
                           />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-red-400" />
+                      <FormMessage className="text-red-600 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -308,7 +308,7 @@ export function SignUpForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-emerald-50">Senha</FormLabel>
+                      <FormLabel className="text-gray-900 dark:text-emerald-50">Senha</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
@@ -316,7 +316,7 @@ export function SignUpForm() {
                             {...field}
                             type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
-                            className="pl-10 pr-10 border-emerald-500/30 focus:border-emerald-500 bg-gray-900/50 text-emerald-50 placeholder:text-gray-500"
+                            className="pl-10 pr-10 border-emerald-300 dark:border-emerald-500/30 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-emerald-50 placeholder:text-gray-500"
                             disabled={isSubmitting || isPending}
                           />
                           <Button
@@ -349,9 +349,9 @@ export function SignUpForm() {
                               {req.regex.test(watchedPassword) ? (
                                 <CheckCircle className="w-3 h-3 text-emerald-500" />
                               ) : (
-                                <div className="w-3 h-3 rounded-full border border-gray-500" />
+                                <div className="w-3 h-3 rounded-full border border-gray-400 dark:border-gray-500" />
                               )}
-                              <span className={req.regex.test(watchedPassword) ? "text-emerald-500" : "text-gray-500"}>
+                              <span className={req.regex.test(watchedPassword) ? "text-emerald-600 dark:text-emerald-500" : "text-gray-600 dark:text-gray-500"}>
                                 {req.text}
                               </span>
                             </motion.div>
@@ -359,7 +359,7 @@ export function SignUpForm() {
                         </div>
                       )}
                       
-                      <FormMessage className="text-red-400" />
+                      <FormMessage className="text-red-600 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -369,7 +369,7 @@ export function SignUpForm() {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-emerald-50">Confirmar Senha</FormLabel>
+                      <FormLabel className="text-gray-900 dark:text-emerald-50">Confirmar Senha</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
@@ -377,7 +377,7 @@ export function SignUpForm() {
                             {...field}
                             type={showConfirmPassword ? "text" : "password"}
                             placeholder="••••••••"
-                            className="pl-10 pr-10 border-emerald-500/30 focus:border-emerald-500 bg-gray-900/50 text-emerald-50 placeholder:text-gray-500"
+                            className="pl-10 pr-10 border-emerald-300 dark:border-emerald-500/30 focus:border-emerald-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-emerald-50 placeholder:text-gray-500"
                             disabled={isSubmitting || isPending}
                           />
                           <Button
@@ -396,7 +396,7 @@ export function SignUpForm() {
                           </Button>
                         </div>
                       </FormControl>
-                      <FormMessage className="text-red-400" />
+                      <FormMessage className="text-red-600 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -410,21 +410,21 @@ export function SignUpForm() {
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="border-emerald-500/30 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+                          className="border-emerald-400 dark:border-emerald-500/30 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel className="text-sm text-gray-300">
+                        <FormLabel className="text-sm text-gray-700 dark:text-gray-300">
                           Aceito os{" "}
-                          <Link href="/terms" className="text-emerald-500 hover:text-emerald-400 underline">
+                          <Link href="/terms" className="text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 underline">
                             termos de uso
                           </Link>{" "}
                           e{" "}
-                          <Link href="/privacy" className="text-emerald-500 hover:text-emerald-400 underline">
+                          <Link href="/privacy" className="text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 underline">
                             política de privacidade
                           </Link>
                         </FormLabel>
-                        <FormMessage className="text-red-400" />
+                        <FormMessage className="text-red-600 dark:text-red-400" />
                       </div>
                     </FormItem>
                   )}
@@ -432,14 +432,14 @@ export function SignUpForm() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-black font-semibold transition-all duration-200 group"
-                                              disabled={isSubmitting || isPending}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold transition-all duration-200 group shadow-lg hover:shadow-xl"
+                  disabled={isSubmitting || isPending}
                 >
                   {(isSubmitting || isPending) ? (
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-5 h-5 border-2 border-black border-t-transparent rounded-full"
+                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
                     />
                   ) : (
                     <>
@@ -452,12 +452,12 @@ export function SignUpForm() {
             </Form>
 
             {/* Sign in link */}
-            <div className="text-center pt-4 border-t border-gray-800">
-              <p className="text-gray-400">
+            <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-800">
+              <p className="text-gray-600 dark:text-gray-400">
                 Já tem uma conta?{" "}
                 <Link
                   href="/login"
-                  className="text-emerald-500 hover:text-emerald-400 font-medium transition-colors"
+                  className="text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 font-medium transition-colors"
                 >
                   Fazer login
                 </Link>

@@ -23,7 +23,6 @@ export const metadata: Metadata = {
 export default async function SignUpPage() {
   const session = await getServerSession(authOptions)
   
-  // Se já estiver logado, redirecionar para a página principal
   if (session) {
     redirect('/dashboard')
   }
