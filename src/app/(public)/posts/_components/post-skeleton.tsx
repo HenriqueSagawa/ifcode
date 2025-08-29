@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export function PostSkeleton() {
   return (
-    <Card className="bg-muted dark:bg-zinc-950 border-border/40 overflow-hidden">
+    <Card className="bg-muted dark:bg-zinc-950 border border-gray-800 overflow-hidden">
       <CardContent className="p-6">
         {/* Header Skeleton */}
         <div className="flex items-start justify-between mb-4">
@@ -35,7 +35,7 @@ export function PostSkeleton() {
 
         {/* Code snippet skeleton */}
         <div className="mb-4">
-          <div className="bg-muted rounded-lg p-3 border border-border/60">
+          <div className="bg-muted rounded-lg p-3 border border-gray-800">
             <div className="space-y-1">
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
@@ -45,7 +45,7 @@ export function PostSkeleton() {
 
         {/* Language skeleton */}
         <div className="flex items-center gap-2 mb-4">
-          <div className="flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1.5 border border-border">
+          <div className="flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1.5 border border-gray-800">
             <Skeleton className="w-3.5 h-3.5" />
             <Skeleton className="w-4 h-4" />
             <Skeleton className="h-3 w-16" />
@@ -53,7 +53,7 @@ export function PostSkeleton() {
         </div>
 
         {/* Actions skeleton */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/60">
+        <div className="flex items-center justify-between pt-4 border-t border border-gray-800">
           <div className="flex items-center gap-1">
             {/* Like button skeleton */}
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full">
@@ -80,7 +80,7 @@ export function PostsPageSkeleton() {
   return (
     <div className="min-h-screen bg-muted dark:bg-zinc-950 text-foreground">
       {/* Header */}
-      <header className="border-b border-border/40 bg-background/50 backdrop-blur-sm sticky top-0 z-40">
+      <header className="border-b border-gray-800 bg-background/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -102,7 +102,7 @@ export function PostsPageSkeleton() {
         <div className="flex gap-6">
           {/* Sidebar Skeleton */}
           <div className="w-80 flex-shrink-0">
-            <Card className="bg-muted dark:bg-zinc-950 border border-border/40">
+            <Card className="bg-muted dark:bg-zinc-950 border border-gray-800">
               <CardContent className="p-4">
                 <div className="space-y-4">
                   {/* Filter sections skeleton */}
