@@ -5,10 +5,14 @@ import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { BackButton } from "@/components/BackButton"
 
 function ProfileSkeleton() {
   return (
     <div className="min-h-screen p-4 bg-transparent transition-colors duration-300">
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
         
         {/* Coluna Esquerda - Perfil Principal */}
@@ -157,7 +161,14 @@ async function ProfileData() {
 
   console.log("Essa é minha foto de perfil:", userData.image);
 
-  return <ProfileDashboardContent userData={session?.user} />
+  return (
+    <div>
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
+      <ProfileDashboardContent userData={session?.user} />
+    </div>
+  )
 }
 
 export default function DashboardProfile() {

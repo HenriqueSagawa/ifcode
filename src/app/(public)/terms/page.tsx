@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { termsData } from './data/tems-data';
+import { BackButton } from '@/components/BackButton';
 
 const termsMetadata = {
   title: "Termos de Uso da Plataforma IFCode",
@@ -66,6 +67,7 @@ export default function TermsOfUsePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              <BackButton variant="ghost" size="sm" fallbackUrl="/" />
               <div className="p-2 bg-green-100 dark:bg-green-500/20 rounded-lg transition-colors duration-300">
                 <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>

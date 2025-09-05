@@ -5,11 +5,16 @@ import { redirect } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SettingsContent } from "./_components/configuration-dashboard"
+import { BackButton } from "@/components/BackButton"
 
 
 function SettingsSkeleton() {
   return (
     <div className="container mx-auto py-6 max-w-6xl">
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
+      
       <div className="mb-6 space-y-2">
         <Skeleton className="h-9 w-64" />
         <Skeleton className="h-5 w-80" />
@@ -99,7 +104,14 @@ async function SettingsData() {
     return null;
   }
 
-  return <SettingsContent userData={session.user} />
+  return (
+    <div>
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
+      <SettingsContent userData={session.user} />
+    </div>
+  )
 }
 
 export default function SettingsPage() {

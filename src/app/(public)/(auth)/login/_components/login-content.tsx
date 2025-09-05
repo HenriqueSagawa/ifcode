@@ -258,6 +258,16 @@ export function SignInForm() {
                     </>
                   )}
                 </Button>
+
+                {/* Forgot password link */}
+                <div className="text-center">
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 font-medium transition-colors"
+                  >
+                    Esqueceu sua senha?
+                  </Link>
+                </div>
               </form>
             </Form>
 

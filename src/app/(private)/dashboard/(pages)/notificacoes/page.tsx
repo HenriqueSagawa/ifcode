@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { NotificationsHeader } from './_components/notifications-dashboard'
 import { NotificationsSkeleton } from './_components/notifications-dashboard'
 import { NotificationsList } from './_components/notifications-dashboard'
+import { BackButton } from '@/components/BackButton'
 
 export default async function NotificationsPage() {
   const currentUser = await getServerSession(authOptions);
@@ -16,6 +17,10 @@ export default async function NotificationsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
+      
       <NotificationsHeader />
       
       <Suspense fallback={<NotificationsSkeleton />}>

@@ -2,6 +2,7 @@ import { PostsPageContent } from "./_components/postspage-content";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type { Metadata } from "next";
+import { BackButton } from "@/components/BackButton";
 
 export const metadata: Metadata = {
   title: "Posts e Artigos de Programação | IF Code",
@@ -69,6 +70,9 @@ export default async function PostsPage() {
 
   return (
     <div>
+      <div className="container mx-auto px-4 py-6">
+        <BackButton className="mb-6" fallbackUrl="/" />
+      </div>
       <PostsPageContent userId={userId} />
     </div>    
   )

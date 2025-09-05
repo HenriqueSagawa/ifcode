@@ -10,11 +10,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { MessageSquare, User, Eye } from "lucide-react"
+import { BackButton } from "@/components/BackButton"
 
 function PostsDashboardSkeleton() {
   return (
     <div className="min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto space-y-6">
+        
+        {/* Back Button */}
+        <div className="mb-6">
+          <BackButton fallbackUrl="/dashboard" />
+        </div>
         
         {/* Header */}
         <div className="space-y-2">
@@ -241,7 +247,14 @@ async function PostsData() {
   const user = session.user;
   const userPosts = await getUserPosts(user?.id || "");
 
-  return <PostsDashboardContent userId={user?.id || ""} initialPosts={userPosts} />
+  return (
+    <div>
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
+      <PostsDashboardContent userId={user?.id || ""} initialPosts={userPosts} />
+    </div>
+  )
 }
 
 export default function PostsDashboardPage() {

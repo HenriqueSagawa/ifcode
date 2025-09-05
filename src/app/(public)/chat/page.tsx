@@ -16,6 +16,7 @@ import { ChatService } from '@/services/gemini/chat.service';
 import { cn } from "@heroui/theme";
 import Link from "next/link";
 import { UserData } from "@/types/userData";
+import { BackButton } from "@/components/BackButton";
 
 const chatService = ChatService.getInstance();
 
@@ -145,7 +146,8 @@ export default function ChatbotPage() {
     return (
         <div className="flex flex-col h-[calc(100vh-5rem)] bg-background text-foreground max-w-screen-xl mx-auto">
             {/* Header */}
-            <header className="p-3 flex items-center bg-background/80 backdrop-blur-sm">
+            <header className="p-3 flex items-center justify-between bg-background/80 backdrop-blur-sm">
+                <BackButton variant="ghost" size="sm" fallbackUrl="/" />
                 <Button variant="outline" size="icon" className="mr-2">
                     <PlusIcon className="h-4 w-4" />
                 </Button>

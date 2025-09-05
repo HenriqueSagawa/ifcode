@@ -8,10 +8,16 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MessageSquare, User, Eye, Star, Reply } from "lucide-react"
+import { BackButton } from "@/components/BackButton"
 
 function CommentsDashboardSkeleton() {
   return (
     <div className="container mx-auto py-6">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
+      
       {/* Header */}
       <div className="mb-6 space-y-2">
         <Skeleton className="h-9 w-80" />
@@ -304,6 +310,10 @@ async function CommentsData() {
 export default function CommentsDashboardPage() {
   return (
     <div className="container mx-auto py-6">
+      <div className="mb-6">
+        <BackButton fallbackUrl="/dashboard" />
+      </div>
+      
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard de Comentários</h1>
         <p className="text-muted-foreground">
