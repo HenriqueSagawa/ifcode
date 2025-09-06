@@ -15,9 +15,9 @@ export const PLATFORM_CONTEXT = {
   },
 
   contact: {
-    email: "contato@ifcode.com.br",
-    phone: "(41) 99999-9999",
-    address: "Instituto Federal do Paraná - Campus Curitiba",
+    email: "ifcodeprojeto@gmail.com",
+    phone: "(44) 99805-0846",
+    address: "Instituto Federal do Paraná - Campus Assis Chateaubriand",
     website: "https://ifcode.com.br"
   },
 

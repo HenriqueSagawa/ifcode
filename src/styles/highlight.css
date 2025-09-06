@@ -1,0 +1,103 @@
+/* Syntax highlighting styles for code blocks */
+.hljs {
+  background: #1a1a1a !important;
+  color: #e6e6e6 !important;
+  padding: 1rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  overflow-x: auto !important;
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+  color: #c678dd !important;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-title,
+.hljs-name,
+.hljs-type,
+.hljs-attribute,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition,
+.hljs-variable,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: #98c379 !important;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote,
+.hljs-deletion,
+.hljs-meta {
+  color: #5c6370 !important;
+  font-style: italic;
+}
+
+/* Numbers */
+.hljs-number,
+.hljs-regexp,
+.hljs-strong,
+.hljs-emphasis {
+  color: #d19a66 !important;
+}
+
+/* Functions */
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-class .hljs-title {
+  color: #61dafb !important;
+}
+
+/* Variables */
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute {
+  color: #e06c75 !important;
+}
+
+/* Operators */
+.hljs-operator,
+.hljs-punctuation {
+  color: #56b6c2 !important;
+}
+
+/* Special */
+.hljs-doctag,
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+/* Code block container */
+pre code.hljs {
+  display: block;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  background: #1a1a1a;
+  border: 1px solid #22c55e40;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+/* Inline code */
+code:not(pre code) {
+  background: #374151;
+  color: #22c55e;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+}

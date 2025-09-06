@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { MessageCircle, Send, X, ExternalLink, Mail, Phone, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SupportService, SupportMessage } from '@/services/gemini/support.service';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface Message {
   id: string;
@@ -160,6 +161,14 @@ export function AISupportModal({ isOpen, onClose }: AISupportModalProps) {
                 <div className="text-center text-white">
                   <MessageCircle className="h-12 w-12 mx-auto mb-2 text-green-400/70" />
                   <p>Olá! Como posso te ajudar hoje?</p>
+                  <div className="mt-4 p-3 bg-gray-800/50 rounded-lg border border-green-500/20">
+                    <p className="text-xs text-gray-400 mb-2">💡 Dica: Minhas respostas suportam formatação markdown!</p>
+                    <div className="text-xs text-gray-300">
+                      <p>• Títulos, listas e código</p>
+                      <p>• Links clicáveis</p>
+                      <p>• Formatação rica</p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Quick Links */}
@@ -239,7 +248,11 @@ export function AISupportModal({ isOpen, onClose }: AISupportModalProps) {
                       : 'bg-gray-800 text-white border border-green-500/30'
                   )}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  {message.role === 'assistant' ? (
+                    <MarkdownRenderer content={message.content} />
+                  ) : (
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  )}
                   <p className="text-xs opacity-70 mt-1">
                     {message.timestamp.toLocaleTimeString()}
                   </p>
