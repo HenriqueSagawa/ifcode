@@ -5,6 +5,7 @@ import PopularQuestions from "@/components/PopularQuestions";
 import Stats from "@/components/Stats";
 import { getPlatformStats } from "./_actions/get-stats";
 import SupportedLanguages from "@/components/SupportedLenguages";
+import { AISupportButton } from "@/components/AISupport";
 
 export default async function Home() {
   const stats = await getPlatformStats();
@@ -19,7 +20,7 @@ export default async function Home() {
         <PopularQuestions />
         <CTA />
       </main>
-
+      <AISupportButton />
     </div>
   );
 }

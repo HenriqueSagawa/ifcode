@@ -1,5 +1,6 @@
 import ContactContent from "./_components/contact-content";
 import { BackButton } from "@/components/BackButton";
+import { AISupportButton } from "@/components/AISupport";
 
 export default function Contato() {
     return (
@@ -8,6 +9,7 @@ export default function Contato() {
                 <BackButton className="mb-6" fallbackUrl="/" />
             </div>
             <ContactContent />
+            <AISupportButton />
         </div>       
     )
 }

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type { Metadata } from "next";
 import { BackButton } from "@/components/BackButton";
+import { AISupportButton } from "@/components/AISupport";
 
 export const metadata: Metadata = {
   title: "Posts e Artigos de Programação | IF Code",
@@ -74,6 +75,7 @@ export default async function PostsPage() {
         <BackButton className="mb-6" fallbackUrl="/" />
       </div>
       <PostsPageContent userId={userId} />
+      <AISupportButton />
     </div>    
   )
 }

@@ -1,6 +1,7 @@
 import { TeamHero } from "@/components/TeamHero";
 import { TeamMembers } from "@/components/TeamMembers";
 import { BackButton } from "@/components/BackButton";
+import { AISupportButton } from "@/components/AISupport";
 
 export default function Equipe() {
   return (
@@ -10,6 +11,7 @@ export default function Equipe() {
       </div>
       <TeamHero />
       <TeamMembers />
+      <AISupportButton />
     </main>
   );
 }

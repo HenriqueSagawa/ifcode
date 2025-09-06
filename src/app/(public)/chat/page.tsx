@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button"
 import { Button as ButtonHeroUi } from "@heroui/button";
 import { Card } from "@/components/ui/card"
-import { PlusIcon } from "lucide-react"
+import { PlusIcon, History } from "lucide-react"
 import { DinamicMessage } from "@/components/Chatbot/DinamicMessage";
 import { PromptInput } from "@/components/Chatbot/PromptInput";
 import { Message } from "@/components/Chatbot/Message";
@@ -17,8 +17,12 @@ import { cn } from "@heroui/theme";
 import Link from "next/link";
 import { UserData } from "@/types/userData";
 import { BackButton } from "@/components/BackButton";
+import { ChatHistoryModal } from "@/components/ChatHistoryModal";
+import { ChatHistoryService } from "@/services/chatHistoryService";
+import { ChatMessage as ChatHistoryMessage } from "@/types/chatHistory";
 
 const chatService = ChatService.getInstance();
+const chatHistoryService = ChatHistoryService.getInstance();
 
 const exampleCards = [
     {
@@ -49,6 +53,8 @@ export default function ChatbotPage() {
     const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [user, setUser] = useState<UserData>()
+    const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+    const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
 
     const dataFetch = useRef(false);
 
@@ -84,19 +90,53 @@ export default function ChatbotPage() {
         scrollToBottom();
     }, [messages]);
 
-    const handleSendMessage = async (message: string) => {
+    const handleSendMessage = async (message: string, model?: string) => {
         if (!message.trim()) return;
 
         try {
             setIsLoading(true);
 
             const userMessage: ChatMessage = { role: "user", content: message };
-            setMessages(prev => [...prev, userMessage]);
+            const updatedMessages = [...messages, userMessage];
+            setMessages(updatedMessages);
 
-            const response = await chatService.sendMessage([...messages, userMessage]);
+            const response = await chatService.sendMessage(updatedMessages);
 
             const botMessage: ChatMessage = { role: "model", content: response };
-            setMessages(prev => [...prev, botMessage]);
+            const finalMessages = [...updatedMessages, botMessage];
+            setMessages(finalMessages);
+
+            // Salvar conversa no banco de dados
+            if (user?.id) {
+                try {
+                    const chatHistoryMessages: ChatHistoryMessage[] = finalMessages.map(msg => ({
+                        role: msg.role,
+                        content: msg.content,
+                        timestamp: new Date()
+                    }));
+
+                    if (currentConversationId) {
+                        // Atualizar conversa existente
+                        await chatHistoryService.updateConversation(
+                            currentConversationId,
+                            undefined,
+                            chatHistoryMessages
+                        );
+                    } else {
+                        // Criar nova conversa
+                        const title = chatHistoryService.generateTitle(message);
+                        const conversationId = await chatHistoryService.saveConversation(
+                            user.id,
+                            title,
+                            chatHistoryMessages
+                        );
+                        setCurrentConversationId(conversationId);
+                    }
+                } catch (error) {
+                    console.error("Erro ao salvar conversa:", error);
+                    // Não mostrar erro para o usuário, apenas log
+                }
+            }
         } catch (error) {
             console.error("Erro ao enviar mensagem:", error);
             addToast({
@@ -108,6 +148,20 @@ export default function ChatbotPage() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleLoadConversation = (historyMessages: ChatHistoryMessage[]) => {
+        const convertedMessages: ChatMessage[] = historyMessages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+        }));
+        setMessages(convertedMessages);
+        setCurrentConversationId(null); // Reset para criar nova conversa
+    };
+
+    const handleNewChat = () => {
+        setMessages([]);
+        setCurrentConversationId(null);
     };
 
     function handleClickCard(Message: string) {
@@ -148,9 +202,26 @@ export default function ChatbotPage() {
             {/* Header */}
             <header className="p-3 flex items-center justify-between bg-background/80 backdrop-blur-sm">
                 <BackButton variant="ghost" size="sm" fallbackUrl="/" />
-                <Button variant="outline" size="icon" className="mr-2">
-                    <PlusIcon className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-2">
+                    {session && user?.id && (
+                        <Button 
+                            variant="outline" 
+                            size="icon" 
+                            onClick={() => setIsHistoryModalOpen(true)}
+                            title="Ver histórico de conversas"
+                        >
+                            <History className="h-4 w-4" />
+                        </Button>
+                    )}
+                    <Button 
+                        variant="outline" 
+                        size="icon" 
+                        onClick={handleNewChat}
+                        title="Nova conversa"
+                    >
+                        <PlusIcon className="h-4 w-4" />
+                    </Button>
+                </div>
             </header>
 
             {/* Main content */}
@@ -207,6 +278,16 @@ export default function ChatbotPage() {
                     <PromptInput onSendMessage={handleSendMessage} isLoading={isLoading} />
                 </div>
             </div>
+
+            {/* Chat History Modal */}
+            {session && user?.id && (
+                <ChatHistoryModal
+                    isOpen={isHistoryModalOpen}
+                    onClose={() => setIsHistoryModalOpen(false)}
+                    userId={user.id}
+                    onLoadConversation={handleLoadConversation}
+                />
+            )}
         </div>
     );
 }

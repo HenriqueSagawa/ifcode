@@ -1,6 +1,7 @@
 import React from "react";
 import { TimelineComponent } from "../../../components/TimeLine";
 import { BackButton } from "@/components/BackButton";
+import { AISupportButton } from "@/components/AISupport";
 
 export default function Sobre() {
     return (
@@ -9,6 +10,7 @@ export default function Sobre() {
                 <BackButton className="mb-6" fallbackUrl="/" />
             </div>
             <TimelineComponent />
+            <AISupportButton />
         </div>
     )
 }

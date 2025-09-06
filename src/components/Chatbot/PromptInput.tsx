@@ -12,7 +12,7 @@ import { cn } from "@heroui/theme";
 import Link from "next/link";
 
 interface PromptInputProps {
-    onSendMessage: (message: string, model: string) => void;
+    onSendMessage: (message: string, model?: string) => void;
     isLoading?: boolean;
     onLoadingMessage?: () => void;
 }
