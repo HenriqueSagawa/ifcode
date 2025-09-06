@@ -45,6 +45,12 @@ export async function GET(request: Request) {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             
+            // Verificar se o post está publicado (não deletado ou arquivado)
+            const postStatus = data.status || "published";
+            if (postStatus !== "published") {
+                return; // Pular posts deletados ou arquivados
+            }
+            
             const createdAt = data.createdAt instanceof Date 
                 ? data.createdAt.toISOString() 
                 : data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString();
@@ -60,7 +66,7 @@ export async function GET(request: Request) {
                 type: data.type || "",
                 imagesUrls: data.images || [],
                 likes: data.likes || 0,
-                status: "published",
+                status: postStatus,
                 updatedAt: createdAt
             });
         });

@@ -33,9 +33,10 @@ interface CommentsSectionProps {
   onCommentLike: (commentId: string) => void;
   userImage: string;
   isAuthor?: boolean; // Nova propriedade para identificar se é o autor
+  userId?: string; // ID do usuário logado
 }
 
-export const CommentsSection = ({ comments, onAddComment, onCommentLike, userImage, isAuthor = false }: CommentsSectionProps) => {
+export const CommentsSection = ({ comments, onAddComment, onCommentLike, userImage, isAuthor = false, userId }: CommentsSectionProps) => {
   // Função para contar comentários por status (opcional - para estatísticas)
   const getCommentsStats = () => {
     const stats = comments.reduce((acc, comment) => {
@@ -107,7 +108,7 @@ export const CommentsSection = ({ comments, onAddComment, onCommentLike, userIma
       {/* Comments List */}
       <div className="space-y-6">
         {comments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} onLike={onCommentLike} />
+          <CommentItem key={comment.id} comment={comment} onLike={onCommentLike} userId={userId} />
         ))}
         
         {/* Mensagem quando não há comentários */}

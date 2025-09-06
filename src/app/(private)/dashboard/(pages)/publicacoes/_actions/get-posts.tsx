@@ -25,24 +25,26 @@ export async function getUserPosts(userId: string): Promise<PostProps[]> {
     try {
       const querySnapshot = await getDocs(simpleQuery)
       
-      const posts: PostProps[] = querySnapshot.docs.map((doc) => {
-        const data = doc.data()
-        
-        return {
-          id: doc.id,
-          title: data.title || "",
-          content: data.content || "",
-          createdAt: data.createdAt || new Date().toISOString().split("T")[0],
-          updatedAt: data.updatedAt || new Date().toISOString().split("T")[0],
-          type: data.type || "article",
-          programmingLanguage: data.programmingLanguage || "unknown",
-          codeSnippet: data.codeSnippet || "",
-          imagesUrls: data.imagesUrls || [],
-          likes: data.likes || 0,
-          userId: data.userId || "",
-          status: data.status || "published"
-        } as PostProps
-      })
+      const posts: PostProps[] = querySnapshot.docs
+        .map((doc) => {
+          const data = doc.data()
+          
+          return {
+            id: doc.id,
+            title: data.title || "",
+            content: data.content || "",
+            createdAt: data.createdAt || new Date().toISOString().split("T")[0],
+            updatedAt: data.updatedAt || new Date().toISOString().split("T")[0],
+            type: data.type || "article",
+            programmingLanguage: data.programmingLanguage || "unknown",
+            codeSnippet: data.codeSnippet || "",
+            imagesUrls: data.imagesUrls || [],
+            likes: data.likes || 0,
+            userId: data.userId || "",
+            status: data.status || "published"
+          } as PostProps
+        })
+        .filter(post => post.status === "published") // Filtrar apenas posts publicados
 
       posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       
@@ -54,23 +56,25 @@ export async function getUserPosts(userId: string): Promise<PostProps[]> {
       const fallbackQuery = query(postsRef, where("userId", "==", userId))
       const fallbackSnapshot = await getDocs(fallbackQuery)
       
-      const posts: PostProps[] = fallbackSnapshot.docs.map((doc) => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          title: data.title || "",
-          content: data.content || "",
-          createdAt: data.createdAt || new Date().toISOString().split("T")[0],
-          updatedAt: data.updatedAt || new Date().toISOString().split("T")[0],
-          type: data.type || "article",
-          programmingLanguage: data.programmingLanguage || "unknown",
-          codeSnippet: data.codeSnippet || "",
-          imagesUrls: data.imagesUrls || [],
-          likes: data.likes || 0,
-          userId: data.userId || "",
-          status: data.status || "published"
-        } as PostProps
-      })
+      const posts: PostProps[] = fallbackSnapshot.docs
+        .map((doc) => {
+          const data = doc.data()
+          return {
+            id: doc.id,
+            title: data.title || "",
+            content: data.content || "",
+            createdAt: data.createdAt || new Date().toISOString().split("T")[0],
+            updatedAt: data.updatedAt || new Date().toISOString().split("T")[0],
+            type: data.type || "article",
+            programmingLanguage: data.programmingLanguage || "unknown",
+            codeSnippet: data.codeSnippet || "",
+            imagesUrls: data.imagesUrls || [],
+            likes: data.likes || 0,
+            userId: data.userId || "",
+            status: data.status || "published"
+          } as PostProps
+        })
+        .filter(post => post.status === "published") // Filtrar apenas posts publicados
       
       posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       

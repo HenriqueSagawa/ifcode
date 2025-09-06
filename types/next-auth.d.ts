@@ -21,4 +21,5 @@ interface User {
     skills?: string[];
     totalPoints?: number;
     level?: number;
+    role?: "user" | "moderator" | "admin" | "superadmin";
 }

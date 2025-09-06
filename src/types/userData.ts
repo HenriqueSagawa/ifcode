@@ -10,4 +10,5 @@ export interface UserData {
     image?: string;
     bannerImage?: string;
     skills?: string[];
+    role?: "user" | "moderator" | "admin" | "superadmin";
   }

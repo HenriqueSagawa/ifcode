@@ -51,24 +51,26 @@ export async function getAllPostsWithAuthors(): Promise<PostWithAuthor[]> {
       return []
     }
 
-    // Extrair dados dos posts com tipagem correta
-    const posts: PostProps[] = postsSnapshot.docs.map(doc => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        title: data.title || "",
-        content: data.content || "",
-        createdAt: toISOStringSafe(data.createdAt),
-        updatedAt: toISOStringSafe(data.updatedAt),
-        type: data.type || "artigo",
-        programmingLanguage: data.programmingLanguage || "",
-        codeSnippet: data.codeSnippet || "",
-        imagesUrls: data.imagesUrls || [],
-        likes: data.likes || 0,
-        userId: data.userId || "",
-        status: data.status || "published"
-      } as PostProps
-    })
+    // Extrair dados dos posts com tipagem correta e filtrar posts deletados/arquivados
+    const posts: PostProps[] = postsSnapshot.docs
+      .map(doc => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          title: data.title || "",
+          content: data.content || "",
+          createdAt: toISOStringSafe(data.createdAt),
+          updatedAt: toISOStringSafe(data.updatedAt),
+          type: data.type || "artigo",
+          programmingLanguage: data.programmingLanguage || "",
+          codeSnippet: data.codeSnippet || "",
+          imagesUrls: data.imagesUrls || [],
+          likes: data.likes || 0,
+          userId: data.userId || "",
+          status: data.status || "published"
+        } as PostProps
+      })
+      .filter(post => post.status === "published") // Filtrar apenas posts publicados
 
     // Buscar informações dos autores
     const postsWithAuthors: PostWithAuthor[] = await Promise.all(
@@ -165,7 +167,7 @@ export async function getPostsByUserWithAuthor(userId: string): Promise<PostWith
           status: data.status || "published"
         } as PostProps
       })
-      .filter(post => post.userId === userId)
+      .filter(post => post.userId === userId && post.status === "published") // Filtrar apenas posts publicados do usuário
 
     // Buscar informações do autor (apenas uma vez já que todos os posts são do mesmo usuário)
     const userDocRef = doc(db, "users", userId)

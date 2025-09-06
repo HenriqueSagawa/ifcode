@@ -3,6 +3,9 @@
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { AiOutlineHeart, AiOutlineMessage, AiFillHeart } from "react-icons/ai"
+import { ReportButton } from "@/components/ReportButton"
+import { hasUserReportedContent } from "@/actions/reports"
+import { useEffect, useState } from "react"
 
 interface CommentWithAuthor {
   id: string;
@@ -31,9 +34,22 @@ interface CommentWithAuthor {
 interface CommentItemProps {
   comment: CommentWithAuthor;
   onLike: (commentId: string) => void;
+  userId?: string;
 }
 
-export const CommentItem = ({ comment, onLike }: CommentItemProps) => {
+export const CommentItem = ({ comment, onLike, userId }: CommentItemProps) => {
+  const [hasReported, setHasReported] = useState(false);
+
+  useEffect(() => {
+    async function checkReport() {
+      if (!userId) {
+        return;
+      }
+      const reported = await hasUserReportedContent(comment.id);
+      setHasReported(reported);
+    }
+    checkReport();
+  }, [comment.id, userId]);
   const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString)
     const now = new Date()
@@ -152,6 +168,17 @@ export const CommentItem = ({ comment, onLike }: CommentItemProps) => {
               <AiOutlineMessage className="w-4 h-4 mr-1.5" />
               Responder
             </Button>
+            
+            {userId && (
+              <ReportButton
+                contentId={comment.id}
+                contentType="comment"
+                hasReported={hasReported}
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-red-400 hover:bg-red-400/10 px-3 py-1.5 h-auto text-sm transition-all"
+              />
+            )}
           </div>
         </div>
       </div>

@@ -19,6 +19,17 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
+import { UserProfileDropdown } from "@/components/UserProfile"
+import { ModeToggle } from "@/components/ModeToggle"
+
+// Types
+interface User {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  role?: "user" | "moderator" | "admin" | "superadmin";
+}
 
 const pageTitles: Record<string, string> = {
   "/": "Dashboard Principal",
@@ -78,7 +89,11 @@ const menuItems = [
   },
 ]
 
-export function DashboardHeader() {
+interface DashboardHeaderProps {
+  user?: User | null;
+}
+
+export function DashboardHeader({ user }: DashboardHeaderProps) {
   const pathname = usePathname()
   const pageTitle = pageTitles[pathname] || "Dashboard"
 
@@ -133,7 +148,7 @@ export function DashboardHeader() {
 
   return (
     <header className="flex h-16 !-mt-4 border-zinc-600 shrink-0 items-center gap-2 border-b px-4 bg-zinc-50 dark:bg-zinc-900">
-      <div className="flex items-center gap-4"> 
+      <div className="flex items-center gap-4 flex-1"> 
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
         <h1 className="text-lg font-semibold">{pageTitle}</h1>
@@ -146,6 +161,12 @@ export function DashboardHeader() {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
+      </div>
+
+      {/* Right side - User Profile */}
+      <div className="flex items-center gap-2">
+        <ModeToggle />
+        <UserProfileDropdown user={user} />
       </div>
     </header>
   )

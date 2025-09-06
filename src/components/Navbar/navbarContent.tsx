@@ -9,7 +9,10 @@ import {
   FaPaperclip, 
   FaQuestion, 
   FaRobot, 
-  FaBars 
+  FaBars,
+  FaShieldAlt,
+  FaRegUser,
+  FaSignOutAlt
 } from "react-icons/fa";
 import { signOut } from "next-auth/react";
 
@@ -34,6 +37,8 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { ModeToggle } from "../ModeToggle";
+import { RiDashboardHorizontalLine } from "react-icons/ri";
+
 
 // Types
 interface MenuItem {
@@ -49,6 +54,7 @@ interface User {
   name?: string | null;
   email?: string | null;
   image?: string | null;
+  role?: "user" | "moderator" | "admin" | "superadmin";
 }
 
 interface NavbarProps {
@@ -132,6 +138,56 @@ const NavbarContent = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const hasSession = user !== null && user !== undefined;
+  const canModerate = user?.role === "moderator" || user?.role === "admin" || user?.role === "superadmin";
+
+  const baseDropdownItems = [
+    {
+      key: "profile",
+      className: "h-14 gap-2",
+      children: (
+        <>
+          <p className="font-semibold">Conectado como</p>
+          <p className="font-semibold">{user?.email || "Email não disponível"}</p>
+        </>
+      )
+    },
+    {
+      key: "dashboard",
+      children: <Link href="/dashboard" className="flex items-center gap-2"><RiDashboardHorizontalLine className="w-4 h-4" /> Dashboard</Link>
+    },
+    {
+      key: "profile-page",
+      children: <Link href={`/perfil/${user?.id}`} className="flex items-center gap-2"> <FaRegUser className="w-4 h-4" /> Meu perfil</Link>
+    }
+  ];
+
+  const moderationItem = {
+    key: "moderation",
+    children: (
+      <Link href="/moderation" className="flex items-center gap-2">
+        <FaShieldAlt className="w-4 h-4" />
+        Painel de Moderação
+      </Link>
+    )
+  };
+
+  const logoutItem = {
+    key: "logout",
+    color: "danger" as const,
+    children: (
+      <button 
+        className="w-full h-full text-left flex items-center gap-2" 
+        onClick={onLogout}
+      >
+        <FaSignOutAlt className="w-4 h-4" />
+        Sair
+      </button>
+    )
+  };
+
+  const dropdownItems = canModerate 
+    ? [...baseDropdownItems, moderationItem, logoutItem]
+    : [...baseDropdownItems, logoutItem];
 
 
 
@@ -229,24 +285,11 @@ const NavbarContent = ({
                   />
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="flat">
-                  <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold">Conectado como</p>
-                    <p className="font-semibold">{user?.email || "Email não disponível"}</p>
-                  </DropdownItem>
-                  <DropdownItem key="dashboard">
-                    <Link href="/dashboard" className="block">Dashboard</Link>
-                  </DropdownItem>
-                  <DropdownItem key="profile-page">
-                    <Link href={`/perfil/${user?.id}`} className="block">Meu perfil</Link>
-                  </DropdownItem>
-                  <DropdownItem key="logout" color="danger">
-                    <button 
-                      className="w-full h-full text-left" 
-                      onClick={onLogout}
-                    >
-                      Sair
-                    </button>
-                  </DropdownItem>
+                  {dropdownItems.map((item) => (
+                    <DropdownItem key={item.key}>
+                      {item.children}
+                    </DropdownItem>
+                  ))}
                 </DropdownMenu>
               </Dropdown>
             ) : (
@@ -375,6 +418,15 @@ const NavbarContent = ({
                           >
                             Perfil
                           </Link>
+                          {canModerate && (
+                            <Link
+                              href="/moderation"
+                              className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                            >
+                              <FaShieldAlt className="w-4 h-4" />
+                              Painel de Moderação
+                            </Link>
+                          )}
                           <ButtonHeroUi 
                             onPress={onLogout} 
                             variant="light" 

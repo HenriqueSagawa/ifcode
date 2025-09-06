@@ -19,6 +19,8 @@ import { PostWithAuthor } from "../_actions/get-posts";
 import { getRelativeTime } from "../_actions/format-date";
 import { addToast } from "@heroui/toast";
 import Link from "next/link";
+import { ReportButton } from "@/components/ReportButton";
+import { hasUserReportedContent } from "@/actions/reports";
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -29,6 +31,7 @@ export default function PostCard({ post, userId }: PostCardProps) {
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
+  const [hasReported, setHasReported] = useState(false);
 
 
   useEffect(() => {
@@ -41,6 +44,17 @@ export default function PostCard({ post, userId }: PostCardProps) {
       setLoading(false);
     }
     checkLike();
+  }, [post.id, userId]);
+
+  useEffect(() => {
+    async function checkReport() {
+      if (!userId) {
+        return;
+      }
+      const reported = await hasUserReportedContent(post.id as string);
+      setHasReported(reported);
+    }
+    checkReport();
   }, [post.id, userId]);
 
   const handleToggleLike = () => {
@@ -203,13 +217,26 @@ export default function PostCard({ post, userId }: PostCardProps) {
             </Button>
           </div>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-green-600 hover:bg-green-600/5 p-2 h-auto rounded-full transition-all"
-          >
-            <AiOutlineShareAlt className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-green-600 hover:bg-green-600/5 p-2 h-auto rounded-full transition-all"
+            >
+              <AiOutlineShareAlt className="w-4 h-4" />
+            </Button>
+            
+            {userId && (
+              <ReportButton
+                contentId={post.id as string}
+                contentType="post"
+                hasReported={hasReported}
+                variant="ghost"
+                size="sm"
+                className="p-2 h-auto rounded-full"
+              />
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
