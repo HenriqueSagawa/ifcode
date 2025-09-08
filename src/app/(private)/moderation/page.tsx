@@ -4,11 +4,13 @@ import { ModerationStats } from "@/app/(private)/moderation/_components/Moderati
 import { ModerationQueue } from "@/app/(private)/moderation/_components/ModerationQueue";
 import { ModerationGuard } from "@/components/ModerationGuard";
 import { Loader } from "@/components/Loader";
+import { BackButton } from "@/components/BackButton";
 
 export default function ModerationPage() {
   return (
     <ModerationGuard>
       <div className="container mx-auto px-4 py-8 space-y-8">
+        <BackButton className="mb-4" />
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-white">Painel de Moderação</h1>
           <p className="text-muted-foreground">
@@ -26,7 +28,7 @@ export default function ModerationPage() {
               <ModerationQueue />
             </Suspense>
           </div>
-          
+
           <div className="space-y-6">
             <Suspense fallback={<Loader />}>
               <ModerationDashboard />
