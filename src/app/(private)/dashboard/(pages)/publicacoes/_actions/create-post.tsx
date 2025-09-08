@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp, doc, setDoc } from "firebase/fires
 import { revalidatePath } from "next/cache"
 import { postFormSchema, type PostFormData } from "../_components/post-form-schema"
 import { db } from "@/lib/firebase"
+import { checkUserSuspension } from "@/lib/suspension"
 
 // Função para fazer upload de uma imagem para o Cloudinary
 export async function uploadImage(formData: FormData) {
@@ -131,6 +132,18 @@ export async function createPost(formData: FormData) {
         const codeSnippet = formData.get('codeSnippet') as string
         const userId = formData.get('userId') as string
         const imageCount = parseInt(formData.get('imageCount') as string) || 0
+
+        // Verificar se o usuário está suspenso
+        if (userId) {
+            const suspensionStatus = await checkUserSuspension(userId)
+            if (suspensionStatus.isSuspended) {
+                return {
+                    success: false,
+                    message: `Usuário suspenso até ${new Date(suspensionStatus.suspendedUntil!).toLocaleString()}. Motivo: ${suspensionStatus.suspensionReason}`,
+                    errors: {}
+                }
+            }
+        }
 
         // Extrair arquivos de imagem
         const imageFiles: File[] = []

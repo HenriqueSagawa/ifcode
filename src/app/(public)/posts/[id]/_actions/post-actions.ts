@@ -6,6 +6,7 @@ import type { PostProps, Comment, commentStatus } from '@/types/posts'
 import type { User } from '@/../types/next-auth'
 import { revalidatePath } from 'next/cache'
 import { createCommentNotification } from '@/actions/notifications'
+import { checkUserSuspension } from '@/lib/suspension'
 
 export interface PostWithAuthor extends PostProps {
   author: User;
@@ -201,6 +202,12 @@ export async function getPostPageData(postId: string): Promise<PostPageData> {
 
 export async function addComment(postId: string, content: string, userId: string): Promise<(Comment & { author: User }) | null> {
   try {
+    // Verificar se o usuário está suspenso
+    const suspensionStatus = await checkUserSuspension(userId);
+    if (suspensionStatus.isSuspended) {
+      throw new Error(`Usuário suspenso até ${new Date(suspensionStatus.suspendedUntil!).toLocaleString()}. Motivo: ${suspensionStatus.suspensionReason}`);
+    }
+
     const post = await getPostById(postId);
     if (!post) {
       throw new Error('Post não encontrado');

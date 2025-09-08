@@ -4,6 +4,7 @@ import { db } from "@/lib/firebase" // Ajuste o caminho conforme sua configuraç
 import { collection, getDocs, doc, getDoc, query, orderBy } from "firebase/firestore"
 import type { PostProps } from "@/types/posts" // Ajuste o caminho
 import { User } from "../../../../../types/next-auth"
+import { checkUserSuspension } from "@/lib/suspension"
 
 export interface PostWithAuthor extends PostProps {
   author: User
@@ -72,60 +73,67 @@ export async function getAllPostsWithAuthors(): Promise<PostWithAuthor[]> {
       })
       .filter(post => post.status === "published") // Filtrar apenas posts publicados
 
-    // Buscar informações dos autores
-    const postsWithAuthors: PostWithAuthor[] = await Promise.all(
-      posts.map(async (post) => {
-        try {
-          // Buscar dados do usuário/autor
-          const userDocRef = doc(db, "users", post.userId)
-          const userSnapshot = await getDoc(userDocRef)
-          
-          let author: User
-          
-          if (userSnapshot.exists()) {
-            const userData = userSnapshot.data()
-            author = {
-              id: userSnapshot.id,
-              name: userData.name || "Usuário sem nome",
-              email: userData.email || "",
-              bio: userData.bio || undefined,
-              birthDate: toISOStringSafe(userData.birthDate) || undefined,
-              createdAt: toISOStringSafe(userData.createdAt) || undefined,
-              github: userData.github || undefined,
-              phone: userData.phone || undefined,
-              image: userData.image || undefined,
-              bannerImage: userData.bannerImage || undefined,
-              fullData: userData.fullData || undefined,
-              skills: userData.skills || undefined
-            } as User
-          } else {
-            // Caso o usuário não seja encontrado, criar um autor padrão
-            author = {
-              id: post.userId,
-              name: "Usuário não encontrado",
-              email: ""
-            } as User
-          }
-
-          return {
-            ...post,
-            author
-          } as PostWithAuthor
-        } catch (error) {
-          console.error(`Erro ao buscar autor do post ${post.id}:`, error)
-          
-          // Em caso de erro, retornar autor padrão
-          return {
-            ...post,
-            author: {
-              id: post.userId,
-              name: "Erro ao carregar autor",
-              email: ""
-            } as User
-          } as PostWithAuthor
+    // Buscar informações dos autores e filtrar usuários suspensos
+    const postsWithAuthors: PostWithAuthor[] = []
+    
+    for (const post of posts) {
+      try {
+        // Verificar se o autor está suspenso
+        const suspensionStatus = await checkUserSuspension(post.userId)
+        if (suspensionStatus.isSuspended) {
+          console.log(`Post ${post.id} ocultado: autor suspenso até ${suspensionStatus.suspendedUntil}`)
+          continue // Pular posts de usuários suspensos
         }
-      })
-    )
+
+        // Buscar dados do usuário/autor
+        const userDocRef = doc(db, "users", post.userId)
+        const userSnapshot = await getDoc(userDocRef)
+        
+        let author: User
+        
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data()
+          author = {
+            id: userSnapshot.id,
+            name: userData.name || "Usuário sem nome",
+            email: userData.email || "",
+            bio: userData.bio || undefined,
+            birthDate: toISOStringSafe(userData.birthDate) || undefined,
+            createdAt: toISOStringSafe(userData.createdAt) || undefined,
+            github: userData.github || undefined,
+            phone: userData.phone || undefined,
+            image: userData.image || undefined,
+            bannerImage: userData.bannerImage || undefined,
+            fullData: userData.fullData || undefined,
+            skills: userData.skills || undefined
+          } as User
+        } else {
+          // Caso o usuário não seja encontrado, criar um autor padrão
+          author = {
+            id: post.userId,
+            name: "Usuário não encontrado",
+            email: ""
+          } as User
+        }
+
+        postsWithAuthors.push({
+          ...post,
+          author
+        } as PostWithAuthor)
+      } catch (error) {
+        console.error(`Erro ao buscar autor do post ${post.id}:`, error)
+        
+        // Em caso de erro, retornar autor padrão
+        postsWithAuthors.push({
+          ...post,
+          author: {
+            id: post.userId,
+            name: "Erro ao carregar autor",
+            email: ""
+          } as User
+        } as PostWithAuthor)
+      }
+    }
 
     return postsWithAuthors
   } catch (error) {
@@ -168,6 +176,13 @@ export async function getPostsByUserWithAuthor(userId: string): Promise<PostWith
         } as PostProps
       })
       .filter(post => post.userId === userId && post.status === "published") // Filtrar apenas posts publicados do usuário
+
+    // Verificar se o usuário está suspenso
+    const suspensionStatus = await checkUserSuspension(userId)
+    if (suspensionStatus.isSuspended) {
+      console.log(`Posts do usuário ${userId} ocultados: usuário suspenso até ${suspensionStatus.suspendedUntil}`)
+      return [] // Retornar array vazio se usuário suspenso
+    }
 
     // Buscar informações do autor (apenas uma vez já que todos os posts são do mesmo usuário)
     const userDocRef = doc(db, "users", userId)

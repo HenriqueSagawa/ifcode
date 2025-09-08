@@ -23,20 +23,17 @@ export function Footer() {
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex flex-col space-y-3">
               <h3 className="font-medium text-white text-sm">Plataforma</h3>
-              <Link href="/questions" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
+              <Link href="/posts" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
                 Perguntas e respostas
               </Link>
-              <Link href="/ai" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
+              <Link href="/chat" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
                 Converse com a IA
               </Link>
             </div>
 
             <div className="flex flex-col space-y-3">
               <h3 className="font-medium text-white text-sm">Suporte</h3>
-              <Link href="/help" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
-                Faqs
-              </Link>
-              <Link href="/contact" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
+              <Link href="/contato" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
                 Contato
               </Link>
               <Link href="/terms" className="text-gray-400 hover:text-green-500 transition-colors text-sm">
@@ -49,14 +46,8 @@ export function Footer() {
           <div className="flex flex-col items-start md:items-end">
             <h3 className="font-medium text-white text-sm mb-3">Redes Sociais</h3>
             <div className="flex items-center space-x-4">
-              <Link href="#" target="_blank" className="text-gray-500 hover:text-green-500 transition-colors">
+              <Link href="github.com/ifcode" target="_blank" className="text-gray-500 hover:text-green-500 transition-colors">
                 <Github className="h-5 w-5" />
-              </Link>
-              <Link href="#" target="_blank" className="text-gray-500 hover:text-green-500 transition-colors">
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link href="#" target="_blank" className="text-gray-500 hover:text-green-500 transition-colors">
-                <Linkedin className="h-5 w-5" />
               </Link>
               <Link href="mailto:ifcodeprojeto@gmail.com" target="_blank" className="text-gray-500 hover:text-green-500 transition-colors">
                 <Mail className="h-5 w-5" />

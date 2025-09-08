@@ -78,6 +78,12 @@ export default function PostPageContent({
       
     } catch (error) {
       console.error('Erro ao adicionar comentário:', error)
+      // Mostrar mensagem de erro amigável para o usuário
+      if (error instanceof Error && error.message.includes('suspenso')) {
+        alert(`❌ ${error.message}`)
+      } else {
+        alert('❌ Erro ao adicionar comentário. Tente novamente.')
+      }
     }
   }
 
