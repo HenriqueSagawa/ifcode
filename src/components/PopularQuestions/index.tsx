@@ -117,7 +117,7 @@ export default function PopularQuestions() {
 
         <div ref={questionsRef} className="flex flex-col gap-2 max-w-5xl mx-auto">
           {questions.map((question) => (
-            <Link key={question.id} href={`/pergunta/${question.id}`}>
+            <Link key={question.id} href={`/#`}>
               <div className="question-card opacity-0 translate-y-10 transition-all duration-700 group rounded-2xl p-6 cursor-pointer hover:scale-[1.02] bg-white border border-gray-200 hover:border-green-500/50 shadow-lg hover:shadow-xl dark:bg-gray-900 dark:border-gray-700 dark:hover:border-green-500/50 dark:shadow-none">
                 {/* Header da pergunta */}
                 <div className="flex items-start justify-between gap-4 mb-4">
@@ -180,7 +180,7 @@ export default function PopularQuestions() {
         </div>
 
         <div ref={ctaRef} className="text-center mt-12 opacity-0 transition-all duration-700">
-          <Link href="/perguntas">
+          <Link href="/posts">
             <button className="px-8 py-4 rounded-xl font-bold transition-all duration-300 whitespace-nowrap cursor-pointer shadow-lg hover:scale-105 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-400 hover:to-green-500 shadow-green-500/30 hover:shadow-green-500/50 dark:shadow-green-500/25 dark:hover:shadow-green-500/40">
               Ver Todas as Perguntas
             </button>
