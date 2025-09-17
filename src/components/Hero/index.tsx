@@ -42,10 +42,10 @@ export const Hero = () => {
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
           <Link href="/posts">
-            <Button className="w-[80%] md:w-1/3 !bg-zinc-900 dark:!bg-zinc-50 text-zinc-50 dark:text-zinc-900">Comece já {" "} <MoveRight /></Button>
+            <Button className="w-[80%] md:w-1/3 !bg-zinc-900 dark:!bg-zinc-50 text-zinc-50 dark:text-zinc-900 !z-40">Comece já {" "} <MoveRight /></Button>
           </Link>
 
-          <Button color="default" variant="ghost" className="w-[80%] md:w-1/3 ">
+          <Button variant="ghost" className="w-[80%] md:w-1/3 !z-40">
             <LinkPreview
               url="https://github.com/IFcode-Assis"
               className="flex items-center"
