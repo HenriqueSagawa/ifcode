@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from "@heroui/button";
+import { Button } from "@/components/ui/button";
 import { HeroCards } from "../HeroCards";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { MoveRight } from "lucide-react";
