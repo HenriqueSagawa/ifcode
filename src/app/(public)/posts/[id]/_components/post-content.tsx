@@ -9,6 +9,7 @@ interface PostContentProps {
 
 export const PostContent = ({ post }: PostContentProps) => {
   const [activeImageUrl, setActiveImageUrl] = useState<string | null>(null)
+  const [isClosing, setIsClosing] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -68,16 +69,22 @@ export const PostContent = ({ post }: PostContentProps) => {
 
       {activeImageUrl && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-          onClick={() => setActiveImageUrl(null)}
+          className={`fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 ${isClosing ? 'ifc-modal-overlay-animate-out' : 'ifc-modal-overlay-animate'}`}
+          onClick={() => {
+            setIsClosing(true)
+            setTimeout(() => setActiveImageUrl(null), 160)
+          }}
           role="dialog"
           aria-modal="true"
         >
-          <div className="relative max-w-5xl w-full max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+          <div className={`relative max-w-5xl w-full max-h-[90vh] ${isClosing ? 'ifc-modal-content-animate-out' : 'ifc-modal-content-animate'}`} onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
               className="absolute -top-2 -right-2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur"
-              onClick={() => setActiveImageUrl(null)}
+              onClick={() => {
+                setIsClosing(true)
+                setTimeout(() => setActiveImageUrl(null), 160)
+              }}
               aria-label="Fechar imagem"
             >
               ✕
