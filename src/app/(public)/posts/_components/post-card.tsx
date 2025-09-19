@@ -21,6 +21,7 @@ import { addToast } from "@heroui/toast";
 import Link from "next/link";
 import { ReportButton } from "@/components/ReportButton";
 import { hasUserReportedContent } from "@/actions/reports";
+// removido Dialog para usar o mesmo modal simples da página do post
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -32,6 +33,9 @@ export default function PostCard({ post, userId }: PostCardProps) {
   const [loading, setLoading] = useState(true);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
   const [hasReported, setHasReported] = useState(false);
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isClosing, setIsClosing] = useState(false);
 
 
   useEffect(() => {
@@ -160,10 +164,20 @@ export default function PostCard({ post, userId }: PostCardProps) {
           <div className="mb-4">
             <div className="grid grid-cols-2 gap-2">
               {post.imagesUrls.slice(0, 4).map((imageUrl, index) => (
-                <div key={index} className="relative">
+                <button
+                  key={index}
+                  type="button"
+                  className="relative group/image cursor-zoom-in focus:outline-none"
+                  onClick={() => {
+                    setActiveImageIndex(index);
+                    setIsImageOpen(true);
+                    setIsClosing(false);
+                  }}
+                >
                   <img
                     src={imageUrl}
-                    alt={`Imagem ${index + 1} do post`}
+                    alt={`Imagem ${index + 1} do post`
+                    }
                     className="w-full h-24 object-cover rounded-lg border border-gray-800"
                   />
                   {index === 3 && post.imagesUrls.length > 4 && (
@@ -173,9 +187,62 @@ export default function PostCard({ post, userId }: PostCardProps) {
                       </span>
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
+
+            {isImageOpen && (
+              <div
+                className={`fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 ${isClosing ? 'ifc-modal-overlay-animate-out' : 'ifc-modal-overlay-animate'}`}
+                onClick={() => {
+                  setIsClosing(true);
+                  setTimeout(() => setIsImageOpen(false), 160);
+                }}
+                role="dialog"
+                aria-modal="true"
+              >
+                <div className={`relative max-w-5xl w-full max-h-[90vh] ${isClosing ? 'ifc-modal-content-animate-out' : 'ifc-modal-content-animate'}`} onClick={(e) => e.stopPropagation()}>
+                  <button
+                    type="button"
+                    className="absolute -top-2 -right-2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur"
+                    onClick={() => {
+                      setIsClosing(true);
+                      setTimeout(() => setIsImageOpen(false), 160);
+                    }}
+                    aria-label="Fechar imagem"
+                  >
+                    ✕
+                  </button>
+
+                  <img
+                    src={post.imagesUrls[activeImageIndex]}
+                    alt={`Imagem ampliada ${activeImageIndex + 1} do post`}
+                    className="w-full h-auto max-h-[90vh] object-contain rounded"
+                  />
+
+                  {post.imagesUrls.length > 1 && (
+                    <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
+                      <button
+                        type="button"
+                        className="bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center"
+                        onClick={() => setActiveImageIndex((prev) => (prev - 1 + post.imagesUrls.length) % post.imagesUrls.length)}
+                        aria-label="Imagem anterior"
+                      >
+                        ‹
+                      </button>
+                      <button
+                        type="button"
+                        className="bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center"
+                        onClick={() => setActiveImageIndex((prev) => (prev + 1) % post.imagesUrls.length)}
+                        aria-label="Próxima imagem"
+                      >
+                        ›
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
