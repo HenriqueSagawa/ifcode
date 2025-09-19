@@ -49,3 +49,40 @@ svg.animate-draw path {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+
+/* ===== Modal Animations (usadas nos modais de imagem) ===== */
+@keyframes ifc-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ifc-zoom-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.ifc-modal-overlay-animate {
+  animation: ifc-fade-in 150ms ease-out;
+}
+
+.ifc-modal-content-animate {
+  animation: ifc-zoom-in 180ms ease-out;
+}
+
+@keyframes ifc-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes ifc-zoom-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.98); }
+}
+
+.ifc-modal-overlay-animate-out {
+  animation: ifc-fade-out 160ms ease-in forwards;
+}
+
+.ifc-modal-content-animate-out {
+  animation: ifc-zoom-out 160ms ease-in forwards;
+}
