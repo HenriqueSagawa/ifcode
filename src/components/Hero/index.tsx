@@ -1,14 +1,17 @@
 'use client'
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@heroui/button";
 import { HeroCards } from "../HeroCards";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { MoveRight } from "lucide-react";
 import { LinkPreview } from "../ui/link-preview";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 
 export const Hero = () => {
+  const router = useRouter();
+
   return (
     <section className="relative container px-2 mx-auto grid grid-cols-1 xl:grid-cols-2 place-items-center py-20 md:py-32 gap-10 overflow-x-clip">
 
@@ -42,10 +45,10 @@ export const Hero = () => {
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
           <Link href="/posts">
-            <Button className="w-[80%] md:w-1/3 !bg-zinc-900 dark:!bg-zinc-50 text-zinc-50 dark:text-zinc-900 !z-40">Comece já {" "} <MoveRight /></Button>
+            <Button onPress={() => { router.push("/posts") }} className="w-[80%] md:w-1/3 !bg-zinc-900 dark:!bg-zinc-50 text-zinc-50 dark:text-zinc-900 !z-40">Comece já {" "} <MoveRight /></Button>
           </Link>
 
-          <Button variant="ghost" className="w-[80%] md:w-1/3 !z-40">
+          <Button onPress={() => { router.push("https://github.com/IFcode-Assis") }} variant="ghost" className="w-[80%] md:w-1/3 !z-40">
             <LinkPreview
               url="https://github.com/IFcode-Assis"
               className="flex items-center"
