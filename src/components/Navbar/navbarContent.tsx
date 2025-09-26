@@ -376,29 +376,41 @@ const NavbarContent = ({
                   <div className="flex flex-col gap-2">
                     <Accordion type="single" collapsible className="w-full">
                       {menu.map((item, index) => (
-                        <AccordionItem
-                          key={index}
-                          value={`item-${index}`}
-                          className="border-none"
-                        >
-                          <AccordionTrigger className="py-2 hover:bg-accent rounded-md px-2">
-                            {item.title}
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="flex flex-col gap-1 pl-4">
-                              {item.items?.map((subItem, subIndex) => (
-                                <Link
-                                  key={subIndex}
-                                  href={subItem.url}
-                                  className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
-                                >
-                                  {subItem.icon}
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              ))}
-                            </div>
-                          </AccordionContent>
-                        </AccordionItem>
+                        item.items && item.items.length > 0 ? (
+                          <AccordionItem
+                            key={index}
+                            value={`item-${index}`}
+                            className="border-none"
+                          >
+                            <AccordionTrigger className="py-2 hover:bg-accent rounded-md px-2">
+                              {item.title}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="flex flex-col gap-1 pl-4">
+                                {item.items.map((subItem, subIndex) => (
+                                  <Link
+                                    key={subIndex}
+                                    href={subItem.url}
+                                    className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
+                                    onClick={() => setIsOpen(false)}
+                                  >
+                                    {subItem.icon}
+                                    <span>{subItem.title}</span>
+                                  </Link>
+                                ))}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ) : (
+                          <Link
+                            key={index}
+                            href={item.url}
+                            className="flex items-center justify-between py-2 px-2 rounded-md hover:bg-accent"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <span>{item.title}</span>
+                          </Link>
+                        )
                       ))}
                     </Accordion>
 
