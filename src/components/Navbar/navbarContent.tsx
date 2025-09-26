@@ -425,7 +425,7 @@ const NavbarContent = ({
                             Dashboard
                           </Link>
                           <Link
-                            href="/perfil"
+                            href={`/perfil/${user?.id}`}
                             className="flex items-center gap-2 py-2 px-2 text-sm rounded-md hover:bg-accent"
                           >
                             Perfil
