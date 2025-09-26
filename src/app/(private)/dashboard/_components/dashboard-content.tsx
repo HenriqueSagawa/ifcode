@@ -3,10 +3,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { FileText, MessageSquare, Heart, Trophy, Plus, Settings, User2, TrendingUp, Star, Award, Target, Calendar, Flame } from "lucide-react"
+import { FileText, MessageSquare, Heart, Trophy, Plus, Settings, User2, TrendingUp, Star, Award, Target, Calendar, Flame, Bell, Clock } from "lucide-react"
 import { User } from "../../../../../types/next-auth"
 import { PostProps } from "@/types/posts"
 import { UserRankingStats, RankingEntry } from "../_actions/get-ranking-stats"
+import { Notification } from "../_actions/get-notifications"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -21,6 +22,7 @@ interface DashboardContentProps {
     streak: number
     totalActivities: number
   }
+  recentNotifications: Notification[]
 }
 
 interface RankingLevel {
@@ -40,11 +42,42 @@ const rankingLevels: RankingLevel[] = [
   { name: "Mestre dos Códigos", minPoints: 4000, maxPoints: Infinity, icon: "/img/mestre-dos-codigos-icon.png" }
 ]
 
-export function DashboardContent({ user, recentPosts, rankingStats, recentActivity }: DashboardContentProps) {
+export function DashboardContent({ user, recentPosts, rankingStats, recentActivity, recentNotifications }: DashboardContentProps) {
   function countLikes() {
     let likes = 0;
     recentPosts.forEach(post => likes += post.likes);
     return likes;
+  }
+
+  function formatNotificationTime(createdAt: any): string {
+    if (!createdAt) return "Agora";
+    
+    const now = new Date();
+    const notificationDate = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
+    const diffInSeconds = Math.floor((now.getTime() - notificationDate.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return "Agora";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+    return `${Math.floor(diffInSeconds / 86400)}d`;
+  }
+
+  function getNotificationIcon(type: string) {
+    switch (type) {
+      case 'like': return Heart;
+      case 'comment': return MessageSquare;
+      case 'follow': return User2;
+      default: return Bell;
+    }
+  }
+
+  function getNotificationColor(type: string) {
+    switch (type) {
+      case 'like': return 'text-red-500';
+      case 'comment': return 'text-blue-500';
+      case 'follow': return 'text-green-500';
+      default: return 'text-gray-500';
+    }
   }
 
   // Função para calcular o nível atual baseado nos pontos
@@ -411,6 +444,69 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                 </Link>
               </CardContent>
             </Card>
+
+            {/* Notificações Recentes */}
+            {recentNotifications.length > 0 && (
+              <Card className="bg-white/90 dark:bg-gray-900/70 border-gray-200 dark:border-blue-500/30 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between text-gray-900 dark:text-white">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-500/20 rounded-lg">
+                        <Bell className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <span>Notificações Recentes</span>
+                    </div>
+                    <Link href="/dashboard/notificacoes">
+                      <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                        Ver todas
+                      </Button>
+                    </Link>
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
+                    Suas notificações mais recentes
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {recentNotifications.slice(0, 3).map((notification) => {
+                      const IconComponent = getNotificationIcon(notification.type);
+                      const iconColor = getNotificationColor(notification.type);
+                      
+                      return (
+                        <Link 
+                          key={notification.id} 
+                          href="/dashboard/notificacoes"
+                          className="block p-3 bg-gray-50 dark:bg-gray-800/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 ${!notification.read ? 'ring-2 ring-blue-500' : ''}`}>
+                              <IconComponent className={`h-4 w-4 ${iconColor}`} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                {notification.title}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                {notification.message}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Clock className="h-3 w-3 text-gray-400" />
+                                <span className="text-xs text-gray-400">
+                                  {formatNotificationTime(notification.createdAt)}
+                                </span>
+                                {!notification.read && (
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Atividades Recentes */}
             <Card className="bg-white/90 dark:bg-gray-900/70 border-gray-200 dark:border-green-500/30 backdrop-blur-sm">

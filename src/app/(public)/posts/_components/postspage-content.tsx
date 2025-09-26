@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge"
 import { AiOutlineSearch } from "react-icons/ai"
 import { IoClose } from "react-icons/io5"
 import { HiOutlineFilter } from "react-icons/hi"
+import { Plus, PenTool } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import type { PostProps, postType } from "@/types/posts"
 import { getAllPostsWithAuthors, PostWithAuthor } from "../_actions/get-posts"
 
@@ -21,6 +24,8 @@ interface Filters {
 }
 
 export function PostsPageContent({ userId }: { userId: string }) {
+  const { data: session } = useSession()
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [posts, setPosts] = useState<PostWithAuthor[]>([])
   const [loading, setLoading] = useState(true)
@@ -34,6 +39,16 @@ export function PostsPageContent({ userId }: { userId: string }) {
     dateRange: "",
     sortBy: "recent",
   })
+
+  const handleCreatePost = () => {
+    if (session?.user) {
+      // Usuário logado - vai para dashboard
+      router.push("/dashboard/publicacoes")
+    } else {
+      // Usuário não logado - vai para login
+      router.push("/login")
+    }
+  }
 
   useEffect(() => {
     async function loadPosts() {
@@ -169,11 +184,25 @@ export function PostsPageContent({ userId }: { userId: string }) {
             >
               Tentar novamente
             </Button>
-          </div>
         </div>
       </div>
-    )
-  }
+
+      {/* Floating Action Button for Mobile */}
+      <div className="fixed bottom-6 right-6 z-50 sm:hidden">
+        <Button
+          onClick={handleCreatePost}
+          className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
+        >
+          {session?.user ? (
+            <PenTool className="h-6 w-6" />
+          ) : (
+            <Plus className="h-6 w-6" />
+          )}
+        </Button>
+      </div>
+    </div>
+  )
+}
 
   return (
     <div className="min-h-screen bg-muted dark:bg-zinc-950 text-foreground">
@@ -267,6 +296,42 @@ export function PostsPageContent({ userId }: { userId: string }) {
           )}
         </div>
       </header>
+
+      {/* Create Post Button */}
+      <div className="container mx-auto px-4 py-4">
+        <div className="bg-background border border-green-500/20 rounded-lg p-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
+                <Plus className="h-5 w-5 text-green-500" />
+                {session?.user ? "Criar nova publicação" : "Participe da comunidade"}
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                {session?.user 
+                  ? "Compartilhe seu conhecimento com outros desenvolvedores"
+                  : "Faça login para criar publicações"
+                }
+              </p>
+            </div>
+            <Button
+              onClick={handleCreatePost}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors duration-200 flex items-center gap-2"
+            >
+              {session?.user ? (
+                <>
+                  <PenTool className="h-4 w-4" />
+                  Criar Post
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4" />
+                  Fazer Login
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
@@ -396,6 +461,20 @@ export function PostsPageContent({ userId }: { userId: string }) {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Floating Action Button for Mobile */}
+      <div className="fixed bottom-6 right-6 z-50 sm:hidden">
+        <Button
+          onClick={handleCreatePost}
+          className="bg-green-600 hover:bg-green-700 text-white rounded-full w-12 h-12 shadow-md hover:shadow-lg transition-all duration-200"
+        >
+          {session?.user ? (
+            <PenTool className="h-5 w-5" />
+          ) : (
+            <Plus className="h-5 w-5" />
+          )}
+        </Button>
       </div>
 
       {/* Backdrop for mobile filters */}

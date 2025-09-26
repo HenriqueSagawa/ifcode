@@ -18,9 +18,20 @@ const postTypeIcons = {
 
 export function PostCard({ post }: PostCardProps) {
   const Icon = postTypeIcons[post.type]
+  
+  const getStatusStyles = () => {
+    switch (post.status) {
+      case "archived":
+        return "border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20"
+      case "deleted":
+        return "border-red-500 bg-red-50 dark:bg-red-950/20"
+      default:
+        return "border-zinc-700"
+    }
+  }
 
   return (
-    <div className="flex items-start space-x-4 p-4 border rounded border-zinc-700">
+    <div className={`flex items-start space-x-4 p-4 border rounded ${getStatusStyles()}`}>
       <div className="flex-shrink-0">
         <Icon className="h-5 w-5 text-muted-foreground" />
       </div>
@@ -32,6 +43,11 @@ export function PostCard({ post }: PostCardProps) {
             <Badge variant="outline" className="flex items-center gap-1">
               <LanguageIcon language={post.programmingLanguage} />
               {post.programmingLanguage.charAt(0).toUpperCase() + post.programmingLanguage.slice(1)}
+            </Badge>
+          )}
+          {post.status === "archived" && (
+            <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+              Arquivado
             </Badge>
           )}
         </div>

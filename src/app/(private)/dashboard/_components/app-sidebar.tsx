@@ -4,6 +4,10 @@ import { Bell, Home, MessageSquare, Settings, FileText, User } from "lucide-reac
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { SquareArrowOutUpRight } from "lucide-react"
+import { useEffect, useState } from "react"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { getUnreadNotificationsCount } from "../_actions/get-notifications"
 
 import logo from "../../../../../public/img/logo ifcode.webp";
 
@@ -53,7 +57,11 @@ const menuItems = [
   },
 ]
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  unreadNotificationsCount?: number
+}
+
+export function AppSidebar({ unreadNotificationsCount = 0 }: AppSidebarProps) {
   const pathname = usePathname()
 
   return (
@@ -82,9 +90,14 @@ export function AppSidebar() {
                     tooltip={item.title}
                     className="h-9 px-3 font-normal rounded"
                   >
-                    <Link href={item.url}>
+                    <Link href={item.url} className="relative">
                       <item.icon className="h-4 w-4" />
                       <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                      {item.title === "Notificações" && unreadNotificationsCount > 0 && (
+                        <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium">
+                          {unreadNotificationsCount > 99 ? "99+" : unreadNotificationsCount}
+                        </span>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

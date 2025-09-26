@@ -44,7 +44,7 @@ export async function getUserPosts(userId: string): Promise<PostProps[]> {
             status: data.status || "published"
           } as PostProps
         })
-        .filter(post => post.status === "published") // Filtrar apenas posts publicados
+        .filter(post => post.status !== "deleted") // Filtrar apenas posts não deletados
 
       posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       
@@ -74,7 +74,7 @@ export async function getUserPosts(userId: string): Promise<PostProps[]> {
             status: data.status || "published"
           } as PostProps
         })
-        .filter(post => post.status === "published") // Filtrar apenas posts publicados
+        .filter(post => post.status !== "deleted") // Filtrar apenas posts não deletados
       
       posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       

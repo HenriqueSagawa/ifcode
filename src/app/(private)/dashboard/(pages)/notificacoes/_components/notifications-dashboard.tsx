@@ -331,7 +331,7 @@ function NotificationCard({ notification, onMarkAsRead, isPending }: Notificatio
                         {notification.postTitle}
                       </p>
                       <Link
-                        href={`/post/${notification.postId}`}
+                        href={`/posts/${notification.postId}`}
                         className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center mt-1"
                       >
                         Ver publicação <ExternalLink className="h-3 w-3 ml-1" />
