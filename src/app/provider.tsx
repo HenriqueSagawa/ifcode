@@ -3,6 +3,7 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
 import { ToastProvider } from "@heroui/toast";
+import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -12,8 +13,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
             enableSystem
             disableTransitionOnChange>
             <SessionProvider>
+                <AccessibilityProvider>
                     <ToastProvider />
                     {children}
+                </AccessibilityProvider>
             </SessionProvider>
         </ThemeProvider>
     )

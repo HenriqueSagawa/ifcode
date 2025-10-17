@@ -12,19 +12,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
   Settings, 
   User, 
-  Bell, 
   Shield, 
   Palette, 
   Globe, 
   Trash2,
   Save,
-  Eye,
-  EyeOff,
-  Mail,
-  Smartphone,
   Lock,
   AlertTriangle,
-  Check,
   Moon,
   Sun,
   Monitor
@@ -32,13 +26,31 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { User as UserProps } from '../../../../../../../types/next-auth'
 import { useTheme } from 'next-themes'
+import { getAccessibilitySettings, updateAccessibilitySettings, type AccessibilitySettings } from '@/hooks/useAccessibility'
+import { useLanguage, type LanguageSettings } from '@/hooks/useLanguage'
 
 export function SettingsContent({ userData }: { userData: UserProps }) {
   const {theme, setTheme} = useTheme()
-  const [activeSection, setActiveSection] = useState('notifications')
+  const [activeSection, setActiveSection] = useState('accessibility')
+  
+  // Language settings
+  const { languageSettings, setLanguageSettings } = useLanguage()
+  
+  // Accessibility settings state
+  const [accessibilitySettings, setAccessibilitySettings] = useState<AccessibilitySettings>(() => {
+    if (typeof window !== 'undefined') {
+      return getAccessibilitySettings()
+    }
+    return {
+      fontSize: 'md',
+      highContrast: false,
+      reduceAnimations: false,
+      underlineLinks: true
+    }
+  })
 
   const menuItems = [
-    { id: "notifications", label: "Notificações", icon: Bell },
+    { id: "accessibility", label: "Acessibilidade", icon: Settings },
     { id: "security", label: "Segurança", icon: Shield },
     { id: "appearance", label: "Aparência", icon: Palette },
     { id: "language", label: "Idioma", icon: Globe },
@@ -54,6 +66,19 @@ export function SettingsContent({ userData }: { userData: UserProps }) {
       root.classList.remove('dark')
     }
   }, [theme])
+
+  // Function to update accessibility settings
+  const updateAccessibilitySetting = (key: keyof AccessibilitySettings, value: any) => {
+    const newSettings = { ...accessibilitySettings, [key]: value }
+    setAccessibilitySettings(newSettings)
+    updateAccessibilitySettings(newSettings)
+  }
+
+  // Function to update language settings
+  const updateLanguageSetting = (key: keyof LanguageSettings, value: any) => {
+    const newSettings = { ...languageSettings, [key]: value }
+    setLanguageSettings(newSettings)
+  }
 
   const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme)
@@ -150,55 +175,77 @@ export function SettingsContent({ userData }: { userData: UserProps }) {
               </Card>
             )}
 
-            {/* Notifications Section */}
-            {activeSection === 'notifications' && (
+            {/* Accessibility Section */}
+            {activeSection === 'accessibility' && (
               <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-gray-900 dark:text-white">
-                    <Bell className="h-5 w-5" />
-                    <span>Notificações</span>
+                    <Settings className="h-5 w-5" />
+                    <span>Acessibilidade</span>
                   </CardTitle>
                   <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Configure como você deseja receber notificações
+                    Ajuste preferências para melhorar a legibilidade e usabilidade
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <label className="text-sm font-medium text-gray-900 dark:text-white">Comentários em Posts</label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Receba notificações quando alguém comentar em seus posts</p>
-                    </div>
-                    <Switch defaultChecked className="data-[state=checked]:bg-green-600" />
+                  <div className="space-y-2">
+                    <Label className="text-gray-700 dark:text-gray-300">Tamanho do Texto</Label>
+                    <Select 
+                      value={accessibilitySettings.fontSize} 
+                      onValueChange={(value) => updateAccessibilitySetting('fontSize', value)}
+                    >
+                      <SelectTrigger className="border-gray-300 dark:border-gray-600 focus:border-green-500">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sm">Pequeno</SelectItem>
+                        <SelectItem value="md">Médio</SelectItem>
+                        <SelectItem value="lg">Grande</SelectItem>
+                        <SelectItem value="xl">Extra Grande</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  
+
                   <Separator className="bg-gray-200 dark:bg-gray-700" />
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <label className="text-sm font-medium text-gray-900 dark:text-white">Respostas aos Comentários</label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Notificações quando responderem seus comentários</p>
+                      <label className="text-sm font-medium text-gray-900 dark:text-white">Alto Contraste</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Melhora o contraste de cores para melhor leitura</p>
                     </div>
-                    <Switch defaultChecked className="data-[state=checked]:bg-green-600" />
+                    <Switch 
+                      checked={accessibilitySettings.highContrast}
+                      onCheckedChange={(checked) => updateAccessibilitySetting('highContrast', checked)}
+                      className="data-[state=checked]:bg-green-600" 
+                    />
                   </div>
-                  
+
                   <Separator className="bg-gray-200 dark:bg-gray-700" />
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <label className="text-sm font-medium text-gray-900 dark:text-white">Emails de Marketing</label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Receba novidades e atualizações por email</p>
+                      <label className="text-sm font-medium text-gray-900 dark:text-white">Reduzir Animações</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Minimiza animações para evitar desconforto</p>
                     </div>
-                    <Switch className="data-[state=checked]:bg-green-600" />
+                    <Switch 
+                      checked={accessibilitySettings.reduceAnimations}
+                      onCheckedChange={(checked) => updateAccessibilitySetting('reduceAnimations', checked)}
+                      className="data-[state=checked]:bg-green-600" 
+                    />
                   </div>
-                  
+
                   <Separator className="bg-gray-200 dark:bg-gray-700" />
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <label className="text-sm font-medium text-gray-900 dark:text-white">Notificações Push</label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Receba notificações no navegador</p>
+                      <label className="text-sm font-medium text-gray-900 dark:text-white">Sublinhar Links</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Deixa links sempre sublinhados</p>
                     </div>
-                    <Switch defaultChecked className="data-[state=checked]:bg-green-600" />
+                    <Switch 
+                      checked={accessibilitySettings.underlineLinks}
+                      onCheckedChange={(checked) => updateAccessibilitySetting('underlineLinks', checked)}
+                      className="data-[state=checked]:bg-green-600" 
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -333,7 +380,10 @@ export function SettingsContent({ userData }: { userData: UserProps }) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label className="text-gray-700 dark:text-gray-300">Idioma</Label>
-                      <Select defaultValue="pt-BR">
+                      <Select 
+                        value={languageSettings.language}
+                        onValueChange={(value) => updateLanguageSetting('language', value)}
+                      >
                         <SelectTrigger className="border-gray-300 dark:border-gray-600 focus:border-green-500">
                           <SelectValue />
                         </SelectTrigger>
@@ -346,7 +396,10 @@ export function SettingsContent({ userData }: { userData: UserProps }) {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-gray-700 dark:text-gray-300">Fuso Horário</Label>
-                      <Select defaultValue="America/Sao_Paulo">
+                      <Select 
+                        value={languageSettings.timezone}
+                        onValueChange={(value) => updateLanguageSetting('timezone', value)}
+                      >
                         <SelectTrigger className="border-gray-300 dark:border-gray-600 focus:border-green-500">
                           <SelectValue />
                         </SelectTrigger>

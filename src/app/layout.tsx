@@ -95,6 +95,82 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="IF Code" />
         <link rel="apple-touch-icon" href="/img/logo ifcode.webp" />
+        <script
+          type="application/ld+json"
+          // Structured data for better SEO
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'IF Code',
+              url: 'https://ifcode.com.br',
+              logo: 'https://ifcode.com.br/img/logo ifcode.webp',
+              sameAs: [
+                'https://www.youtube.com/@henriquetutomusagawa1047'
+              ],
+              contactPoint: [
+                {
+                  '@type': 'ContactPoint',
+                  email: 'ifcodeprojeto@gmail.com',
+                  contactType: 'customer support',
+                  availableLanguage: ['Portuguese', 'English']
+                }
+              ]
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          // Website entity to help discoverability
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'IF Code',
+              url: 'https://ifcode.com.br'
+            })
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Apply accessibility settings
+                  const accessibilitySettings = localStorage.getItem('accessibility-settings');
+                  if (accessibilitySettings) {
+                    const parsed = JSON.parse(accessibilitySettings);
+                    const root = document.documentElement;
+                    
+                    // Apply font size
+                    root.classList.remove('text-sm', 'text-base', 'text-lg', 'text-xl');
+                    switch (parsed.fontSize) {
+                      case 'sm': root.classList.add('text-sm'); break;
+                      case 'md': root.classList.add('text-base'); break;
+                      case 'lg': root.classList.add('text-lg'); break;
+                      case 'xl': root.classList.add('text-xl'); break;
+                    }
+                    
+                    // Apply other settings
+                    if (parsed.highContrast) root.classList.add('high-contrast');
+                    if (parsed.reduceAnimations) root.classList.add('reduce-motion');
+                    if (parsed.underlineLinks) root.classList.add('underline-links');
+                  }
+                  
+                  // Apply language settings
+                  const languageSettings = localStorage.getItem('language-settings');
+                  if (languageSettings) {
+                    const parsed = JSON.parse(languageSettings);
+                    document.documentElement.lang = parsed.language;
+                    document.documentElement.setAttribute('data-timezone', parsed.timezone);
+                  }
+                } catch (e) {
+                  console.warn('Failed to apply settings:', e);
+                }
+              })();
+            `,
+          }}
+        />
       </head>
 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col py-4 mx-auto overflow-x-hidden`}>
