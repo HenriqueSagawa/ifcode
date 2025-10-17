@@ -337,28 +337,29 @@ export function PostsPageContent({ userId }: { userId: string }) {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Mobile Filter Sidebar - Collapsible */}
           <div className={`
-            ${showFilters ? 'block' : 'hidden'} 
-            sm:${showFilters ? 'block' : 'hidden'}
+            ${showFilters ? 'flex' : 'hidden'} 
+            sm:${showFilters ? 'flex' : 'hidden'}
             lg:block lg:w-80 lg:flex-shrink-0
-            fixed lg:static top-0 left-0 right-0 bottom-0 
-            bg-background/95 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none
+            fixed lg:static inset-0 lg:inset-auto items-center justify-center
             z-50 lg:z-auto overflow-y-auto lg:overflow-visible
-            p-4 lg:p-0
+            p-0 lg:p-0
           `}>
-            {/* Mobile Filter Header */}
-            <div className="flex items-center justify-between mb-4 lg:hidden">
-              <h2 className="text-lg font-semibold text-green-400">Filtros</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowFilters(false)}
-                className="text-muted-foreground hover:text-green-400"
-              >
-                <IoClose className="w-5 h-5" />
-              </Button>
+            <div className="w-[90%] max-w-md bg-background/95 backdrop-blur-sm shadow-lg border border-border rounded p-4 lg:w-auto lg:max-w-none lg:bg-transparent lg:shadow-none lg:border-0 lg:rounded-none lg:p-0">
+              {/* Mobile Filter Header */}
+              <div className="flex items-center justify-between mb-4 lg:hidden">
+                <h2 className="text-lg font-semibold text-green-400">Filtros</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowFilters(false)}
+                  className="text-muted-foreground hover:text-green-400"
+                >
+                  <IoClose className="w-5 h-5" />
+                </Button>
+              </div>
+              
+              <FilterSidebar filters={filters} onFiltersChange={setFilters} />
             </div>
-            
-            <FilterSidebar filters={filters} onFiltersChange={setFilters} />
           </div>
 
           {/* Main Content */}
