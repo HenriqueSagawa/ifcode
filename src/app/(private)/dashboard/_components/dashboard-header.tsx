@@ -147,14 +147,14 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   }
 
   return (
-    <header className="flex h-16 !-mt-4 border-zinc-600 shrink-0 items-center gap-2 border-b px-4 bg-zinc-50 dark:bg-zinc-900">
-      <div className="flex items-center gap-4 flex-1"> 
+    <header className="flex h-14 sm:h-16 !-mt-4 border-zinc-600 shrink-0 items-center gap-2 border-b px-3 sm:px-4 bg-zinc-50 dark:bg-zinc-900">
+      <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0"> 
         <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <h1 className="text-lg font-semibold">{pageTitle}</h1>
+        <Separator orientation="vertical" className="mr-1 sm:mr-2 h-4" />
+        <h1 className="text-sm sm:text-lg font-semibold truncate">{pageTitle}</h1>
         
-        {/* Menu de Navegação */}
-        <div className="hidden md:block ml-6">
+        {/* Menu de Navegação - Hidden on mobile */}
+        <div className="hidden lg:block ml-4 sm:ml-6">
           <NavigationMenu>
             <NavigationMenuList>
               {menuItems.map((item) => renderMenuItem(item))}
@@ -164,7 +164,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
       </div>
 
       {/* Right side - User Profile */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
         <ModeToggle />
         <UserProfileDropdown user={user} />
       </div>

@@ -162,64 +162,65 @@ export function CommentsDashboardContent({
   }
 
   const renderComentario = (comentario: CommentWithUser) => (
-    <div key={comentario.id} className={`${getBorderClass(comentario)} border rounded-lg p-4 space-y-3`}>
-      <div className="flex items-start justify-between">
-        <div className="flex items-center space-x-3">
-          <Avatar className="h-8 w-8">
+    <div key={comentario.id} className={`${getBorderClass(comentario)} border rounded-lg p-3 sm:p-4 space-y-3 max-w-full`}>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="flex items-center space-x-3 min-w-0 flex-1">
+          <Avatar className="h-8 w-8 flex-shrink-0">
             <AvatarImage src={comentario.user?.image} />
             <AvatarFallback>
               {comentario.user?.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium">{comentario.user?.name}</p>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <p className="text-sm font-medium truncate">{comentario.user?.name}</p>
               {renderUserPoints(comentario.user)}
             </div>
-            <p className="text-xs text-muted-foreground">{comentario.user?.email}</p>
+            <p className="text-xs text-muted-foreground truncate">{comentario.user?.email}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant={comentario.type === 'received' ? 'outline' : 'secondary'}>
+        <div className="flex flex-wrap items-center gap-1 sm:gap-2 flex-shrink-0">
+          <Badge variant={comentario.type === 'received' ? 'outline' : 'secondary'} className="text-xs">
             {comentario.type === 'received' ? 'Recebido' : 'Feito por você'}
           </Badge>
-          <Badge variant={getStatusVariant(comentario.status as string)}>
+          <Badge variant={getStatusVariant(comentario.status as string)} className="text-xs">
             {getStatusLabel(comentario.status as string)}
           </Badge>
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed">{comentario.content}</p>
+      <p className="text-sm leading-relaxed break-words">{comentario.content}</p>
 
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>Em: <span className="font-medium">{comentario.postId}</span></span>
-        <span>{formatarData(comentario.createdAt)}</span>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 text-xs text-muted-foreground">
+        <span className="truncate">Em: <span className="font-medium">{comentario.postId}</span></span>
+        <span className="whitespace-nowrap">{formatarData(comentario.createdAt)}</span>
       </div>
 
       {/* Só mostrar ações de moderação para comentários RECEBIDOS */}
       {comentario.type === 'received' && comentario.status === "pending" && (
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button 
             size="sm" 
             variant="outline"
             onClick={() => handleAprovar(comentario.id)}
             disabled={isPending}
-            className="text-green-600 hover:text-green-700"
+            className="text-green-600 hover:text-green-700 text-xs sm:text-sm"
           >
             <Check className="mr-1 h-3 w-3" />
-            Aprovar (+25 pts)
+            <span className="hidden sm:inline">Aprovar (+25 pts)</span>
+            <span className="sm:hidden">Aprovar</span>
           </Button>
           <Button 
             size="sm" 
             variant="outline"
             onClick={() => handleRejeitar(comentario.id)}
             disabled={isPending}
-            className="text-red-600 hover:text-red-700"
+            className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
           >
             <X className="mr-1 h-3 w-3" />
             Rejeitar
           </Button>
-          <Button size="sm" variant="outline" disabled={isPending}>
+          <Button size="sm" variant="outline" disabled={isPending} className="text-xs sm:text-sm">
             <Reply className="mr-1 h-3 w-3" />
             Responder
           </Button>
@@ -228,15 +229,16 @@ export function CommentsDashboardContent({
 
       {/* Para comentários aprovados/rejeitados ou feitos pelo usuário */}
       {(comentario.type === 'received' && comentario.status !== "pending") || comentario.type === 'made' ? (
-        <div className="flex items-center space-x-2">
-          <Button size="sm" variant="outline" disabled={isPending}>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm" variant="outline" disabled={isPending} className="text-xs sm:text-sm">
             <Reply className="mr-1 h-3 w-3" />
             Responder
           </Button>
           {comentario.type === 'received' && comentario.status === 'accepted' && (
-            <Badge variant="outline" className="text-green-600">
+            <Badge variant="outline" className="text-green-600 text-xs">
               <Star className="mr-1 h-3 w-3" />
-              +25 pontos concedidos
+              <span className="hidden sm:inline">+25 pontos concedidos</span>
+              <span className="sm:hidden">+25 pts</span>
             </Badge>
           )}
         </div>
@@ -245,9 +247,9 @@ export function CommentsDashboardContent({
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-x-hidden">
       {/* Cards de estatísticas */}
-      <div className="grid gap-4 md:grid-cols-6">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
@@ -307,17 +309,20 @@ export function CommentsDashboardContent({
       {/* Tabs para separar comentários recebidos e feitos */}
       <Tabs defaultValue="recebidos" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="todos" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            Todos ({stats.total})
+          <TabsTrigger value="todos" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Todos ({stats.total})</span>
+            <span className="sm:hidden">Todos</span>
           </TabsTrigger>
-          <TabsTrigger value="recebidos" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            Recebidos ({stats.recebidos})
+          <TabsTrigger value="recebidos" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Recebidos ({stats.recebidos})</span>
+            <span className="sm:hidden">Recebidos</span>
           </TabsTrigger>
-          <TabsTrigger value="feitos" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Feitos ({stats.feitos})
+          <TabsTrigger value="feitos" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+            <User className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Feitos ({stats.feitos})</span>
+            <span className="sm:hidden">Feitos</span>
           </TabsTrigger>
         </TabsList>
 

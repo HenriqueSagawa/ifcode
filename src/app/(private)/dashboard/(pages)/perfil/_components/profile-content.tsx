@@ -243,13 +243,13 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
   }
 
   return (
-    <div className="min-h-screen p-4 bg-transparent transition-colors duration-300">
+    <div className="min-h-screen p-3 sm:p-4 bg-transparent transition-colors duration-300">
       {/* Overlay para indicar salvamento */}
       {(isLoading || isUploadingImage) && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-3">
-            <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-            <span className="text-gray-900 dark:text-white font-medium">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 flex items-center space-x-3 max-w-sm w-full">
+            <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-blue-500" />
+            <span className="text-gray-900 dark:text-white font-medium text-sm sm:text-base">
               {isUploadingImage 
                 ? `Fazendo upload da ${isUploadingImage === 'profile' ? 'foto de perfil' : 'imagem de banner'}...`
                 : 'Salvando perfil...'
@@ -277,7 +277,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
 
       <div className="">
         {/* Grid Layout: Esquerda (perfil principal) e Direita (informações + habilidades) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
 
           {/* Coluna Esquerda - Perfil Principal */}
           <div className="lg:col-span-2">
@@ -287,7 +287,7 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
               <div className="relative">
                 {/* Banner */}
                 <div
-                  className="h-48 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 relative group cursor-pointer"
+                  className="h-32 sm:h-40 lg:h-48 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 relative group cursor-pointer"
                   style={{
                     backgroundImage: editData.bannerImage ? `url(${editData.bannerImage})` : undefined,
                     backgroundSize: 'cover',
@@ -296,12 +296,12 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                   onClick={() => handleImageUpload('banner')}
                 >
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-full p-3">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-full p-2 sm:p-3">
                       {isUploadingImage === 'banner' ? (
-                        <Loader2 className="h-5 w-5 text-white animate-spin" />
+                        <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 text-white animate-spin" />
                       ) : (
                         <div className="flex flex-col items-center space-y-1">
-                          <ImageIcon className="h-5 w-5 text-white" />
+                          <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                           <span className="text-xs text-white font-medium">
                             {editData.bannerImage ? 'Alterar banner' : 'Adicionar banner'}
                           </span>
@@ -312,23 +312,23 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                 </div>
 
                 {/* Avatar */}
-                <div className="absolute -bottom-16 left-8">
+                <div className="absolute -bottom-12 sm:-bottom-14 lg:-bottom-16 left-4 sm:left-6 lg:left-8">
                   <div className="relative group cursor-pointer" onClick={() => handleImageUpload('profile')}>
-                    <Avatar className="h-32 w-32 border-4 border-white dark:border-gray-700 shadow-xl">
+                    <Avatar className="h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 border-2 sm:border-4 border-white dark:border-gray-700 shadow-xl">
                       <AvatarImage src={editData.image} />
-                      <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                      <AvatarFallback className="text-lg sm:text-xl lg:text-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                         {editData.name
                           ? editData.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-                          : <User className="h-12 w-12" />
+                          : <User className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />
                         }
                       </AvatarFallback>
                     </Avatar>
                     <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       {isUploadingImage === 'profile' ? (
-                        <Loader2 className="h-6 w-6 text-white animate-spin" />
+                        <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white animate-spin" />
                       ) : (
                         <div className="flex flex-col items-center space-y-1">
-                          <Camera className="h-6 w-6 text-white" />
+                          <Camera className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
                           <span className="text-xs text-white font-medium">
                             {editData.image ? 'Alterar' : 'Adicionar'}
                           </span>
@@ -339,29 +339,29 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                 </div>
               </div>
 
-              <CardContent className="pt-20 pb-8">
-                <div className="space-y-6">
+              <CardContent className="pt-16 sm:pt-18 lg:pt-20 pb-6 sm:pb-8">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Nome e Action Buttons */}
-                  <div className="space-y-4">
-                    <div className="flex items-start justify-between sm:flex-row flex-col sm:space-x-4">
-                      <div className="flex-1">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="flex items-start justify-between flex-col sm:flex-row gap-3 sm:gap-4">
+                      <div className="flex-1 min-w-0">
                         {isEditing ? (
                           <div className="space-y-2">
-                            <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Nome Completo</Label>
+                            <Label htmlFor="name" className="text-gray-700 dark:text-gray-300 text-sm">Nome Completo</Label>
                             <Input
                               id="name"
                               value={editData.name || ""}
                               onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                               placeholder="Digite seu nome completo"
                               disabled={isLoading || isUploadingImage !== null}
-                              className="text-xl font-semibold bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
+                              className="text-lg sm:text-xl font-semibold bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white disabled:opacity-50 transition-all"
                             />
                           </div>
                         ) : (
-                          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                             {editData.name || (
-                              <span className="text-gray-500 dark:text-gray-400 text-xl font-normal">
-                                <Plus className="h-5 w-5 inline mr-2" />
+                              <span className="text-gray-500 dark:text-gray-400 text-lg sm:text-xl font-normal">
+                                <Plus className="h-4 w-4 sm:h-5 sm:w-5 inline mr-2" />
                                 Adicionar nome
                               </span>
                             )}
@@ -370,9 +370,9 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                       </div>
                       
                       {/* Action Buttons */}
-                      <div className="ml-4">
+                      <div className="w-full sm:w-auto">
                         {isEditing ? (
-                          <div className="space-x-2 flex">
+                          <div className="flex flex-col sm:flex-row gap-2">
                             <Button 
                               onClick={handleSave} 
                               size="sm" 
@@ -385,18 +385,18 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                             >
                               {isLoading ? (
                                 <>
-                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                  Salvando...
+                                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 animate-spin" />
+                                  <span className="text-xs sm:text-sm">Salvando...</span>
                                 </>
                               ) : saveSuccess ? (
                                 <>
-                                  <Check className="h-4 w-4 mr-2" />
-                                  Salvo!
+                                  <Check className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                                  <span className="text-xs sm:text-sm">Salvo!</span>
                                 </>
                               ) : (
                                 <>
-                                  <Save className="h-4 w-4 mr-2" />
-                                  Salvar
+                                  <Save className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                                  <span className="text-xs sm:text-sm">Salvar</span>
                                 </>
                               )}
                             </Button>
@@ -407,12 +407,12 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                               disabled={isLoading || isUploadingImage !== null}
                               className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
                             >
-                              <X className="h-4 w-4 mr-2" />
-                              Cancelar
+                              <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                              <span className="text-xs sm:text-sm">Cancelar</span>
                             </Button>
                           </div>
                         ) : (
-                          <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                          <div className="flex flex-wrap gap-2">
                             <Button 
                               onClick={handleViewProfile}
                               variant="outline" 
@@ -420,8 +420,8 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                               disabled={!editData.id || isUploadingImage !== null}
                               className="border-blue-300 dark:border-blue-600/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-600/20 hover:text-blue-700 dark:hover:text-blue-300 transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
                             >
-                              <Eye className="h-4 w-4 mr-2" />
-                              Visualizar
+                              <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                              <span className="text-xs sm:text-sm">Visualizar</span>
                             </Button>
                             
                             <Button 
@@ -433,13 +433,13 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                             >
                               {copied ? (
                                 <>
-                                  <Check className="h-4 w-4 mr-2" />
-                                  Copiado!
+                                  <Check className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                                  <span className="text-xs sm:text-sm">Copiado!</span>
                                 </>
                               ) : (
                                 <>
-                                  <Share2 className="h-4 w-4 mr-2" />
-                                  Compartilhar
+                                  <Share2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                                  <span className="text-xs sm:text-sm">Compartilhar</span>
                                 </>
                               )}
                             </Button>
@@ -451,8 +451,8 @@ export function ProfileDashboardContent({ userData = {} }: ProfilePageProps) {
                               disabled={isUploadingImage !== null}
                               className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white transform hover:scale-105 transition-all duration-200 disabled:opacity-50"
                             >
-                              <Pencil className="h-4 w-4 mr-2" />
-                              Editar
+                              <Pencil className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                              <span className="text-xs sm:text-sm">Editar</span>
                             </Button>
                           </div>
                         )}

@@ -208,41 +208,41 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black text-gray-900 dark:text-white transition-colors duration-300">
-      <div className="space-y-8 p-6">
+      <div className="space-y-6 p-4 sm:p-6 max-w-full overflow-x-hidden">
         {/* Header com boas-vindas */}
-        <div className="border-b border-gray-200 dark:border-green-500/30 pb-6">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+        <div className="border-b border-gray-200 dark:border-green-500/30 pb-4 sm:pb-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
             Olá, {user.name}! 👋
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2 text-lg">
+          <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm sm:text-base lg:text-lg">
             Confira seu desempenho na plataforma IFCode
           </p>
           {weeklyPointsGain > 0 && (
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 rounded-lg">
+            <div className="mt-4 inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 rounded-lg">
               <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <span className="text-sm font-medium text-green-700 dark:text-green-300">
+              <span className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-300">
                 +{weeklyPointsGain} pontos esta semana!
               </span>
             </div>
           )}
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3 max-w-full">
           {/* Coluna Principal - Stats e Posts */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 lg:space-y-8 min-w-0">
             {/* Stats Cards */}
-            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {stats.map((stat, index) => (
                 <Card key={stat.title} className="bg-white/80 dark:bg-gray-900/50 border-gray-200 dark:border-green-500/30 hover:border-gray-300 dark:hover:border-green-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-green-500/10 backdrop-blur-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">{stat.title}</CardTitle>
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">{stat.title}</CardTitle>
                     <div className="p-2 bg-green-500/20 dark:bg-green-500/20 rounded-lg">
-                      <stat.icon className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      <stat.icon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</div>
-                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">{stat.description}</p>
+                    <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</div>
+                    <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 font-medium">{stat.description}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -251,45 +251,45 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
             {/* Meus Posts Recentes */}
             <Card className="bg-white/90 dark:bg-gray-900/70 border-gray-200 dark:border-green-500/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <CardTitle className="flex items-center gap-2 sm:gap-3 text-gray-900 dark:text-white">
                   <div className="p-2 bg-green-500/20 rounded-lg">
-                    <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                   </div>
-                  <span className="text-xl">Meus Posts Recentes</span>
+                  <span className="text-lg sm:text-xl">Meus Posts Recentes</span>
                 </CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400 text-base">
+                <CardDescription className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
                   Suas últimas publicações e seu desempenho
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {recentPosts.length > 0 ? (
                     recentPosts.map((post) => (
-                      <div key={post.id} className="border-l-4 border-green-500 bg-gray-50 dark:bg-gray-800/50 pl-6 py-4 hover:bg-gray-100 dark:hover:bg-gray-800/80 rounded-r-lg transition-all duration-300 hover:shadow-md">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-3 text-lg">{post.title}</h4>
-                            <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
-                              <span className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700/50 px-3 py-1 rounded-full">
-                                <Heart className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      <div key={post.id} className="border-l-4 border-green-500 bg-gray-50 dark:bg-gray-800/50 pl-4 sm:pl-6 py-3 sm:py-4 hover:bg-gray-100 dark:hover:bg-gray-800/80 rounded-r-lg transition-all duration-300 hover:shadow-md">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2 sm:mb-3 text-base sm:text-lg break-words">{post.title}</h4>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                              <span className="flex items-center gap-1 sm:gap-2 bg-gray-200 dark:bg-gray-700/50 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
+                                <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                                 {post.likes}
                               </span>
-                              <span className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700/50 px-3 py-1 rounded-full">
-                                <MessageSquare className="h-4 w-4 text-green-600 dark:text-green-400" />
+                              <span className="flex items-center gap-1 sm:gap-2 bg-gray-200 dark:bg-gray-700/50 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
+                                <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                                 0 comentários
                               </span>
                             </div>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getLanguageColor(post.programmingLanguage)}`}>
+                          <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium border ${getLanguageColor(post.programmingLanguage)} self-start sm:self-auto whitespace-nowrap flex-shrink-0`}>
                             {post.programmingLanguage}
                           </span>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p className="text-lg mb-2">Nenhuma publicação encontrada</p>
+                    <div className="text-center py-6 sm:py-8 text-gray-500 dark:text-gray-400">
+                      <FileText className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+                      <p className="text-base sm:text-lg mb-2">Nenhuma publicação encontrada</p>
                       <p className="text-sm">Comece criando seu primeiro post!</p>
                     </div>
                   )}
@@ -297,7 +297,7 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                 <Link href="/dashboard/publicacoes">
                   <Button
                     variant="outline"
-                    className="w-full mt-6 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-500/10 border-green-500/50 hover:border-green-600 dark:hover:border-green-400/70 transition-all duration-300 py-3 text-base font-medium"
+                    className="w-full mt-4 sm:mt-6 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-500/10 border-green-500/50 hover:border-green-600 dark:hover:border-green-400/70 transition-all duration-300 py-2 sm:py-3 text-sm sm:text-base font-medium"
                   >
                     Ver todas as publicações
                   </Button>
@@ -307,21 +307,21 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
           </div>
 
           {/* Sidebar Direita */}
-          <div className="space-y-8">
+          <div className="space-y-6 lg:space-y-8 min-w-0">
             {/* Ranking e Nível do Usuário */}
             <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/40 dark:to-green-800/40 border-green-200 dark:border-green-500/40 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-green-700 dark:text-green-300">
+                <CardTitle className="flex items-center gap-2 sm:gap-3 text-green-700 dark:text-green-300">
                   <div className="p-2 bg-green-500/30 rounded-lg">
-                    <Trophy className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                   </div>
-                  <span>Meu Ranking</span>
+                  <span className="text-sm sm:text-base">Meu Ranking</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 sm:space-y-6">
                 {/* Nível Atual com Imagem */}
-                <div className="text-center space-y-4">
-                  <div className="relative w-20 h-20 mx-auto">
+                <div className="text-center space-y-3 sm:space-y-4">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto">
                     <Image
                       src={currentLevel.icon}
                       alt={currentLevel.name}
@@ -331,17 +331,17 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-green-700 dark:text-green-300">{currentLevel.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Nível {rankingStats.level}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-green-700 dark:text-green-300">{currentLevel.name}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Nível {rankingStats.level}</p>
                   </div>
                 </div>
 
                 {/* Pontuação */}
                 <div className="text-center space-y-2">
-                  <div className="text-4xl font-bold text-green-600 dark:text-green-400">{userPoints}</div>
-                  <p className="text-green-700 dark:text-green-300 font-medium">pontos conquistados</p>
+                  <div className="text-3xl sm:text-4xl font-bold text-green-600 dark:text-green-400">{userPoints}</div>
+                  <p className="text-green-700 dark:text-green-300 font-medium text-sm sm:text-base">pontos conquistados</p>
                   {weeklyPointsGain > 0 && (
-                    <p className="text-sm text-green-600 dark:text-green-400">
+                    <p className="text-xs sm:text-sm text-green-600 dark:text-green-400">
                       +{weeklyPointsGain} pontos esta semana
                     </p>
                   )}
@@ -349,8 +349,8 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
 
                 {/* Barra de Progresso */}
                 {nextLevel && (
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm">
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex justify-between text-xs sm:text-sm">
                       <span className="text-gray-600 dark:text-gray-400">Progresso para {nextLevel.name}</span>
                       <span className="text-green-600 dark:text-green-400 font-medium">
                         {Math.round(progressPercentage)}%
@@ -358,7 +358,7 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                     </div>
                     <Progress 
                       value={progressPercentage} 
-                      className="h-3 bg-gray-200 dark:bg-gray-700"
+                      className="h-2 sm:h-3 bg-gray-200 dark:bg-gray-700"
                     />
                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">
                       {pointsToNextLevel} pontos para o próximo nível
@@ -367,12 +367,12 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                 )}
 
                 {/* Posição no Ranking */}
-                <div className="bg-white/60 dark:bg-black/40 rounded-xl p-4 border border-green-200 dark:border-green-500/30">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Ranking Geral</span>
-                    <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <div className="bg-white/60 dark:bg-black/40 rounded-xl p-3 sm:p-4 border border-green-200 dark:border-green-500/30">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Ranking Geral</span>
+                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                  <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">
                     {currentRankPosition > 0 ? `#${currentRankPosition}` : "Não ranqueado"}
                   </div>
                   {currentRankPosition > 0 && (
@@ -385,19 +385,19 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                 </div>
 
                 {/* Stats Secundárias */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white/60 dark:bg-black/40 rounded-xl p-3 border border-green-200 dark:border-green-500/30">
-                    <div className="flex items-center justify-center mb-2">
-                      <Award className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div className="bg-white/60 dark:bg-black/40 rounded-xl p-2 sm:p-3 border border-green-200 dark:border-green-500/30">
+                    <div className="flex items-center justify-center mb-1 sm:mb-2">
+                      <Award className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <div className="text-xl font-bold text-gray-900 dark:text-white text-center">{recentActivity.totalActivities}</div>
+                    <div className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white text-center">{recentActivity.totalActivities}</div>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-center">Atividades</p>
                   </div>
-                  <div className="bg-white/60 dark:bg-black/40 rounded-xl p-3 border border-green-200 dark:border-green-500/30">
-                    <div className="flex items-center justify-center mb-2">
-                      <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                  <div className="bg-white/60 dark:bg-black/40 rounded-xl p-2 sm:p-3 border border-green-200 dark:border-green-500/30">
+                    <div className="flex items-center justify-center mb-1 sm:mb-2">
+                      <Flame className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 dark:text-orange-400" />
                     </div>
-                    <div className="text-xl font-bold text-gray-900 dark:text-white text-center">{currentStreak}</div>
+                    <div className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white text-center">{currentStreak}</div>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-center">Streak</p>
                   </div>
                 </div>
@@ -407,38 +407,38 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
             {/* Ações Rápidas */}
             <Card className="bg-white/90 dark:bg-gray-900/70 border-gray-200 dark:border-green-500/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <CardTitle className="flex items-center gap-2 sm:gap-3 text-gray-900 dark:text-white">
                   <div className="p-2 bg-green-500/20 rounded-lg">
-                    <Plus className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                   </div>
-                  <span>Ações Rápidas</span>
+                  <span className="text-sm sm:text-base">Ações Rápidas</span>
                 </CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400">
+                <CardDescription className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                   Crie conteúdo e gerencie seu perfil
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
                 <Link href="/dashboard/publicacoes">
-                  <Button className="w-full justify-start bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white transition-all duration-300 py-3 font-medium">
-                    <Plus className="mr-3 h-5 w-5" />
+                  <Button className="w-full justify-start bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white transition-all duration-300 py-2 sm:py-3 text-sm sm:text-base font-medium">
+                    <Plus className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
                     Nova Publicação
                   </Button>
                 </Link>
                 <Link href="/dashboard/perfil">
-                  <Button className="w-full justify-start bg-gray-100 hover:bg-gray-200 dark:bg-gray-800/50 dark:hover:bg-gray-700/70 border-green-200 hover:border-green-300 dark:border-green-500/30 dark:hover:border-green-400/50 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-all duration-300 py-3" variant="outline">
-                    <User2 className="mr-3 h-5 w-5" />
+                  <Button className="w-full justify-start bg-gray-100 hover:bg-gray-200 dark:bg-gray-800/50 dark:hover:bg-gray-700/70 border-green-200 hover:border-green-300 dark:border-green-500/30 dark:hover:border-green-400/50 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-all duration-300 py-2 sm:py-3 text-sm sm:text-base" variant="outline">
+                    <User2 className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
                     Editar Perfil
                   </Button>
                 </Link>
                 <Link href="/dashboard/comentarios">
-                  <Button className="w-full justify-start bg-gray-100 hover:bg-gray-200 dark:bg-gray-800/50 dark:hover:bg-gray-700/70 border-green-200 hover:border-green-300 dark:border-green-500/30 dark:hover:border-green-400/50 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-all duration-300 py-3" variant="outline">
-                    <MessageSquare className="mr-3 h-5 w-5" />
+                  <Button className="w-full justify-start bg-gray-100 hover:bg-gray-200 dark:bg-gray-800/50 dark:hover:bg-gray-700/70 border-green-200 hover:border-green-300 dark:border-green-500/30 dark:hover:border-green-400/50 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-all duration-300 py-2 sm:py-3 text-sm sm:text-base" variant="outline">
+                    <MessageSquare className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
                     Gerenciar Comentários
                   </Button>
                 </Link>
                 <Link href="/dashboard/configuracoes">
-                  <Button className="w-full justify-start bg-gray-100 hover:bg-gray-200 dark:bg-gray-800/50 dark:hover:bg-gray-700/70 border-green-200 hover:border-green-300 dark:border-green-500/30 dark:hover:border-green-400/50 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-all duration-300 py-3" variant="outline">
-                    <Settings className="mr-3 h-5 w-5" />
+                  <Button className="w-full justify-start bg-gray-100 hover:bg-gray-200 dark:bg-gray-800/50 dark:hover:bg-gray-700/70 border-green-200 hover:border-green-300 dark:border-green-500/30 dark:hover:border-green-400/50 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-all duration-300 py-2 sm:py-3 text-sm sm:text-base" variant="outline">
+                    <Settings className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
                     Configurações do Perfil
                   </Button>
                 </Link>
@@ -450,24 +450,24 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
               <Card className="bg-white/90 dark:bg-gray-900/70 border-gray-200 dark:border-blue-500/30 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between text-gray-900 dark:text-white">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <div className="p-2 bg-blue-500/20 rounded-lg">
-                        <Bell className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
                       </div>
-                      <span>Notificações Recentes</span>
+                      <span className="text-sm sm:text-base">Notificações Recentes</span>
                     </div>
                     <Link href="/dashboard/notificacoes">
-                      <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                      <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-xs sm:text-sm">
                         Ver todas
                       </Button>
                     </Link>
                   </CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
+                  <CardDescription className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                     Suas notificações mais recentes
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {recentNotifications.slice(0, 3).map((notification) => {
                       const IconComponent = getNotificationIcon(notification.type);
                       const iconColor = getNotificationColor(notification.type);
@@ -476,26 +476,26 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                         <Link 
                           key={notification.id} 
                           href="/dashboard/notificacoes"
-                          className="block p-3 bg-gray-50 dark:bg-gray-800/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300"
+                          className="block p-2 sm:p-3 bg-gray-50 dark:bg-gray-800/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300"
                         >
-                          <div className="flex items-start gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 ${!notification.read ? 'ring-2 ring-blue-500' : ''}`}>
-                              <IconComponent className={`h-4 w-4 ${iconColor}`} />
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 ${!notification.read ? 'ring-2 ring-blue-500' : ''}`}>
+                              <IconComponent className={`h-3 w-3 sm:h-4 sm:w-4 ${iconColor}`} />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                              <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate">
                                 {notification.title}
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                 {notification.message}
                               </p>
-                              <div className="flex items-center gap-2 mt-1">
+                              <div className="flex items-center gap-1 sm:gap-2 mt-1">
                                 <Clock className="h-3 w-3 text-gray-400" />
                                 <span className="text-xs text-gray-400">
                                   {formatNotificationTime(notification.createdAt)}
                                 </span>
                                 {!notification.read && (
-                                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full"></div>
                                 )}
                               </div>
                             </div>
@@ -511,25 +511,25 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
             {/* Atividades Recentes */}
             <Card className="bg-white/90 dark:bg-gray-900/70 border-gray-200 dark:border-green-500/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <CardTitle className="flex items-center gap-2 sm:gap-3 text-gray-900 dark:text-white">
                   <div className="p-2 bg-green-500/20 rounded-lg">
-                    <Star className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <Star className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                   </div>
-                  <span>Atividades Recentes</span>
+                  <span className="text-sm sm:text-base">Atividades Recentes</span>
                 </CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400">
+                <CardDescription className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                   Suas últimas conquistas e pontuações
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {displayAchievements.map((activity, index) => (
-                    <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${activity.color}`}>
-                        <activity.icon className="h-5 w-5" />
+                    <div key={index} className="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 dark:bg-gray-800/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300">
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${activity.color}`}>
+                        <activity.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{activity.title}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate">{activity.title}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-500">{activity.timeAgo}</p>
                       </div>
                     </div>
@@ -537,9 +537,9 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
                 </div>
                 
                 {rankingStats.recentEntries.length === 0 && (
-                  <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-                    <Target className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Participe mais para ver suas atividades aqui!</p>
+                  <div className="text-center py-4 sm:py-6 text-gray-500 dark:text-gray-400">
+                    <Target className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-xs sm:text-sm">Participe mais para ver suas atividades aqui!</p>
                   </div>
                 )}
               </CardContent>
@@ -549,24 +549,24 @@ export function DashboardContent({ user, recentPosts, rankingStats, recentActivi
             {rankingStats.monthlyPoints > 0 && (
               <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-800/40 border-blue-200 dark:border-blue-500/40 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-blue-700 dark:text-blue-300">
+                  <CardTitle className="flex items-center gap-2 sm:gap-3 text-blue-700 dark:text-blue-300">
                     <div className="p-2 bg-blue-500/30 rounded-lg">
-                      <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <span>Estatísticas do Mês</span>
+                    <span className="text-sm sm:text-base">Estatísticas do Mês</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-white/60 dark:bg-black/40 rounded-lg">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Pontos do mês</span>
-                      <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 dark:bg-black/40 rounded-lg">
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Pontos do mês</span>
+                      <span className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400">
                         {rankingStats.monthlyPoints}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-white/60 dark:bg-black/40 rounded-lg">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Média diária</span>
-                      <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 dark:bg-black/40 rounded-lg">
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Média diária</span>
+                      <span className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400">
                         {Math.round(rankingStats.monthlyPoints / 30)}
                       </span>
                     </div>

@@ -21,9 +21,9 @@ export default async function DashboardLayout({
             <SidebarProvider>
                 <div className="flex min-h-screen w-full bg-background">
                     <SidebarWithNotifications userId={session.user?.id || ""} />
-                    <div className="flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col min-w-0">
                         <DashboardHeader user={session.user} />
-                        <main className="flex-1 p-6">{children}</main>
+                        <main className="flex-1 p-3 sm:p-4 lg:p-6 overflow-x-auto">{children}</main>
                     </div>
                 </div>
             </SidebarProvider>

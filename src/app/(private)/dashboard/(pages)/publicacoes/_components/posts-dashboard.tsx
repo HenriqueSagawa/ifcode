@@ -60,24 +60,24 @@ export function PostsDashboardContent({ userId, initialPosts = [] }: PostsDashbo
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard de Posts</h1>
-          <p className="text-muted-foreground">Gerencie suas publicações e crie novos conteúdos</p>
+      <div className="container mx-auto p-3 sm:p-4 lg:p-6">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Dashboard de Posts</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">Gerencie suas publicações e crie novos conteúdos</p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="create">Criar Post</TabsTrigger>
+            <TabsTrigger value="overview" className="text-xs sm:text-sm">Visão Geral</TabsTrigger>
+            <TabsTrigger value="create" className="text-xs sm:text-sm">Criar Post</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-4 sm:space-y-6">
             <PostStats posts={posts} />
             <PostsList posts={posts} />
           </TabsContent>
 
-          <TabsContent value="create" className="space-y-6">
+          <TabsContent value="create" className="space-y-4 sm:space-y-6">
             <PostForm userId={userId} />
           </TabsContent>
         </Tabs>

@@ -309,14 +309,14 @@ async function CommentsData() {
 
 export default function CommentsDashboardPage() {
   return (
-    <div className="container mx-auto py-6">
-      <div className="mb-6">
+    <div className="container mx-auto py-4 sm:py-6 max-w-full overflow-x-hidden">
+      <div className="mb-4 sm:mb-6">
         <BackButton fallbackUrl="/dashboard" />
       </div>
       
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard de Comentários</h1>
-        <p className="text-muted-foreground">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard de Comentários</h1>
+        <p className="text-muted-foreground text-sm sm:text-base">
           Gerencie todos os comentários recebidos em suas publicações
         </p>
       </div>
