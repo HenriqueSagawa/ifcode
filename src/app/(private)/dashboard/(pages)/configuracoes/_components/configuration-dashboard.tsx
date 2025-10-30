@@ -12,7 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
   Settings, 
   User, 
-  Shield, 
   Palette, 
   Globe, 
   Trash2,
@@ -24,6 +23,10 @@ import {
   Monitor
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { addToast } from "@heroui/toast"
 import { User as UserProps } from '../../../../../../../types/next-auth'
 import { useTheme } from 'next-themes'
 import { getAccessibilitySettings, updateAccessibilitySettings, type AccessibilitySettings } from '@/hooks/useAccessibility'
@@ -32,6 +35,10 @@ import { useLanguage, type LanguageSettings } from '@/hooks/useLanguage'
 export function SettingsContent({ userData }: { userData: UserProps }) {
   const {theme, setTheme} = useTheme()
   const [activeSection, setActiveSection] = useState('accessibility')
+  const router = useRouter()
+  const [confirmEmail, setConfirmEmail] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   
   // Language settings
   const { languageSettings, setLanguageSettings } = useLanguage()
@@ -45,13 +52,12 @@ export function SettingsContent({ userData }: { userData: UserProps }) {
       fontSize: 'md',
       highContrast: false,
       reduceAnimations: false,
-      underlineLinks: true
+      underlineLinks: false
     }
   })
 
   const menuItems = [
     { id: "accessibility", label: "Acessibilidade", icon: Settings },
-    { id: "security", label: "Segurança", icon: Shield },
     { id: "appearance", label: "Aparência", icon: Palette },
     { id: "language", label: "Idioma", icon: Globe },
     { id: "danger", label: "Zona de Perigo", icon: AlertTriangle }
@@ -251,57 +257,7 @@ export function SettingsContent({ userData }: { userData: UserProps }) {
               </Card>
             )}
 
-            {/* Security Section */}
-            {activeSection === 'security' && (
-              <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2 text-gray-900 dark:text-white">
-                    <Shield className="h-5 w-5" />
-                    <span>Segurança</span>
-                  </CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Mantenha sua conta segura
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="current-password" className="text-gray-700 dark:text-gray-300">Senha Atual</Label>
-                    <Input 
-                      id="current-password" 
-                      type="password" 
-                      placeholder="Digite sua senha atual"
-                      className="border-gray-300 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-400"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="new-password" className="text-gray-700 dark:text-gray-300">Nova Senha</Label>
-                      <Input 
-                        id="new-password" 
-                        type="password" 
-                        placeholder="Nova senha"
-                        className="border-gray-300 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-400"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirm-password" className="text-gray-700 dark:text-gray-300">Confirmar Senha</Label>
-                      <Input 
-                        id="confirm-password" 
-                        type="password" 
-                        placeholder="Confirme a nova senha"
-                        className="border-gray-300 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-400"
-                      />
-                    </div>
-                  </div>
-                  
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    <Lock className="h-4 w-4 mr-2" />
-                    Alterar Senha
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+            
 
             {/* Appearance Section */}
             {activeSection === 'appearance' && (
@@ -433,10 +389,78 @@ export function SettingsContent({ userData }: { userData: UserProps }) {
                     <p className="text-sm text-red-700 dark:text-red-300 mb-4">
                       Esta ação não pode ser desfeita. Todos os seus dados, posts e comentários serão permanentemente removidos.
                     </p>
-                    <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Excluir Conta
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir Conta
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Digite seu e-mail ({userData?.email}) para confirmar a exclusão definitiva da sua conta e de todos os dados relacionados.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <div className="space-y-2">
+                          <Label htmlFor="confirm-email" className="text-gray-700 dark:text-gray-300">Seu e-mail</Label>
+                          <Input
+                            id="confirm-email"
+                            type="email"
+                            placeholder={userData?.email || "seu-email@exemplo.com"}
+                            value={confirmEmail}
+                            onChange={(e) => setConfirmEmail(e.target.value)}
+                            className="border-gray-300 dark:border-gray-600 focus:border-red-500 dark:focus:border-red-400"
+                          />
+                          {deleteError && (
+                            <p className="text-sm text-red-600 dark:text-red-400">{deleteError}</p>
+                          )}
+                        </div>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => { setConfirmEmail(''); setDeleteError(null); }}>
+                            Cancelar
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700"
+                            disabled={isDeleting || confirmEmail.trim().toLowerCase() !== (userData?.email || '').toLowerCase()}
+                            onClick={async () => {
+                              try {
+                                setDeleteError(null)
+                                setIsDeleting(true)
+                                const res = await fetch('/api/users/delete-account', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ email: confirmEmail.trim() })
+                                })
+                                if (!res.ok) {
+                                  const data = await res.json().catch(() => ({}))
+                                  throw new Error(data?.error || 'Falha ao excluir a conta')
+                                }
+                                addToast({
+                                  title: 'Conta excluída',
+                                  description: 'Sua conta e dados foram removidos com sucesso.',
+                                  color: 'default',
+                                })
+                                await signOut({ redirect: false })
+                                router.replace('/')
+                              } catch (err: any) {
+                                setDeleteError(err.message || 'Erro ao excluir conta')
+                                addToast({
+                                  title: 'Erro ao excluir',
+                                  description: err.message || 'Tente novamente mais tarde.',
+                                  color: 'danger',
+                                })
+                              } finally {
+                                setIsDeleting(false)
+                              }
+                            }}
+                          >
+                            {isDeleting ? 'Excluindo...' : 'Excluir definitivamente'}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardContent>
               </Card>

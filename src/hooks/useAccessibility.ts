@@ -13,7 +13,7 @@ const defaultSettings: AccessibilitySettings = {
   fontSize: 'md',
   highContrast: false,
   reduceAnimations: false,
-  underlineLinks: true
+  underlineLinks: false
 }
 
 export const useAccessibility = () => {
