@@ -274,14 +274,17 @@ export default function PostCard({ post, userId }: PostCardProps) {
               <span className="text-xs font-medium">{likesCount}</span>
             </Button>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-blue-500 hover:bg-blue-500/5 px-3 py-1.5 h-auto rounded-full transition-all"
-            >
-              <AiOutlineMessage className="w-4 h-4 mr-1.5" />
-              <span className="text-xs font-medium">Comentar</span>
-            </Button>
+
+            <Link href={`/posts/${post.id}`}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-blue-500 hover:bg-blue-500/5 px-3 py-1.5 h-auto rounded-full transition-all"
+              >
+                <AiOutlineMessage className="w-4 h-4 mr-1.5" />
+                <span className="text-xs font-medium">Comentar</span>
+              </Button>
+            </Link>
           </div>
 
           <div className="flex items-center gap-2">
@@ -292,7 +295,7 @@ export default function PostCard({ post, userId }: PostCardProps) {
             >
               <AiOutlineShareAlt className="w-4 h-4" />
             </Button>
-            
+
             {userId && (
               <ReportButton
                 contentId={post.id as string}
